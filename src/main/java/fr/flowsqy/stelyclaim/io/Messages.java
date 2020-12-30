@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.utils;
+package fr.flowsqy.stelyclaim.io;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

@@ -1,8 +1,7 @@
 package fr.flowsqy.stelyclaim.command;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.utils.Messages;
-import org.bukkit.ChatColor;
+import fr.flowsqy.stelyclaim.io.Messages;
 import org.bukkit.command.PluginCommand;
 
 public class CommandManager {
@@ -15,8 +14,7 @@ public class CommandManager {
         assert claimCmd != null;
         assert bedrockCmd != null;
 
-        final String noPermMessage = ChatColor.RED + "You don't have the permission to do this command";
-        final String configNoPerm = messages.getMessage("util.noperm", noPermMessage);
+        final String configNoPerm = messages.getMessage("util.noperm");
 
         claimCmd.setPermissionMessage(configNoPerm);
         bedrockCmd.setPermissionMessage(configNoPerm);

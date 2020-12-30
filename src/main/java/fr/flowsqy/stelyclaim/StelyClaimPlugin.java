@@ -1,7 +1,8 @@
 package fr.flowsqy.stelyclaim;
 
 import fr.flowsqy.stelyclaim.command.CommandManager;
-import fr.flowsqy.stelyclaim.utils.Messages;
+import fr.flowsqy.stelyclaim.io.BedrockManager;
+import fr.flowsqy.stelyclaim.io.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,8 +16,18 @@ import java.util.logging.Logger;
 
 public class StelyClaimPlugin extends JavaPlugin {
 
+    private static StelyClaimPlugin instance;
+
+    public static StelyClaimPlugin getInstance() {
+        return instance;
+    }
+
+    private Messages messages;
+    private BedrockManager breakManager;
+
     @Override
     public void onEnable() {
+        instance = this;
 
         final Logger logger = getLogger();
         final File dataFolder = getDataFolder();
@@ -28,7 +39,8 @@ public class StelyClaimPlugin extends JavaPlugin {
             return;
         }
 
-        final Messages messages = new Messages(initMessages(dataFolder));
+        this.messages = new Messages(initMessages(dataFolder));
+        this.breakManager = new BedrockManager(getDataFolder());
 
         new CommandManager(this, messages);
 
@@ -49,6 +61,14 @@ public class StelyClaimPlugin extends JavaPlugin {
         }
 
         return YamlConfiguration.loadConfiguration(messagesFile);
+    }
+
+    public Messages getMessages() {
+        return messages;
+    }
+
+    public BedrockManager getBreakManager() {
+        return breakManager;
     }
 
 }
