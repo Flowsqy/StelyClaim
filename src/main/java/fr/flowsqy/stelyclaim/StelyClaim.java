@@ -1,4 +1,14 @@
 package fr.flowsqy.stelyclaim;
 
-public class StelyClaim {
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class StelyClaim extends JavaPlugin {
+
+    @Override
+    public void onEnable() {
+
+
+
+    }
+
 }

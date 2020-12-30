@@ -1,0 +1,4 @@
+name: StelyClaim
+author: Flowsqy
+version: ${project.version}
+main: fr.flowsqy.stelyclaim.StelyClaim
