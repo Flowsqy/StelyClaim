@@ -1,4 +1,19 @@
 name: StelyClaim
 author: Flowsqy
 version: ${project.version}
-main: fr.flowsqy.stelyclaim.StelyClaim
+main: fr.flowsqy.stelyclaim.StelyClaimPlugin
+depends:
+  - WorldEdit
+  - WorldGuard
+api-version: 1.13
+commands:
+  claim:
+    aliases:
+      - stelyclaim
+    permission: stelyclaim.claim
+    description: Root command for region manipulation
+    usage: /claim <subCommand>
+  bedrock:
+    permission: stelyclaim.bedrock
+    description: Provide instant bedrock break for survival players
+    usage: /bedrock

@@ -1,0 +1,4 @@
+prefix: "&7[&5StelyClaim&7]&f"
+
+util:
+  noperm: "%prefix%&cTu n'as pas la permission de faire cette commande"
