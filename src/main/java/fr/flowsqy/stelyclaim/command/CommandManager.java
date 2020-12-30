@@ -6,7 +6,7 @@ import org.bukkit.command.PluginCommand;
 
 public class CommandManager {
 
-    public CommandManager(StelyClaimPlugin plugin, Messages messages){
+    public CommandManager(StelyClaimPlugin plugin, Messages messages) {
 
         final PluginCommand claimCmd = plugin.getCommand("claim");
         final PluginCommand bedrockCmd = plugin.getCommand("bedrock");
@@ -18,6 +18,10 @@ public class CommandManager {
 
         claimCmd.setPermissionMessage(configNoPerm);
         bedrockCmd.setPermissionMessage(configNoPerm);
+
+        final ClaimCommand claimExecutor = new ClaimCommand();
+        claimCmd.setExecutor(claimExecutor);
+        claimCmd.setTabCompleter(claimExecutor);
 
         final BedrockCommand bedrockExecutor = new BedrockCommand(plugin);
         bedrockCmd.setExecutor(bedrockExecutor);

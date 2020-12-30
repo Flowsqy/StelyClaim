@@ -37,13 +37,13 @@ public class BedrockCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(!(sender instanceof Player)){
+        if (!(sender instanceof Player)) {
             return messages.sendMessage(sender, "util.onlyplayer");
         }
 
         final Player player = (Player) sender;
 
-        if(manager.toggle(player.getName(), true))
+        if (manager.toggle(player.getName(), true))
             return messages.sendMessage(player, "bedrock.enable");
 
         return messages.sendMessage(player, "bedrock.disable");
@@ -59,28 +59,28 @@ public class BedrockCommand implements TabExecutor {
         private final PluginManager pluginManager = Bukkit.getPluginManager();
 
         @EventHandler(priority = EventPriority.MONITOR)
-        public void onInteract(PlayerInteractEvent event){
-            if(event.getAction() != Action.LEFT_CLICK_BLOCK)
+        public void onInteract(PlayerInteractEvent event) {
+            if (event.getAction() != Action.LEFT_CLICK_BLOCK)
                 return;
 
             final Block block = event.getClickedBlock();
-            if(block == null)
+            if (block == null)
                 return;
 
-            if(block.getType() != Material.BEDROCK)
+            if (block.getType() != Material.BEDROCK)
                 return;
 
             final Player player = event.getPlayer();
 
-            if(player.getGameMode() != GameMode.SURVIVAL)
+            if (player.getGameMode() != GameMode.SURVIVAL)
                 return;
 
-            if(!manager.has(player.getName()))
+            if (!manager.has(player.getName()))
                 return;
 
             final BlockBreakEvent blockEvent = new BlockBreakEvent(block, player);
             pluginManager.callEvent(blockEvent);
-            if(blockEvent.isCancelled())
+            if (blockEvent.isCancelled())
                 return;
 
             block.setType(Material.AIR);

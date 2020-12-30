@@ -24,27 +24,27 @@ public class Messages {
         return prefix;
     }
 
-    public String getMessage(String path, String... replace){
+    public String getMessage(String path, String... replace) {
         String message = yamlConfiguration.getString(path);
-        if(message == null)
+        if (message == null)
             return null;
 
         message = message.replace("%prefix%", prefix);
 
-        if(replace == null)
+        if (replace == null)
             return ChatColor.translateAlternateColorCodes('&', message);
 
         final int middle = (replace.length - replace.length % 2) / 2;
-        for(int index = 0; index < middle; index++){
-            message = message.replace(replace[index], replace[index+middle]);
+        for (int index = 0; index < middle; index++) {
+            message = message.replace(replace[index], replace[index + middle]);
         }
 
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public boolean sendMessage(CommandSender sender, String path, String... replace){
+    public boolean sendMessage(CommandSender sender, String path, String... replace) {
         final String message = getMessage(path, replace);
-        if(message != null)
+        if (message != null)
             sender.sendMessage(message);
         return true;
     }

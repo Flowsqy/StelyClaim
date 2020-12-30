@@ -17,13 +17,12 @@ import java.util.logging.Logger;
 public class StelyClaimPlugin extends JavaPlugin {
 
     private static StelyClaimPlugin instance;
+    private Messages messages;
+    private BedrockManager breakManager;
 
     public static StelyClaimPlugin getInstance() {
         return instance;
     }
-
-    private Messages messages;
-    private BedrockManager breakManager;
 
     @Override
     public void onEnable() {
@@ -32,7 +31,7 @@ public class StelyClaimPlugin extends JavaPlugin {
         final Logger logger = getLogger();
         final File dataFolder = getDataFolder();
 
-        if(!checkDataFolder(dataFolder)){
+        if (!checkDataFolder(dataFolder)) {
             logger.log(Level.WARNING, "Can not write in the directory : " + dataFolder.getAbsolutePath());
             logger.log(Level.WARNING, "Disable the plugin");
             Bukkit.getPluginManager().disablePlugin(this);
@@ -47,17 +46,18 @@ public class StelyClaimPlugin extends JavaPlugin {
     }
 
     private boolean checkDataFolder(File dataFolder) {
-        if(dataFolder.exists())
+        if (dataFolder.exists())
             return dataFolder.canWrite();
         return dataFolder.mkdirs();
     }
 
     private YamlConfiguration initMessages(File dataFolder) {
         final File messagesFile = new File(dataFolder, "messages.yml");
-        if(!messagesFile.exists()){
-            try{
+        if (!messagesFile.exists()) {
+            try {
                 Files.copy(Objects.requireNonNull(getResource("messages.yml")), messagesFile.toPath());
-            }catch (IOException ignored){}
+            } catch (IOException ignored) {
+            }
         }
 
         return YamlConfiguration.loadConfiguration(messagesFile);
