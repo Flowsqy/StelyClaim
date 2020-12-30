@@ -32,14 +32,14 @@ public class Messages {
         message = message.replace("%prefix%", prefix);
 
         if(replace == null)
-            return message;
+            return ChatColor.translateAlternateColorCodes('&', message);
 
         final int middle = (replace.length - replace.length % 2) / 2;
         for(int index = 0; index < middle; index++){
             message = message.replace(replace[index], replace[index+middle]);
         }
 
-        return message;
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
 
     public boolean sendMessage(CommandSender sender, String path, String... replace){

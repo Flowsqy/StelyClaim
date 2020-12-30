@@ -2,7 +2,7 @@ name: StelyClaim
 author: Flowsqy
 version: ${project.version}
 main: fr.flowsqy.stelyclaim.StelyClaimPlugin
-depends:
+depend:
   - WorldEdit
   - WorldGuard
 api-version: 1.13
