@@ -1,4 +1,9 @@
 prefix: "&7[&5StelyClaim&7]&f"
 
 util:
-  noperm: "%prefix%&cTu n'as pas la permission de faire cette commande"
+  noperm: "%prefix% &cTu n'as pas la permission de faire cette commande"
+  onlyplayer: "%prefix% &cCette commande est réservée aux joueurs"
+
+bedrock:
+  enable: "%prefix% &6Bedrock &aActivé"
+  disable: "%prefix% &6Bedrock &cDésactivé"

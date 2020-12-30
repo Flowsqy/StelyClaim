@@ -4,6 +4,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,12 +16,12 @@ public class BedrockManager {
 
     public BedrockManager(File dataFolder){
         this.file = new File(dataFolder, "bedrock.yml");
-        this.config = new YamlConfiguration();
-        this.players = new HashSet<>();
+        this.config = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
+        this.players = new HashSet<>(config.getStringList("players"));
     }
 
     public void save() {
-        config.set("players", players);
+        config.set("players", new ArrayList<>(players));
         try {
             config.save(file);
         } catch (IOException ignored) {}
@@ -39,5 +40,8 @@ public class BedrockManager {
         return false;
     }
 
+    public boolean has(String player){
+        return players.contains(player);
+    }
 
 }

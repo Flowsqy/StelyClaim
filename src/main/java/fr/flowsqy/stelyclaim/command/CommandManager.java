@@ -19,7 +19,9 @@ public class CommandManager {
         claimCmd.setPermissionMessage(configNoPerm);
         bedrockCmd.setPermissionMessage(configNoPerm);
 
-
+        final BedrockCommand bedrockExecutor = new BedrockCommand(messages, plugin.getBreakManager());
+        bedrockCmd.setExecutor(bedrockExecutor);
+        bedrockCmd.setTabCompleter(bedrockExecutor);
 
     }
 
