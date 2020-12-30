@@ -17,3 +17,80 @@ commands:
     permission: stelyclaim.bedrock
     description: Provide instant bedrock break for survival players
     usage: /bedrock
+permissions:
+  stelyclaim.claim.*:
+    children:
+      stelyclaim.claim.help: true
+      stelyclaim.claim.define-other: true
+      stelyclaim.claim.redefine-other: true
+      stelyclaim.claim.addmember-other: true
+      stelyclaim.claim.removemember-other: true
+      stelyclaim.claim.addowner-other: true
+      stelyclaim.claim.removeowner-other: true
+      stelyclaim.claim.remove-other: true
+      stelyclaim.claim.info-other: true
+      stelyclaim.claim.teleport-other: true
+      stelyclaim.claim.stats-other: true
+  stelyclaim.claim.help:
+    children:
+      stelyclaim.claim: true
+  stelyclaim.claim.define-other:
+    children:
+      stelyclaim.define: true
+  stelyclaim.claim.define:
+    children:
+      stelyclaim.claim: true
+  stelyclaim.claim.redefine-other:
+    children:
+      stelyclaim.redefine: true
+  stelyclaim.claim.redefine:
+    children:
+      stelyclaim.claim: true
+  stelyclaim.claim.addmember-other:
+    children:
+      stelyclaim.addmember: true
+  stelyclaim.claim.addmember:
+    children:
+      stelyclaim.claim: true
+  stelyclaim.claim.removemember-other:
+    children:
+      stelyclaim.removemember: true
+  stelyclaim.claim.removemember:
+    children:
+      stelyclaim.claim: true
+  stelyclaim.claim.addowner-other:
+    children:
+      stelyclaim.addowner: true
+  stelyclaim.claim.addowner:
+    children:
+      stelyclaim.claim: true
+  stelyclaim.claim.removeowner-other:
+    children:
+      stelyclaim.removeowner: true
+  stelyclaim.claim.removeowner:
+    children:
+      stelyclaim.claim: true
+  stelyclaim.claim.remove-other:
+    children:
+      stelyclaim.remove: true
+  stelyclaim.claim.remove:
+    children:
+      stelyclaim.claim: true
+  stelyclaim.claim.info-other:
+    children:
+      stelyclaim.info: true
+  stelyclaim.claim.info:
+    children:
+      stelyclaim.claim: true
+  stelyclaim.claim.teleport-other:
+    children:
+      stelyclaim.teleport: true
+  stelyclaim.claim.teleport:
+    children:
+      stelyclaim.claim: true
+  stelyclaim.claim.stats-other:
+    children:
+      stelyclaim.stats: true
+  stelyclaim.claim.stats:
+    children:
+      stelyclaim.claim: true

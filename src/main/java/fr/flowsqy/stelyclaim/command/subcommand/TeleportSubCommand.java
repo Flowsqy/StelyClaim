@@ -4,9 +4,8 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-public class RedefineSubCommand extends SubCommand {
-
-    public RedefineSubCommand(String name, String alias, String permission, boolean stats, boolean console) {
+public class TeleportSubCommand extends SubCommand {
+    public TeleportSubCommand(String name, String alias, String permission, boolean stats, boolean console) {
         super(name, alias, permission, stats, console);
     }
 

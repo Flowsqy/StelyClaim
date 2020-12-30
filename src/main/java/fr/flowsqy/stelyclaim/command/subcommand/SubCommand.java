@@ -9,15 +9,13 @@ public abstract class SubCommand {
     private final String name;
     private final String alias;
     private final String permission;
-    private final boolean other;
     private final boolean stats;
     private final boolean console;
 
-    public SubCommand(String name, String alias, String permission, boolean other, boolean stats, boolean console) {
+    public SubCommand(String name, String alias, String permission, boolean stats, boolean console) {
         this.name = name;
         this.alias = alias;
         this.permission = permission;
-        this.other = other;
         this.stats = stats;
         this.console = console;
     }
@@ -34,10 +32,6 @@ public abstract class SubCommand {
         return permission;
     }
 
-    public boolean isOther() {
-        return other;
-    }
-
     public boolean isStats() {
         return stats;
     }
@@ -46,8 +40,8 @@ public abstract class SubCommand {
         return console;
     }
 
-    public abstract void execute(CommandSender sender, String arg, List<String> args);
+    public abstract void execute(CommandSender sender, List<String> args);
 
-    public abstract List<String> tab(CommandSender sender, String arg, List<String> args);
+    public abstract List<String> tab(CommandSender sender, List<String> args);
 
 }

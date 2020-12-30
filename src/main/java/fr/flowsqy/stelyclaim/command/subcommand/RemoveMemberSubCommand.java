@@ -6,17 +6,17 @@ import java.util.List;
 
 public class RemoveMemberSubCommand extends SubCommand {
 
-    public RemoveMemberSubCommand(String name, String alias, String permission, boolean other, boolean stats, boolean console) {
-        super(name, alias, permission, other, stats, console);
+    public RemoveMemberSubCommand(String name, String alias, String permission, boolean stats, boolean console) {
+        super(name, alias, permission, stats, console);
     }
 
     @Override
-    public void execute(CommandSender sender, String arg, List<String> args) {
+    public void execute(CommandSender sender, List<String> args) {
 
     }
 
     @Override
-    public List<String> tab(CommandSender sender, String arg, List<String> args) {
+    public List<String> tab(CommandSender sender, List<String> args) {
         return null;
     }
 }
