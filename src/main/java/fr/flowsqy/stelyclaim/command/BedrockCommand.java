@@ -1,9 +1,24 @@
 package fr.flowsqy.stelyclaim.command;
 
+import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
 import fr.flowsqy.stelyclaim.io.Messages;
-import org.bukkit.command.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.plugin.PluginManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,9 +28,11 @@ public class BedrockCommand implements TabExecutor {
     private final Messages messages;
     private final BedrockManager manager;
 
-    public BedrockCommand(Messages messages, BedrockManager manager) {
-        this.messages = messages;
-        this.manager = manager;
+    public BedrockCommand(StelyClaimPlugin plugin) {
+        this.messages = plugin.getMessages();
+        this.manager = plugin.getBreakManager();
+
+        Bukkit.getPluginManager().registerEvents(new BedrockListener(), plugin);
     }
 
     @Override
@@ -25,9 +42,6 @@ public class BedrockCommand implements TabExecutor {
         }
 
         final Player player = (Player) sender;
-
-        System.out.println(messages.getMessage("bedrock.on"));
-        System.out.println(messages.getMessage("bedrock.off"));
 
         if(manager.toggle(player.getName(), true))
             return messages.sendMessage(player, "bedrock.enable");
@@ -39,4 +53,41 @@ public class BedrockCommand implements TabExecutor {
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
         return Collections.emptyList();
     }
+
+    private final class BedrockListener implements Listener {
+
+        private final PluginManager pluginManager = Bukkit.getPluginManager();
+
+        @EventHandler(priority = EventPriority.MONITOR)
+        public void onInteract(PlayerInteractEvent event){
+            if(event.getAction() != Action.LEFT_CLICK_BLOCK)
+                return;
+
+            final Block block = event.getClickedBlock();
+            if(block == null)
+                return;
+
+            if(block.getType() != Material.BEDROCK)
+                return;
+
+            final Player player = event.getPlayer();
+
+            if(player.getGameMode() != GameMode.SURVIVAL)
+                return;
+
+            if(!manager.has(player.getName()))
+                return;
+
+            final BlockBreakEvent blockEvent = new BlockBreakEvent(block, player);
+            pluginManager.callEvent(blockEvent);
+            if(blockEvent.isCancelled())
+                return;
+
+            block.setType(Material.AIR);
+            player.playEffect(block.getLocation(), Effect.STEP_SOUND, Material.BEDROCK);
+
+        }
+
+    }
+
 }
