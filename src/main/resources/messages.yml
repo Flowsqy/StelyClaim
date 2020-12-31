@@ -7,3 +7,26 @@ util:
 bedrock:
   enable: "%prefix% &6Bedrock &aActivé"
   disable: "%prefix% &6Bedrock &cDésactivé"
+
+help:
+  help: '%prefix% &6/claim help [Commande]'
+  define: '%prefix% &6/claim define'
+  define-other:  '%prefix% &6/claim define [Claim]'
+  redefine: '%prefix% &6/claim redefine'
+  redefine-other: '%prefix% &6/claim redefine [Claim]'
+  addowner: '%prefix% &6/claim addowner <Joueur>'
+  addowner-other: '%prefix% &6/claim addowner [Claim] <Joueur>'
+  removeowner: '%prefix% &6/claim removeowner <Joueur>'
+  removeowner-other: '%prefix% &6/claim removeowner [Claim] <Joueur>'
+  addmember: '%prefix% &6/claim addmember <Joueur>'
+  addmember-other: '%prefix% &6/claim addmember [Claim] <Joueur>'
+  removemember: '%prefix% &6/claim removemember <Joueur>'
+  removemember-other: '%prefix% &6/claim removemember [Claim] <Joueur>'
+  remove: '%prefix% &6/claim remove'
+  remove-other: '%prefix% &6/claim remove [Claim]'
+  info: '%prefix% &6/claim info'
+  info-other: '%prefix% &6/claim info [Claim]'
+  teleport: '%prefix% &6/claim tp'
+  teleport-other: '%prefix% &6/claim tp [Claim]'
+  stats: '%prefix% &6/claim stats <show|reset> [Commande]'
+  stats-other: '%prefix% &6/claim stats <show|reset> [Joueur] [Commande]'

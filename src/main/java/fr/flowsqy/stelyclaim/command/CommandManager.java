@@ -19,7 +19,7 @@ public class CommandManager {
         claimCmd.setPermissionMessage(configNoPerm);
         bedrockCmd.setPermissionMessage(configNoPerm);
 
-        final ClaimCommand claimExecutor = new ClaimCommand();
+        final ClaimCommand claimExecutor = new ClaimCommand(plugin);
         claimCmd.setExecutor(claimExecutor);
         claimCmd.setTabCompleter(claimExecutor);
 

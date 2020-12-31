@@ -1,6 +1,8 @@
 package fr.flowsqy.stelyclaim.command;
 
+import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.subcommand.*;
+import fr.flowsqy.stelyclaim.io.Messages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -12,15 +14,36 @@ import java.util.stream.Stream;
 
 public class ClaimCommand implements TabExecutor {
 
+    private final Messages messages;
     private final List<SubCommand> subCommands;
+    private final SubCommand helpSubCommand;
 
-    public ClaimCommand(){
+    public ClaimCommand(StelyClaimPlugin plugin){
+        this.messages = plugin.getMessages();
         subCommands = new ArrayList<>();
-        initCommands();
+        initCommands(plugin);
+        helpSubCommand = subCommands.get(0);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        final List<String> argsList = args == null ?
+                new ArrayList<>() :
+                new ArrayList<>(Arrays.asList(args));
+        final String arg = argsList.size() < 1 ? "" : argsList.get(0).toLowerCase(Locale.ROOT);
+        final Optional<SubCommand> subCommand = getSubCommand(arg);
+        final boolean isPlayer = sender instanceof Player;
+        if(subCommand.isPresent()) {
+            final SubCommand subCmd = subCommand.get();
+            if (isPlayer ? sender.hasPermission(subCmd.getPermission()) : subCmd.isConsole()){
+                subCmd.execute(sender, argsList, isPlayer);
+                return true;
+            }
+            if(!isPlayer)
+                return messages.sendMessage(sender, "util.onlyplayer");
+        }
+        if(sender.hasPermission(helpSubCommand.getPermission()))
+            helpSubCommand.execute(sender, argsList, isPlayer);
         return true;
     }
 
@@ -29,12 +52,12 @@ public class ClaimCommand implements TabExecutor {
         final List<String> argsList = args == null ?
                 new ArrayList<>() :
                 new ArrayList<>(Arrays.asList(args));
-        final String arg = (argsList.size() < 1 ? "" : argsList.get(0)).toLowerCase(Locale.ROOT);
+        final String arg = argsList.size() < 1 ? "" : argsList.get(0).toLowerCase(Locale.ROOT);
         final Optional<SubCommand> subCommand = getSubCommand(arg);
         if(subCommand.isPresent()) {
             final SubCommand subCmd = subCommand.get();
             final boolean isPlayer = sender instanceof Player;
-            if (sender instanceof Player ? sender.hasPermission(subCmd.getPermission()) : subCmd.isConsole()) {
+            if (isPlayer ? sender.hasPermission(subCmd.getPermission()) : subCmd.isConsole()) {
                 return subCmd.tab(sender, argsList, isPlayer);
             }
             else {
@@ -65,15 +88,16 @@ public class ClaimCommand implements TabExecutor {
     }
 
     private Optional<SubCommand> getSubCommand(String arg){
-        if (arg == null || arg.equals(""))
+        if (arg.equals(""))
             return Optional.empty();
         return subCommands.stream()
                 .filter(cmd -> cmd.getName().equalsIgnoreCase(arg) || cmd.getAlias().equalsIgnoreCase(arg))
                 .findAny();
     }
 
-    private void initCommands() {
+    private void initCommands(StelyClaimPlugin plugin) {
         subCommands.add(new HelpSubCommand(
+                plugin,
                 "help",
                 "h",
                 "stelyclaim.claim.help",
@@ -82,6 +106,7 @@ public class ClaimCommand implements TabExecutor {
                 subCommands
         ));
         subCommands.add(new DefineSubCommand(
+                plugin,
                 "define",
                 "d",
                 "stelyclaim.claim.define",
@@ -89,6 +114,7 @@ public class ClaimCommand implements TabExecutor {
                 false
         ));
         subCommands.add(new RedefineSubCommand(
+                plugin,
                 "redefine",
                 "rd",
                 "stelyclaim.claim.redefine",
@@ -96,6 +122,7 @@ public class ClaimCommand implements TabExecutor {
                 false
         ));
         subCommands.add(new AddMemberSubCommand(
+                plugin,
                 "addmember",
                 "am",
                 "stelyclaim.claim.addmember",
@@ -103,6 +130,7 @@ public class ClaimCommand implements TabExecutor {
                 true
         ));
         subCommands.add(new RemoveMemberSubCommand(
+                plugin,
                 "removemember",
                 "rm",
                 "stelyclaim.claim.removemember",
@@ -110,6 +138,7 @@ public class ClaimCommand implements TabExecutor {
                 true
         ));
         subCommands.add(new AddOwnerSubCommand(
+                plugin,
                 "addowner",
                 "ao",
                 "stelyclaim.claim.addowner",
@@ -117,6 +146,7 @@ public class ClaimCommand implements TabExecutor {
                 true
         ));
         subCommands.add(new RemoveOwnerSubCommand(
+                plugin,
                 "removeowner",
                 "ro",
                 "stelyclaim.claim.removeowner",
@@ -124,6 +154,7 @@ public class ClaimCommand implements TabExecutor {
                 true
         ));
         subCommands.add(new RemoveSubCommand(
+                plugin,
                 "remove",
                 "r",
                 "stelyclaim.claim.remove",
@@ -131,6 +162,7 @@ public class ClaimCommand implements TabExecutor {
                 true
         ));
         subCommands.add(new InfoSubCommand(
+                plugin,
                 "info",
                 "i",
                 "stelyclaim.claim.info",
@@ -138,6 +170,7 @@ public class ClaimCommand implements TabExecutor {
                 true
         ));
         subCommands.add(new TeleportSubCommand(
+                plugin,
                 "teleport",
                 "tp",
                 "stelyclaim.claim.teleport",
@@ -145,6 +178,7 @@ public class ClaimCommand implements TabExecutor {
                 false
         ));
         subCommands.add(new StatsSubCommand(
+                plugin,
                 "stats",
                 "s",
                 "stelyclaim.claim.stats",

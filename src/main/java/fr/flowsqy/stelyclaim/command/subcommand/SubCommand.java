@@ -1,18 +1,24 @@
 package fr.flowsqy.stelyclaim.command.subcommand;
 
+import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.io.Messages;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
 public abstract class SubCommand {
 
-    private final String name;
-    private final String alias;
-    private final String permission;
-    private final boolean stats;
-    private final boolean console;
+    protected final StelyClaimPlugin plugin;
+    protected final Messages messages;
+    protected final String name;
+    protected final String alias;
+    protected final String permission;
+    protected final boolean stats;
+    protected final boolean console;
 
-    public SubCommand(String name, String alias, String permission, boolean stats, boolean console) {
+    public SubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean stats, boolean console) {
+        this.plugin = plugin;
+        this.messages = plugin.getMessages();
         this.name = name;
         this.alias = alias;
         this.permission = permission;

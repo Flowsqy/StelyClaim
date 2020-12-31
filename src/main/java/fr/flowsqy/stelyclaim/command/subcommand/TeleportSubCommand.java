@@ -1,12 +1,13 @@
 package fr.flowsqy.stelyclaim.command.subcommand;
 
+import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
 public class TeleportSubCommand extends SubCommand {
-    public TeleportSubCommand(String name, String alias, String permission, boolean stats, boolean console) {
-        super(name, alias, permission, stats, console);
+    public TeleportSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean stats, boolean console) {
+        super(plugin, name, alias, permission, stats, console);
     }
 
     @Override

@@ -1,13 +1,14 @@
 package fr.flowsqy.stelyclaim.command.subcommand;
 
+import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
 public class RemoveMemberSubCommand extends SubCommand {
 
-    public RemoveMemberSubCommand(String name, String alias, String permission, boolean stats, boolean console) {
-        super(name, alias, permission, stats, console);
+    public RemoveMemberSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean stats, boolean console) {
+        super(plugin, name, alias, permission, stats, console);
     }
 
     @Override
