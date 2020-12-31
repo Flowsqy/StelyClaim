@@ -10,12 +10,12 @@ public class AddMemberSubCommand extends SubCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, List<String> args) {
+    public void execute(CommandSender sender, List<String> args, boolean isPlayer) {
 
     }
 
     @Override
-    public List<String> tab(CommandSender sender, List<String> args) {
+    public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
         return null;
     }
 }

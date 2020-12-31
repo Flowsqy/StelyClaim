@@ -40,8 +40,8 @@ public abstract class SubCommand {
         return console;
     }
 
-    public abstract void execute(CommandSender sender, List<String> args);
+    public abstract void execute(CommandSender sender, List<String> args, boolean isPlayer);
 
-    public abstract List<String> tab(CommandSender sender, List<String> args);
+    public abstract List<String> tab(CommandSender sender, List<String> args, boolean isPlayer);
 
 }

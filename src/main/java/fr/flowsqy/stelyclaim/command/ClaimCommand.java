@@ -13,66 +13,74 @@ import java.util.stream.Stream;
 public class ClaimCommand implements TabExecutor {
 
     private final List<SubCommand> subCommands;
-    private final HelpSubCommand helpSubCommand;
 
     public ClaimCommand(){
         subCommands = new ArrayList<>();
-
         initCommands();
-        this.helpSubCommand = new HelpSubCommand(
-                "help",
-                "h",
-                "stelyclaim.claim.help",
-                false,
-                true,
-                subCommands
-        );
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        return false;
+        return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        final String arg = (args == null || args.length < 1 ? "" : args[0]).toLowerCase(Locale.ROOT);
+        final List<String> argsList = args == null ?
+                new ArrayList<>() :
+                new ArrayList<>(Arrays.asList(args));
+        final String arg = (argsList.size() < 1 ? "" : argsList.get(0)).toLowerCase(Locale.ROOT);
         final Optional<SubCommand> subCommand = getSubCommand(arg);
         if(subCommand.isPresent()) {
-            if (sender.hasPermission(helpSubCommand.getName()))
-                return subCommand.get().tab(
-                        sender,
-                        args == null ?
-                                new ArrayList<>() :
-                                new ArrayList<>(Arrays.asList(args))
-                );
-            else
+            final SubCommand subCmd = subCommand.get();
+            final boolean isPlayer = sender instanceof Player;
+            if (sender instanceof Player ? sender.hasPermission(subCmd.getPermission()) : subCmd.isConsole()) {
+                return subCmd.tab(sender, argsList, isPlayer);
+            }
+            else {
                 return Collections.emptyList();
+            }
         }
-        else {
+        else if (argsList.size() < 2) {
             final Stream<SubCommand> subCommandStream;
             if(sender instanceof Player)
                 subCommandStream = subCommands.stream()
                         .filter(cmd -> sender.hasPermission(cmd.getPermission()));
-            else
+            else {
                 subCommandStream = subCommands.stream()
                         .filter(SubCommand::isConsole);
-            return subCommandStream
-                    .map(SubCommand::getName)
-                    .filter(cmd -> cmd.startsWith(arg))
-                    .collect(Collectors.toList());
+            }
+            if(arg.equalsIgnoreCase(""))
+                return subCommandStream
+                        .map(SubCommand::getName)
+                        .collect(Collectors.toList());
+            else
+                return subCommandStream
+                        .map(SubCommand::getName)
+                        .filter(cmd -> cmd.startsWith(arg))
+                        .collect(Collectors.toList());
         }
+        else
+            return Collections.emptyList();
     }
 
     private Optional<SubCommand> getSubCommand(String arg){
-        if(arg == null || arg.equals("") || arg.equalsIgnoreCase("help"))
-            return Optional.of(helpSubCommand);
+        if (arg == null || arg.equals(""))
+            return Optional.empty();
         return subCommands.stream()
                 .filter(cmd -> cmd.getName().equalsIgnoreCase(arg) || cmd.getAlias().equalsIgnoreCase(arg))
                 .findAny();
     }
 
     private void initCommands() {
+        subCommands.add(new HelpSubCommand(
+                "help",
+                "h",
+                "stelyclaim.claim.help",
+                false,
+                true,
+                subCommands
+        ));
         subCommands.add(new DefineSubCommand(
                 "define",
                 "d",
@@ -97,7 +105,7 @@ public class ClaimCommand implements TabExecutor {
         subCommands.add(new RemoveMemberSubCommand(
                 "removemember",
                 "rm",
-                "selyclaim.claim.removemember",
+                "stelyclaim.claim.removemember",
                 true,
                 true
         ));
