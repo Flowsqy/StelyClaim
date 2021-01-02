@@ -36,14 +36,14 @@ public class ClaimCommand implements TabExecutor {
         if(subCommand.isPresent()) {
             final SubCommand subCmd = subCommand.get();
             if (isPlayer ? sender.hasPermission(subCmd.getPermission()) : subCmd.isConsole()){
-                subCmd.execute(sender, argsList, isPlayer);
+                subCmd.execute(sender, argsList, argsList.size(), isPlayer);
                 return true;
             }
             if(!isPlayer)
                 return messages.sendMessage(sender, "util.onlyplayer");
         }
         if(sender.hasPermission(helpSubCommand.getPermission()))
-            helpSubCommand.execute(sender, argsList, isPlayer);
+            helpSubCommand.execute(sender, argsList, argsList.size(), isPlayer);
         return true;
     }
 
@@ -127,7 +127,7 @@ public class ClaimCommand implements TabExecutor {
                 "am",
                 "stelyclaim.claim.addmember",
                 true,
-                true
+                false
         ));
         subCommands.add(new RemoveMemberSubCommand(
                 plugin,
@@ -135,7 +135,7 @@ public class ClaimCommand implements TabExecutor {
                 "rm",
                 "stelyclaim.claim.removemember",
                 true,
-                true
+                false
         ));
         subCommands.add(new AddOwnerSubCommand(
                 plugin,
@@ -143,7 +143,7 @@ public class ClaimCommand implements TabExecutor {
                 "ao",
                 "stelyclaim.claim.addowner",
                 true,
-                true
+                false
         ));
         subCommands.add(new RemoveOwnerSubCommand(
                 plugin,
@@ -151,7 +151,7 @@ public class ClaimCommand implements TabExecutor {
                 "ro",
                 "stelyclaim.claim.removeowner",
                 true,
-                true
+                false
         ));
         subCommands.add(new RemoveSubCommand(
                 plugin,
@@ -159,7 +159,7 @@ public class ClaimCommand implements TabExecutor {
                 "r",
                 "stelyclaim.claim.remove",
                 true,
-                true
+                false
         ));
         subCommands.add(new InfoSubCommand(
                 plugin,
@@ -167,7 +167,7 @@ public class ClaimCommand implements TabExecutor {
                 "i",
                 "stelyclaim.claim.info",
                 false,
-                true
+                false
         ));
         subCommands.add(new TeleportSubCommand(
                 plugin,

@@ -30,3 +30,8 @@ help:
   teleport-other: '%prefix% &6/claim tp [Claim]'
   stats: '%prefix% &6/claim stats <show|reset> [Commande]'
   stats-other: '%prefix% &6/claim stats <show|reset> [Joueur] [Commande]'
+
+claim:
+  worldnothandle: "%prefix% &cLe monde &8%world% &cne gère pas les régions"
+  notexist: "%prefix% &cTu n'as pas de claim"
+  notexistother: "%prefix% &8%region% &cne possède pas de claim"

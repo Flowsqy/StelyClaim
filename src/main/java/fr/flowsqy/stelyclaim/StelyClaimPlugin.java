@@ -1,5 +1,7 @@
 package fr.flowsqy.stelyclaim;
 
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
 import fr.flowsqy.stelyclaim.command.CommandManager;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
 import fr.flowsqy.stelyclaim.io.Messages;
@@ -19,6 +21,7 @@ public class StelyClaimPlugin extends JavaPlugin {
     private static StelyClaimPlugin instance;
     private Messages messages;
     private BedrockManager breakManager;
+    private RegionContainer regionContainer;
 
     public static StelyClaimPlugin getInstance() {
         return instance;
@@ -40,6 +43,7 @@ public class StelyClaimPlugin extends JavaPlugin {
 
         this.messages = new Messages(initMessages(dataFolder));
         this.breakManager = new BedrockManager(getDataFolder());
+        this.regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
 
         new CommandManager(this, messages);
 
@@ -71,4 +75,7 @@ public class StelyClaimPlugin extends JavaPlugin {
         return breakManager;
     }
 
+    public RegionContainer getRegionContainer() {
+        return regionContainer;
+    }
 }

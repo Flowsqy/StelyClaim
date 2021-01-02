@@ -21,7 +21,7 @@ public class HelpSubCommand extends SubCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, List<String> args, boolean isPlayer) {
+    public void execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
         final int argsSize = args.size();
         final boolean help;
         if(argsSize > 2){
@@ -62,14 +62,20 @@ public class HelpSubCommand extends SubCommand {
             }
         }
         messages.sendMessage(sender, "help.help");
-        subCommands.stream()
-                .skip(1)
-                .filter(cmd -> sender.hasPermission(cmd.getPermission()))
-                .forEach(cmd -> {
-                    boolean other = sender.hasPermission(cmd.getPermission()+"-other");
-                    messages.sendMessage(sender, "help."+cmd.getName()+(other ? "-other" : ""));
-                }
-                );
+        if(sender instanceof Player)
+            subCommands.stream()
+                    .skip(1)
+                    .filter(cmd -> sender.hasPermission(cmd.getPermission()))
+                    .forEach(cmd -> {
+                                boolean other = sender.hasPermission(cmd.getPermission()+"-other");
+                                messages.sendMessage(sender, "help."+cmd.getName()+(other ? "-other" : ""));
+                            }
+                    );
+        else
+            subCommands.stream()
+                    .skip(1)
+                    .filter(SubCommand::isConsole)
+                    .forEach(cmd -> messages.sendMessage(sender, "help."+cmd.getName()+"-other"));
 
     }
 
