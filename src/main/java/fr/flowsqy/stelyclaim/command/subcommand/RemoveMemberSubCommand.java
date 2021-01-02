@@ -3,6 +3,7 @@ package fr.flowsqy.stelyclaim.command.subcommand;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class RemoveMemberSubCommand extends DomainSubCommand {
     }
 
     @Override
-    protected void modifyRegion(ProtectedRegion region, String targetPlayer, boolean ownRegion) {
+    protected void modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion) {
 
     }
 

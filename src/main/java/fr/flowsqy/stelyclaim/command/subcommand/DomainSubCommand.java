@@ -48,12 +48,12 @@ public abstract class DomainSubCommand extends RegionSubCommand {
                 return true;
             }
 
-            modifyRegion(region, targetPlayer, ownRegion);
+            modifyRegion(player, region, targetPlayer, ownRegion);
             return true;
         }
         return false;
     }
 
-    protected abstract void modifyRegion(ProtectedRegion region, String targetPlayer, boolean ownRegion);
+    protected abstract void modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion);
 
 }
