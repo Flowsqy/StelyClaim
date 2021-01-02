@@ -1,5 +1,6 @@
 package fr.flowsqy.stelyclaim.command.subcommand;
 
+import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import org.bukkit.command.CommandSender;
@@ -14,6 +15,23 @@ public class RemoveOwnerSubCommand extends DomainSubCommand {
 
     @Override
     protected void modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion) {
+        final DefaultDomain domain = region.getOwners();
+        if(!domain.contains(targetPlayer))
+            messages.sendMessage(
+                    sender,
+                    "claim.notowner" + (ownRegion ? "" : "other"),
+                    "%region%", "%target%",
+                    region.getId(), targetPlayer
+            );
+        else{
+            domain.removePlayer(targetPlayer);
+            messages.sendMessage(
+                    sender,
+                    "claim.removeowner" + (ownRegion ? "" : "other"),
+                    "%region%", "%target%",
+                    region.getId(), targetPlayer
+            );
+        }
 
     }
 
