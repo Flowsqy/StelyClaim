@@ -1,8 +1,6 @@
 package fr.flowsqy.stelyclaim.command.subcommand;
 
 import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.MaxChangedBlocksException;
-import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.blocks.BaseItem;
 import com.sk89q.worldedit.blocks.BaseItemStack;
 import com.sk89q.worldedit.entity.BaseEntity;
@@ -41,6 +39,10 @@ public abstract class RegionSubCommand extends SubCommand{
 
     protected final RegionManager getRegionContainer(String worldName){
         return regionContainer.get(new WorldName(worldName));
+    }
+
+    protected final RegionManager getRegionContainer(com.sk89q.worldedit.world.World world){
+        return regionContainer.get(world);
     }
 
     protected final RegionManager getRegionContainer(World world){

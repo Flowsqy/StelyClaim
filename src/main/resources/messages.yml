@@ -3,6 +3,7 @@ prefix: "&7[&5StelyClaim&7]&f"
 util:
   noperm: "%prefix% &cTu n'as pas la permission de faire cette commande"
   onlyplayer: "%prefix% &cCette commande est réservée aux joueurs"
+  error: "%prefix% &cIl y a eu une erreur lors de l'opération: %error%"
 
 bedrock:
   enable: "%prefix% &6Bedrock &aActivé"
@@ -33,6 +34,8 @@ help:
 
 claim:
   worldnothandle: "%prefix% &cLe monde &8%world% &cne gère pas les régions"
+  alreadyexist: "%prefix% &cTu as déjà un claim"
+  alreadyexistother: "%prefix% &8%region% &ca déjà un claim"
   notexist: "%prefix% &cTu n'as pas de claim"
   notexistother: "%prefix% &8%region% &cne possède pas de claim"
   addmember: "%prefix% &6Tu viens d'ajouter &a%target% &6à ton claim"
@@ -51,3 +54,11 @@ claim:
   removeownerother: "%prefix% &6Tu viens de retirer &a%target% &6des propriétaires du claim de &a%region%"
   notowner: "%prefix% &8%target% &cne fait pas parti des propriétaires de ton claim"
   notownerother: "%prefix% &8%target% &cne fait pas parti des propriétaires du claim de &8%region%"
+  noselection: "%prefix% &cTu dois d'abord faire une séléction"
+  notcuboid: "%prefix% &cTu ne peux faire que des sélections cubiques"
+  overlap: "%prefix% &cLa séléction passe sur d'autres régions: &8%regions%"
+  redefinenotoverlap: "%prefix% &cAttention, la séléction n'intègre pas l'ancien claim"
+  define: "%prefix% &6Tu viens de créer ton claim"
+  defineother: "%prefix% &6Tu viens de créer le claim de &a%region%"
+  redefine: "%prefix% &6Tu viens de redéfinir ton claim"
+  redefineother: "%prefix% &6Tu viens de redéfinir le claim de &a%region%"
