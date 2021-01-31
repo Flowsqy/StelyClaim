@@ -62,3 +62,7 @@ claim:
   defineother: "%prefix% &6Tu viens de créer le claim de &a%region%"
   redefine: "%prefix% &6Tu viens de redéfinir ton claim"
   redefineother: "%prefix% &6Tu viens de redéfinir le claim de &a%region%"
+  notp: "%prefix% &cTon claim n'a pas de point de téléportation défini"
+  notpother: "%prefix% &cLe claim de &8%region% &cn'a pas de point de téléportation défini"
+  tp: "%prefix% &6Tu as été téléporté à ton claim"
+  tpother: "%prefix% &6Tu as été téléporté au claim de &a%region%"
