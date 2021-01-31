@@ -3,10 +3,22 @@ package fr.flowsqy.stelyclaim.command;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.subcommand.*;
 import fr.flowsqy.stelyclaim.io.Messages;
+import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.plugin.PluginManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -73,7 +85,7 @@ public class ClaimCommand implements TabExecutor {
                 subCommandStream = subCommands.stream()
                         .filter(SubCommand::isConsole);
             }
-            if(arg.equalsIgnoreCase(""))
+            if(arg.isEmpty())
                 return subCommandStream
                         .map(SubCommand::getName)
                         .collect(Collectors.toList());
@@ -88,7 +100,7 @@ public class ClaimCommand implements TabExecutor {
     }
 
     private Optional<SubCommand> getSubCommand(String arg){
-        if (arg.equals(""))
+        if (arg.isEmpty())
             return Optional.empty();
         return subCommands.stream()
                 .filter(cmd -> cmd.getName().equalsIgnoreCase(arg) || cmd.getAlias().equalsIgnoreCase(arg))

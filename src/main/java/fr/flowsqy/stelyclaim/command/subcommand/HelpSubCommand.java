@@ -23,7 +23,6 @@ public class HelpSubCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
         final int argsSize = args.size();
-        final boolean help;
         if(argsSize > 2){
             final String firstArg = args.get(0);
             if(firstArg.equalsIgnoreCase(getName()) || firstArg.equalsIgnoreCase(getAlias())){
@@ -37,7 +36,7 @@ public class HelpSubCommand extends SubCommand {
 
             if(
                     (firstArg.equalsIgnoreCase(getName()) || firstArg.equalsIgnoreCase(getAlias()))
-                    && !secondArg.equalsIgnoreCase("")
+                    && !secondArg.isEmpty()
             ){
                 final Stream<SubCommand> subCommandStream;
                 if(sender instanceof Player)
@@ -92,7 +91,7 @@ public class HelpSubCommand extends SubCommand {
         if (size != 2)
             return Collections.emptyList();
         final String arg = args.get(1).toLowerCase(Locale.ROOT);
-        if(arg.equalsIgnoreCase(""))
+        if(arg.isEmpty())
             return subCommandsStream
                     .map(SubCommand::getName)
                     .collect(Collectors.toList());
