@@ -111,7 +111,7 @@ public class ClaimCommand implements TabExecutor {
     }
 
     private void initCommands(StelyClaimPlugin plugin) {
-        subCommands.add(new HelpSubCommand(
+        final HelpSubCommand helpSubCommand = new HelpSubCommand(
                 plugin,
                 "help",
                 "h",
@@ -119,7 +119,8 @@ public class ClaimCommand implements TabExecutor {
                 false,
                 true,
                 subCommands
-        ));
+        );
+        subCommands.add(helpSubCommand);
         subCommands.add(new DefineSubCommand(
                 plugin,
                 "define",
@@ -202,11 +203,12 @@ public class ClaimCommand implements TabExecutor {
         ));
         subCommands.add(new PillarSubCommand(
                 plugin,
-                "pillars",
+                "pillar",
                 "p",
                 "stelyclaim.claim.pillar",
                 false,
-                false
+                false,
+                helpSubCommand
         ));
     }
 

@@ -7,6 +7,8 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import fr.flowsqy.stelyclaim.command.CommandManager;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
 import fr.flowsqy.stelyclaim.io.Messages;
+import fr.flowsqy.stelyclaim.util.DisconnectListener;
+import fr.flowsqy.stelyclaim.util.PillarData;
 import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,6 +17,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +31,7 @@ public class StelyClaimPlugin extends JavaPlugin {
     private RegionContainer regionContainer;
     private SessionManager sessionManager;
     private TeleportSync teleportSync;
+    private final Map<String, PillarData> pillarData = new HashMap<>();
 
     public static StelyClaimPlugin getInstance() {
         return instance;
@@ -52,8 +57,9 @@ public class StelyClaimPlugin extends JavaPlugin {
         this.sessionManager = WorldEdit.getInstance().getSessionManager();
         this.teleportSync = new TeleportSync(this);
 
-        new CommandManager(this, messages);
+        new DisconnectListener(this);
 
+        new CommandManager(this, messages);
     }
 
     private boolean checkDataFolder(File dataFolder) {
@@ -92,5 +98,9 @@ public class StelyClaimPlugin extends JavaPlugin {
 
     public TeleportSync getTeleportSync() {
         return teleportSync;
+    }
+
+    public Map<String, PillarData> getPillarData() {
+        return pillarData;
     }
 }
