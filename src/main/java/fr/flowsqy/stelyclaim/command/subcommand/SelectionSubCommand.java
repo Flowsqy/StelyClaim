@@ -15,14 +15,18 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.util.PillarData;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class SelectionSubCommand extends RegionSubCommand {
@@ -31,10 +35,12 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
     //TODO Initialize this with the config
     private final int maxY = 255;
     private final int minY = 0;
+    private final Map<String, PillarData> pillarData;
 
     public SelectionSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean stats, boolean console) {
         super(plugin, name, alias, permission, stats, console);
         this.sessionManager = plugin.getSessionManager();
+        this.pillarData = plugin.getPillarData();
     }
 
     @Override
@@ -134,7 +140,38 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
         manageRegion(player, region, newRegion, ownRegion, regionManager);
 
-        //TODO Pillars manage
+        // Pillars manage
+        PillarData pillarData = this.pillarData.get(sender.getName());
+        if(pillarData == null){
+            pillarData = new PillarData();
+            this.pillarData.put(sender.getName(), pillarData);
+        }
+        final BlockVector3 maxPoint = newRegion.getMaximumPoint();
+        final BlockVector3 minPoint = newRegion.getMinimumPoint();
+
+        final int maxX = Math.max(maxPoint.getBlockX(), minPoint.getBlockX());
+        final int minX = Math.min(maxPoint.getBlockX(), minPoint.getBlockX());
+        final int maxZ = Math.max(maxPoint.getBlockZ(), minPoint.getBlockZ());
+        final int minZ = Math.min(maxPoint.getBlockZ(), minPoint.getBlockZ());
+
+        final org.bukkit.World pillarWorld = player.getWorld();
+        final Location pillarNW = new Location(pillarWorld, minX, 0, minZ, -45, 0);
+        final Location pillarNE = new Location(pillarWorld, maxX, 0, minZ, 45, 0);
+        final Location pillarSW = new Location(pillarWorld, minX, 0, maxZ, -135, 0);
+        final Location pillarSE = new Location(pillarWorld, maxX, 0, maxZ, 135, 0);
+        final Location pillarCurrent = player.getLocation();
+
+        final String idNW = pillarData.registerLocation(pillarNW);
+        final String idNE = pillarData.registerLocation(pillarNE);
+        final String idSW = pillarData.registerLocation(pillarSW);
+        final String idSE = pillarData.registerLocation(pillarSE);
+        final String idCurrent = pillarData.registerLocation(pillarCurrent);
+
+        player.spigot().sendMessage(createTextComponent("nw", idNW));
+        player.spigot().sendMessage(createTextComponent("ne", idNE));
+        player.spigot().sendMessage(createTextComponent("sw", idSW));
+        player.spigot().sendMessage(createTextComponent("se", idSE));
+        player.spigot().sendMessage(createTextComponent("current", idCurrent));
 
         //TODO Mail gestion
 
@@ -145,6 +182,15 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
     protected void checkIntegrateRegion(boolean overlapSame, Player player){}
 
     protected abstract void manageRegion(Player player, ProtectedRegion region, ProtectedCuboidRegion newRegion, boolean ownRegion, RegionManager regionManager);
+
+    private TextComponent createTextComponent(String direction, String id){
+        // TODO Link message to the config
+        final TextComponent textComponent = new TextComponent();
+        textComponent.setExtra(new ArrayList<>(Arrays.asList(TextComponent.fromLegacyText("Coucou je suis le pillier "+direction))));
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Clique moi dessus")));
+        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claim pillar " + id));
+        return textComponent;
+    }
 
     @Override
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {

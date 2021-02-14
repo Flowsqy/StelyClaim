@@ -45,7 +45,16 @@ public class PillarSubCommand extends SubCommand {
             helpSubCommand.execute(sender, args, size, isPlayer);
             return;
         }
-        teleportSync.addTeleport((Player) sender, loc);
+        if(loc.getWorld() == null) // Normally impossible
+            return;
+
+        final Location teleportLoc = loc.clone();
+        if(teleportLoc.getX() == Math.floor(teleportLoc.getX())){
+            // Correct position only for pillar loc (exclude current position)
+            teleportLoc.setY(loc.getWorld().getHighestBlockYAt(loc));
+            teleportLoc.add(0.5, 1, 0.5);
+        }
+        teleportSync.addTeleport((Player) sender, teleportLoc);
     }
 
     @Override
