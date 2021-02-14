@@ -50,6 +50,7 @@ public class HelpSubCommand extends SubCommand {
                             .filter(SubCommand::isConsole);
                 // Get the optional SubCommand
                 final Optional<SubCommand> optionalSubCommand = subCommandStream
+                        .limit(11) // Exclude Pillar
                         .filter(cmd -> cmd.getName().equalsIgnoreCase(secondArg) || cmd.getAlias().equalsIgnoreCase(secondArg))
                         .findAny();
                 if(optionalSubCommand.isPresent()) {
@@ -68,6 +69,7 @@ public class HelpSubCommand extends SubCommand {
         messages.sendMessage(sender, "help.help");
         if(sender instanceof Player)
             subCommands.stream()
+                    .limit(11) // Exclude Pillar
                     .skip(1)
                     .filter(cmd -> sender.hasPermission(cmd.getPermission()))
                     .forEach(cmd -> {
@@ -77,6 +79,7 @@ public class HelpSubCommand extends SubCommand {
                     );
         else
             subCommands.stream()
+                    .limit(11) // Exclude Pillar
                     .skip(1)
                     .filter(SubCommand::isConsole)
                     .forEach(cmd -> messages.sendMessage(sender, "help."+cmd.getName()+"-other"));
@@ -93,9 +96,11 @@ public class HelpSubCommand extends SubCommand {
         final Stream<SubCommand> subCommandsStream;
         if (isPlayer)
             subCommandsStream = subCommands.stream()
+                    .limit(11) // Exclude Pillar
                     .filter(subCommand -> sender.hasPermission(subCommand.getPermission()));
         else
             subCommandsStream = subCommands.stream()
+                    .limit(11) // Exclude Pillar
                     .filter(SubCommand::isConsole);
         final String arg = args.get(1).toLowerCase(Locale.ROOT);
         if(arg.isEmpty())

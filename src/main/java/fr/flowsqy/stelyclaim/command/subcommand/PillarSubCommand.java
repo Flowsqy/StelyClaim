@@ -3,6 +3,7 @@ package fr.flowsqy.stelyclaim.command.subcommand;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import org.bukkit.command.CommandSender;
 
+import java.util.Collections;
 import java.util.List;
 
 public class PillarSubCommand extends SubCommand{
@@ -18,7 +19,7 @@ public class PillarSubCommand extends SubCommand{
 
     @Override
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
-        return null;
+        return Collections.emptyList();
     }
     
 }

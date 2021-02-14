@@ -80,9 +80,11 @@ public class ClaimCommand implements TabExecutor {
             final Stream<SubCommand> subCommandStream;
             if(sender instanceof Player)
                 subCommandStream = subCommands.stream()
+                        .limit(11)  // Exclude Pillar
                         .filter(cmd -> sender.hasPermission(cmd.getPermission()));
             else {
                 subCommandStream = subCommands.stream()
+                        .limit(11)  // Exclude Pillar
                         .filter(SubCommand::isConsole);
             }
             if(arg.isEmpty())
