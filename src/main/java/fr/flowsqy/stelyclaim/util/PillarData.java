@@ -31,7 +31,7 @@ public class PillarData {
     }
 
     public String registerLocation(Location location){
-        final String id = String.valueOf(nextPillarId);
+        final String id = String.valueOf(next());
         locations.put(id, location);
         return id;
     }
