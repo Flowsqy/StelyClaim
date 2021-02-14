@@ -39,11 +39,14 @@ permissions:
       stelyclaim.define: true
   stelyclaim.claim.define:
     children:
-      stelyclaim.claim: true
+      stelyclaim.claim.pillar: true
   stelyclaim.claim.redefine-other:
     children:
       stelyclaim.redefine: true
   stelyclaim.claim.redefine:
+    children:
+      stelyclaim.claim.pillar: true
+  stelyclaim.claim.pillar:
     children:
       stelyclaim.claim: true
   stelyclaim.claim.addmember-other:
