@@ -3,22 +3,10 @@ package fr.flowsqy.stelyclaim.command;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.subcommand.*;
 import fr.flowsqy.stelyclaim.io.Messages;
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.plugin.PluginManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,13 +27,18 @@ public class ClaimCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        final List<String> argsList = args == null ?
-                new ArrayList<>() :
-                new ArrayList<>(Arrays.asList(args));
-        final String arg = argsList.size() < 1 ? "" : argsList.get(0).toLowerCase(Locale.ROOT);
+        final List<String> argsList =
+                args == null ?
+                        new ArrayList<>() :
+                        new ArrayList<>(Arrays.asList(args));
+        final String arg =
+                argsList.size() < 1 ?
+                        "" :
+                        argsList.get(0).toLowerCase(Locale.ROOT);
         final Optional<SubCommand> subCommand = getSubCommand(arg);
         final boolean isPlayer = sender instanceof Player;
         if(subCommand.isPresent()) {
+            // Redirect to SubCommand's executable
             final SubCommand subCmd = subCommand.get();
             if (isPlayer ? sender.hasPermission(subCmd.getPermission()) : subCmd.isConsole()){
                 subCmd.execute(sender, argsList, argsList.size(), isPlayer);
@@ -55,18 +48,24 @@ public class ClaimCommand implements TabExecutor {
                 return messages.sendMessage(sender, "util.onlyplayer");
         }
         if(sender.hasPermission(helpSubCommand.getPermission()))
+            // Send help if has perm
             helpSubCommand.execute(sender, argsList, argsList.size(), isPlayer);
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        final List<String> argsList = args == null ?
-                new ArrayList<>() :
-                new ArrayList<>(Arrays.asList(args));
-        final String arg = argsList.size() < 1 ? "" : argsList.get(0).toLowerCase(Locale.ROOT);
+        final List<String> argsList =
+                args == null ?
+                        new ArrayList<>() :
+                        new ArrayList<>(Arrays.asList(args));
+        final String arg =
+                argsList.size() < 1 ?
+                        "" :
+                        argsList.get(0).toLowerCase(Locale.ROOT);
         final Optional<SubCommand> subCommand = getSubCommand(arg);
         if(subCommand.isPresent()) {
+            // Tab a SubCommand
             final SubCommand subCmd = subCommand.get();
             final boolean isPlayer = sender instanceof Player;
             if (isPlayer ? sender.hasPermission(subCmd.getPermission()) : subCmd.isConsole()) {
@@ -77,6 +76,7 @@ public class ClaimCommand implements TabExecutor {
             }
         }
         else if (argsList.size() < 2) {
+            // Tab all SubCommands
             final Stream<SubCommand> subCommandStream;
             if(sender instanceof Player)
                 subCommandStream = subCommands.stream()
@@ -96,6 +96,7 @@ public class ClaimCommand implements TabExecutor {
                         .collect(Collectors.toList());
         }
         else
+            // Wrong subCommandName, do nothing
             return Collections.emptyList();
     }
 
@@ -196,6 +197,14 @@ public class ClaimCommand implements TabExecutor {
                 "stelyclaim.claim.stats",
                 false,
                 true
+        ));
+        subCommands.add(new PillarSubCommand(
+                plugin,
+                "pillars",
+                "p",
+                "stelyclaim.claim.pillar",
+                false,
+                false
         ));
     }
 

@@ -7,6 +7,7 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import fr.flowsqy.stelyclaim.command.CommandManager;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
 import fr.flowsqy.stelyclaim.io.Messages;
+import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,6 +26,7 @@ public class StelyClaimPlugin extends JavaPlugin {
     private BedrockManager breakManager;
     private RegionContainer regionContainer;
     private SessionManager sessionManager;
+    private TeleportSync teleportSync;
 
     public static StelyClaimPlugin getInstance() {
         return instance;
@@ -48,6 +50,7 @@ public class StelyClaimPlugin extends JavaPlugin {
         this.breakManager = new BedrockManager(getDataFolder());
         this.regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
         this.sessionManager = WorldEdit.getInstance().getSessionManager();
+        this.teleportSync = new TeleportSync(this);
 
         new CommandManager(this, messages);
 
@@ -85,5 +88,9 @@ public class StelyClaimPlugin extends JavaPlugin {
 
     public SessionManager getSessionManager() {
         return sessionManager;
+    }
+
+    public TeleportSync getTeleportSync() {
+        return teleportSync;
     }
 }
