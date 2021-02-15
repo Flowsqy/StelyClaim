@@ -37,10 +37,44 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
     private final int minY = 0;
     private final Map<String, PillarData> pillarData;
 
+    private final TextComponent pillarNWTxtCpnt;
+    private final TextComponent pillarNETxtCpnt;
+    private final TextComponent pillarSWTxtCpnt;
+    private final TextComponent pillarSETxtCpnt;
+    private final TextComponent pillarCurrentTxtCpnt;
+
     public SelectionSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean stats, boolean console) {
         super(plugin, name, alias, permission, stats, console);
         this.sessionManager = plugin.getSessionManager();
         this.pillarData = plugin.getPillarData();
+
+        pillarNWTxtCpnt = createTextComponent("northwest");
+        pillarNETxtCpnt = createTextComponent("northeast");
+        pillarSWTxtCpnt = createTextComponent("southwest");
+        pillarSETxtCpnt = createTextComponent("southeast");
+        pillarCurrentTxtCpnt = createTextComponent("current");
+    }
+
+    private TextComponent createTextComponent(String direction){
+        final String message = messages.getMessage("pillar."+direction+".message");
+        if(message == null)
+            return null;
+        final TextComponent textComponent = new TextComponent();
+        textComponent.setExtra(
+                new ArrayList<>(Arrays.asList(
+                        TextComponent.fromLegacyText(message)
+                ))
+        );
+        final String text = messages.getMessage("pillar."+direction+".hover");
+        if(text != null){
+            textComponent.setHoverEvent(
+                    new HoverEvent(
+                            HoverEvent.Action.SHOW_TEXT,
+                            new Text(text)
+                    )
+            );
+        }
+        return textComponent;
     }
 
     @Override
@@ -155,23 +189,27 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         final int minZ = Math.min(maxPoint.getBlockZ(), minPoint.getBlockZ());
 
         final org.bukkit.World pillarWorld = player.getWorld();
-        final Location pillarNW = new Location(pillarWorld, minX, 0, minZ, -45, 0);
-        final Location pillarNE = new Location(pillarWorld, maxX, 0, minZ, 45, 0);
-        final Location pillarSW = new Location(pillarWorld, minX, 0, maxZ, -135, 0);
-        final Location pillarSE = new Location(pillarWorld, maxX, 0, maxZ, 135, 0);
-        final Location pillarCurrent = player.getLocation();
+        final Player.Spigot spigotPlayer = player.spigot();
 
-        final String idNW = pillarData.registerLocation(pillarNW);
-        final String idNE = pillarData.registerLocation(pillarNE);
-        final String idSW = pillarData.registerLocation(pillarSW);
-        final String idSE = pillarData.registerLocation(pillarSE);
-        final String idCurrent = pillarData.registerLocation(pillarCurrent);
-
-        player.spigot().sendMessage(createTextComponent("nw", idNW));
-        player.spigot().sendMessage(createTextComponent("ne", idNE));
-        player.spigot().sendMessage(createTextComponent("sw", idSW));
-        player.spigot().sendMessage(createTextComponent("se", idSE));
-        player.spigot().sendMessage(createTextComponent("current", idCurrent));
+        if(pillarNWTxtCpnt != null){
+            final Location pillar = new Location(pillarWorld, minX, 0, minZ, -45, 0);
+            sendPillarMessage(spigotPlayer, pillarNWTxtCpnt, pillar, pillarData);
+        }
+        if(pillarNETxtCpnt != null){
+            final Location pillar = new Location(pillarWorld, maxX, 0, minZ, 45, 0);
+            sendPillarMessage(spigotPlayer, pillarNETxtCpnt, pillar, pillarData);
+        }
+        if(pillarSWTxtCpnt != null){
+            final Location pillar = new Location(pillarWorld, minX, 0, maxZ, -135, 0);
+            sendPillarMessage(spigotPlayer, pillarSWTxtCpnt, pillar, pillarData);
+        }
+        if(pillarSETxtCpnt != null){
+            final Location pillar = new Location(pillarWorld, maxX, 0, maxZ, 135, 0);
+            sendPillarMessage(spigotPlayer, pillarSETxtCpnt, pillar, pillarData);
+        }
+        if(pillarCurrentTxtCpnt != null){
+            sendPillarMessage(spigotPlayer, pillarCurrentTxtCpnt, player.getLocation(), pillarData);
+        }
 
         //TODO Mail gestion
 
@@ -183,13 +221,10 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
     protected abstract void manageRegion(Player player, ProtectedRegion region, ProtectedCuboidRegion newRegion, boolean ownRegion, RegionManager regionManager);
 
-    private TextComponent createTextComponent(String direction, String id){
-        // TODO Link message to the config
-        final TextComponent textComponent = new TextComponent();
-        textComponent.setExtra(new ArrayList<>(Arrays.asList(TextComponent.fromLegacyText("Coucou je suis le pillier "+direction))));
-        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Clique moi dessus")));
+    private void sendPillarMessage(Player.Spigot spigotPlayer, TextComponent textComponent, Location location, PillarData pillarData){
+        final String id = pillarData.registerLocation(location);
         textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claim pillar " + id));
-        return textComponent;
+        spigotPlayer.sendMessage(textComponent);
     }
 
     @Override

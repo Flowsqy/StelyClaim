@@ -66,3 +66,20 @@ claim:
   notpother: "%prefix% &cLe claim de &8%region% &cn'a pas de point de téléportation défini"
   tp: "%prefix% &6Tu as été téléporté à ton claim"
   tpother: "%prefix% &6Tu as été téléporté au claim de &a%region%"
+
+pillar:
+  northwest:
+    message: "&6Acceder au pillier &aNord Ouest"
+    hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Nord Ouest"
+  northeast:
+    message: "&6Acceder au pillier &aNord Est"
+    hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Nord Est"
+  southwest:
+    message: "&6Acceder au pillier &aSud Ouest"
+    hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Sud Ouest"
+  southeast:
+    message: "&6Acceder au pillier &aSud Est"
+    hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Sud Est"
+  current:
+    message: "&6Acceder à ta position actuelle"
+    hover: "&7En cliquant sur ce message tu seras directement téléporté à la position où tu as effectué la commande"
