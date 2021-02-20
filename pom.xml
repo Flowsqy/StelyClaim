@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.flowsqy.stelyclaim</groupId>
-    <artifactId>StelyClaim</artifactId>
+    <artifactId>stelyclaim</artifactId>
     <version>3.0.0</version>
 
     <properties>
@@ -43,6 +43,12 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.16.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>fr.flowsqy.componentreplacer</groupId>
+            <artifactId>componentreplacer</artifactId>
+            <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
