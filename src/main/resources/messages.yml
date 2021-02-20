@@ -68,18 +68,39 @@ claim:
   tpother: "%prefix% &6Tu as été téléporté au claim de &a%region%"
 
 pillar:
+  message: "&6Acceder au pillier %northwest%&6, %northeast%&6, %southwest%&6, %southeast%&6 et à %current%"
   northwest:
-    message: "&6Acceder au pillier &aNord Ouest"
+    message: "&aNord Ouest"
     hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Nord Ouest"
   northeast:
-    message: "&6Acceder au pillier &aNord Est"
+    message: "&aNord Est"
     hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Nord Est"
   southwest:
-    message: "&6Acceder au pillier &aSud Ouest"
+    message: "&aSud Ouest"
     hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Sud Ouest"
   southeast:
-    message: "&6Acceder au pillier &aSud Est"
+    message: "&aSud Est"
     hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Sud Est"
   current:
-    message: "&6Acceder à ta position actuelle"
+    message: "&ata position actuelle"
     hover: "&7En cliquant sur ce message tu seras directement téléporté à la position où tu as effectué la commande"
+
+## Cette configuration là est aussi possible (une position par ligne)
+#
+#pillar:
+#  message: "%northwest%\n%northeast%\n%southwest%\n%southeast%\n%current%"
+#  northwest:
+#    message: "&6Acceder au pillier &aNord Ouest"
+#    hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Nord Ouest"
+#  northeast:
+#    message: "&6Acceder au pillier &aNord Est"
+#    hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Nord Est"
+#  southwest:
+#    message: "&6Acceder au pillier &aSud Ouest"
+#    hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Sud Ouest"
+#  southeast:
+#    message: "&6Acceder au pillier &aSud Est"
+#    hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Sud Est"
+#  current:
+#    message: "&6Acceder à ta position actuelle"
+#    hover: "&7En cliquant sur ce message tu seras directement téléporté à la position où tu as effectué la commande"

@@ -3,6 +3,7 @@ author: Flowsqy
 version: ${project.version}
 main: fr.flowsqy.stelyclaim.StelyClaimPlugin
 depend:
+  - ComponentReplacer
   - WorldEdit
   - WorldGuard
 api-version: 1.13

@@ -14,6 +14,7 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.util.PillarData;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -37,6 +38,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
     private final int minY = 0;
     private final Map<String, PillarData> pillarData;
 
+    private final String pillarMessage;
     private final TextComponent pillarNWTxtCpnt;
     private final TextComponent pillarNETxtCpnt;
     private final TextComponent pillarSWTxtCpnt;
@@ -48,18 +50,28 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         this.sessionManager = plugin.getSessionManager();
         this.pillarData = plugin.getPillarData();
 
-        pillarNWTxtCpnt = createTextComponent("northwest");
-        pillarNETxtCpnt = createTextComponent("northeast");
-        pillarSWTxtCpnt = createTextComponent("southwest");
-        pillarSETxtCpnt = createTextComponent("southeast");
-        pillarCurrentTxtCpnt = createTextComponent("current");
+        pillarMessage = messages.getMessage("pillar.message");
+        if(pillarMessage != null) {
+            pillarNWTxtCpnt = createTextComponent("northwest");
+            pillarNETxtCpnt = createTextComponent("northeast");
+            pillarSWTxtCpnt = createTextComponent("southwest");
+            pillarSETxtCpnt = createTextComponent("southeast");
+            pillarCurrentTxtCpnt = createTextComponent("current");
+        }
+        else{
+            pillarNWTxtCpnt = null;
+            pillarNETxtCpnt = null;
+            pillarSWTxtCpnt = null;
+            pillarSETxtCpnt = null;
+            pillarCurrentTxtCpnt = null;
+        }
     }
 
     private TextComponent createTextComponent(String direction){
         final String message = messages.getMessage("pillar."+direction+".message");
-        if(message == null)
-            return null;
         final TextComponent textComponent = new TextComponent();
+        if(message == null)
+            return textComponent;
         textComponent.setExtra(
                 new ArrayList<>(Arrays.asList(
                         TextComponent.fromLegacyText(message)
@@ -175,40 +187,46 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         manageRegion(player, region, newRegion, ownRegion, regionManager);
 
         // Pillars manage
-        PillarData pillarData = this.pillarData.get(sender.getName());
-        if(pillarData == null){
-            pillarData = new PillarData();
-            this.pillarData.put(sender.getName(), pillarData);
-        }
-        final BlockVector3 maxPoint = newRegion.getMaximumPoint();
-        final BlockVector3 minPoint = newRegion.getMinimumPoint();
 
-        final int maxX = Math.max(maxPoint.getBlockX(), minPoint.getBlockX());
-        final int minX = Math.min(maxPoint.getBlockX(), minPoint.getBlockX());
-        final int maxZ = Math.max(maxPoint.getBlockZ(), minPoint.getBlockZ());
-        final int minZ = Math.min(maxPoint.getBlockZ(), minPoint.getBlockZ());
+        if(pillarMessage != null) {
+            PillarData pillarData = this.pillarData.get(sender.getName());
+            if(pillarData == null){
+                pillarData = new PillarData();
+                this.pillarData.put(sender.getName(), pillarData);
+            }
+            final BlockVector3 maxPoint = newRegion.getMaximumPoint();
+            final BlockVector3 minPoint = newRegion.getMinimumPoint();
 
-        final org.bukkit.World pillarWorld = player.getWorld();
-        final Player.Spigot spigotPlayer = player.spigot();
+            final int maxX = Math.max(maxPoint.getBlockX(), minPoint.getBlockX());
+            final int minX = Math.min(maxPoint.getBlockX(), minPoint.getBlockX());
+            final int maxZ = Math.max(maxPoint.getBlockZ(), minPoint.getBlockZ());
+            final int minZ = Math.min(maxPoint.getBlockZ(), minPoint.getBlockZ());
 
-        if(pillarNWTxtCpnt != null){
-            final Location pillar = new Location(pillarWorld, minX, 0, minZ, -45, 0);
-            sendPillarMessage(spigotPlayer, pillarNWTxtCpnt, pillar, pillarData);
-        }
-        if(pillarNETxtCpnt != null){
-            final Location pillar = new Location(pillarWorld, maxX, 0, minZ, 45, 0);
-            sendPillarMessage(spigotPlayer, pillarNETxtCpnt, pillar, pillarData);
-        }
-        if(pillarSWTxtCpnt != null){
-            final Location pillar = new Location(pillarWorld, minX, 0, maxZ, -135, 0);
-            sendPillarMessage(spigotPlayer, pillarSWTxtCpnt, pillar, pillarData);
-        }
-        if(pillarSETxtCpnt != null){
-            final Location pillar = new Location(pillarWorld, maxX, 0, maxZ, 135, 0);
-            sendPillarMessage(spigotPlayer, pillarSETxtCpnt, pillar, pillarData);
-        }
-        if(pillarCurrentTxtCpnt != null){
-            sendPillarMessage(spigotPlayer, pillarCurrentTxtCpnt, player.getLocation(), pillarData);
+            final org.bukkit.World pillarWorld = player.getWorld();
+
+            final ComponentReplacer replacer = new ComponentReplacer(pillarMessage);
+
+            if (pillarNWTxtCpnt != null) {
+                final Location pillar = new Location(pillarWorld, minX, 0, minZ, -45, 0);
+                sendPillarMessage("%northwest%", pillarNWTxtCpnt, pillar, pillarData, replacer);
+            }
+            if (pillarNETxtCpnt != null) {
+                final Location pillar = new Location(pillarWorld, maxX, 0, minZ, 45, 0);
+                sendPillarMessage("%northeast%", pillarNETxtCpnt, pillar, pillarData, replacer);
+            }
+            if (pillarSWTxtCpnt != null) {
+                final Location pillar = new Location(pillarWorld, minX, 0, maxZ, -135, 0);
+                sendPillarMessage("%southwest%", pillarSWTxtCpnt, pillar, pillarData, replacer);
+            }
+            if (pillarSETxtCpnt != null) {
+                final Location pillar = new Location(pillarWorld, maxX, 0, maxZ, 135, 0);
+                sendPillarMessage("%southeast%", pillarSETxtCpnt, pillar, pillarData, replacer);
+            }
+            if (pillarCurrentTxtCpnt != null) {
+                sendPillarMessage("%current%", pillarCurrentTxtCpnt, player.getLocation(), pillarData, replacer);
+            }
+
+            player.spigot().sendMessage(replacer.create());
         }
 
         //TODO Mail gestion
@@ -221,10 +239,11 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
     protected abstract void manageRegion(Player player, ProtectedRegion region, ProtectedCuboidRegion newRegion, boolean ownRegion, RegionManager regionManager);
 
-    private void sendPillarMessage(Player.Spigot spigotPlayer, TextComponent textComponent, Location location, PillarData pillarData){
+    private void sendPillarMessage(String regex, TextComponent textComponent, Location location, PillarData pillarData, ComponentReplacer replacer){
         final String id = pillarData.registerLocation(location);
-        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claim pillar " + id));
-        spigotPlayer.sendMessage(textComponent);
+        final TextComponent component = textComponent.duplicate();
+        component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claim pillar " + id));
+        replacer.replace(regex, new TextComponent[]{component});
     }
 
     @Override
