@@ -229,7 +229,21 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
             player.spigot().sendMessage(replacer.create());
         }
 
-        //TODO Mail gestion
+        // Mail manage
+
+        if(!ownRegion){
+            final Player targetPlayer = Bukkit.getPlayer(regionName);
+            if(targetPlayer != null && player.canSee(targetPlayer)){
+                messages.sendMessage(targetPlayer, "claim."+getName()+"-target", "%sender%", player.getName());
+            }
+            else{
+                plugin.getMailManager().sendMail(
+                        player,
+                        targetPlayer == null ? regionName : targetPlayer.getName(),
+                        getName()
+                        );
+            }
+        }
 
     }
 

@@ -66,6 +66,13 @@ claim:
   notpother: "%prefix% &cLe claim de &8%region% &cn'a pas de point de téléportation défini"
   tp: "%prefix% &6Tu as été téléporté à ton claim"
   tpother: "%prefix% &6Tu as été téléporté au claim de &a%region%"
+  define-target: "%prefix% &a%sender% &6viens de définir ton claim"
+  redefine-target: "%prefix% &a%sender% &6viens de changer la taille de ton claim"
+  addmember-target: "%prefix% &a%sender% &6viens d'ajouter &a%target% &6à ton claim"
+  removemember-target: "%prefix% &a%sender% &6viens de retirer &a%target% &6de ton claim"
+  addowner-target: "%prefix% &a%sender% &6viens d'ajouter &a%target% &6aux propriétaires de ton claim"
+  removeowner-target: "%prefix% &a%sender% &6viens de retirer &a%target% &6des propriétaires de ton claim"
+  remove-target: "%prefix% &a%sender% &6viens de supprimer ton claim"
 
 pillar:
   message: "&6Acceder au pillier %northwest%&6, %northeast%&6, %southwest%&6, %southeast%&6 et à %current%"
@@ -112,8 +119,8 @@ pillar:
 # Les couleurs sont possibles pour les mails, cependant si les mails sont envoyé dans le format d'Essentials
 # (cf. config.yml), elles seront supprimées si l'expéditeur n'a pas la permission Essentials de l'utiliser (eg. essentials.mail.black)
 mail:
-  define: "J'ai créer ton claim"
-  redefine: "J'ai redéfinie la taille de ton claim"
+  define: "J'ai créé ton claim"
+  redefine: "J'ai redéfini la taille de ton claim"
   addmember: "J'ai ajouté %target% à ton claim"
   removemember: "J'ai retiré %target% de ton claim"
   addowner: "J'ai ajouté %target% aux propriétaires de ton claim"
