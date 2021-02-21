@@ -1,0 +1,23 @@
+# SubCommands that can send mails : define, redefine, addmember, removemember, addowner, removeowner, remove
+mail:
+  define:
+    enabled: true
+    custom-format: false
+  redefine:
+    enabled: true
+    custom-format: false
+  addmember:
+    enabled: true
+    custom-format: false
+  removemember:
+    enabled: true
+    custom-format: false
+  addowner:
+    enabled: true
+    custom-format: false
+  removeowner:
+    enabled: true
+    custom-format: false
+  remove:
+    enabled: true
+    custom-format: false

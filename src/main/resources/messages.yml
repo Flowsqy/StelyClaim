@@ -104,3 +104,18 @@ pillar:
 #  current:
 #    message: "&6Acceder à ta position actuelle"
 #    hover: "&7En cliquant sur ce message tu seras directement téléporté à la position où tu as effectué la commande"
+
+
+# Pour chacun des messages de claim, %from% sera remplacé par le nom de l'expéditeur et %to% par celui du receveur
+# %target% désigne la personne ajouté ou supprimer d'un claim (donc n'existe pas pour define, remove et redefine)
+#
+# Les couleurs sont possibles pour les mails, cependant si les mails sont envoyé dans le format d'Essentials
+# (cf. config.yml), elles seront supprimées si l'expéditeur n'a pas la permission Essentials de l'utiliser (eg. essentials.mail.black)
+mail:
+  define: "J'ai créer ton claim"
+  redefine: "J'ai redéfinie la taille de ton claim"
+  addmember: "J'ai ajouté %target% à ton claim"
+  removemember: "J'ai retiré %target% de ton claim"
+  addowner: "J'ai ajouté %target% aux propriétaires de ton claim"
+  removeowner: "J'ai retiré %target% des propriétaires de ton claim"
+  remove: "J'ai supprimé ton claim"

@@ -8,6 +8,7 @@ import fr.flowsqy.stelyclaim.command.CommandManager;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
 import fr.flowsqy.stelyclaim.io.Messages;
 import fr.flowsqy.stelyclaim.util.DisconnectListener;
+import fr.flowsqy.stelyclaim.util.MailManager;
 import fr.flowsqy.stelyclaim.util.PillarData;
 import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.Bukkit;
@@ -32,6 +33,7 @@ public class StelyClaimPlugin extends JavaPlugin {
     private RegionContainer regionContainer;
     private SessionManager sessionManager;
     private TeleportSync teleportSync;
+    private MailManager mailManager;
     private final Map<String, PillarData> pillarData = new HashMap<>();
 
     public static StelyClaimPlugin getInstance() {
@@ -58,6 +60,7 @@ public class StelyClaimPlugin extends JavaPlugin {
         this.regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
         this.sessionManager = WorldEdit.getInstance().getSessionManager();
         this.teleportSync = new TeleportSync(this);
+        this.mailManager = new MailManager(messages, configuration);
 
         new DisconnectListener(this);
 
@@ -104,6 +107,10 @@ public class StelyClaimPlugin extends JavaPlugin {
 
     public TeleportSync getTeleportSync() {
         return teleportSync;
+    }
+
+    public MailManager getMailManager() {
+        return mailManager;
     }
 
     public Map<String, PillarData> getPillarData() {

@@ -111,6 +111,7 @@ public class ClaimCommand implements TabExecutor {
     }
 
     private void initCommands(StelyClaimPlugin plugin) {
+        // SubCommands : help, define, redefine, addmember, removemember, addowner, removeowner, remove, info, teleport, stats, pillar
         final HelpSubCommand helpSubCommand = new HelpSubCommand(
                 plugin,
                 "help",
