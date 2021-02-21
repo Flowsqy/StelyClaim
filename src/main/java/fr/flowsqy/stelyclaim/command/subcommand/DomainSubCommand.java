@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.List;
 
 public abstract class DomainSubCommand extends RegionSubCommand {
@@ -49,7 +50,8 @@ public abstract class DomainSubCommand extends RegionSubCommand {
                 return true;
             }
 
-            modifyRegion(player, region, targetName, ownRegion);
+            if(!modifyRegion(player, region, targetName, ownRegion))
+                return true;
 
             if(!ownRegion){
                 final Player targetPlayer = Bukkit.getPlayer(claimName);
@@ -75,6 +77,11 @@ public abstract class DomainSubCommand extends RegionSubCommand {
         return false;
     }
 
-    protected abstract void modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion);
+    protected abstract boolean modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion);
 
+    @Override
+    public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
+        // TODO Tab completion
+        return Collections.emptyList();
+    }
 }
