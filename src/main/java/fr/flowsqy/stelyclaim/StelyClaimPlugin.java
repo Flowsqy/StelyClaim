@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 public class StelyClaimPlugin extends JavaPlugin {
 
     private static StelyClaimPlugin instance;
+    private YamlConfiguration configuration;
     private Messages messages;
     private BedrockManager breakManager;
     private RegionContainer regionContainer;
@@ -51,7 +52,8 @@ public class StelyClaimPlugin extends JavaPlugin {
             return;
         }
 
-        this.messages = new Messages(initMessages(dataFolder));
+        this.configuration = initFile(dataFolder, "config.yml");
+        this.messages = new Messages(initFile(dataFolder, "messages.yml"));
         this.breakManager = new BedrockManager(getDataFolder());
         this.regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
         this.sessionManager = WorldEdit.getInstance().getSessionManager();
@@ -68,16 +70,20 @@ public class StelyClaimPlugin extends JavaPlugin {
         return dataFolder.mkdirs();
     }
 
-    private YamlConfiguration initMessages(File dataFolder) {
-        final File messagesFile = new File(dataFolder, "messages.yml");
-        if (!messagesFile.exists()) {
+    private YamlConfiguration initFile(File dataFolder, String fileName) {
+        final File file = new File(dataFolder, fileName);
+        if (!file.exists()) {
             try {
-                Files.copy(Objects.requireNonNull(getResource("messages.yml")), messagesFile.toPath());
+                Files.copy(Objects.requireNonNull(getResource(fileName)), file.toPath());
             } catch (IOException ignored) {
             }
         }
 
-        return YamlConfiguration.loadConfiguration(messagesFile);
+        return YamlConfiguration.loadConfiguration(file);
+    }
+
+    public YamlConfiguration getConfiguration() {
+        return configuration;
     }
 
     public Messages getMessages() {
