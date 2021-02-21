@@ -3,6 +3,7 @@ package fr.flowsqy.stelyclaim.command.subcommand;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -33,7 +34,7 @@ public abstract class DomainSubCommand extends RegionSubCommand {
         messages.sendMessage(player, "help."+getName() + (hasOtherPerm ? "-other" : ""));
     }
 
-    private boolean checkRegion(Player player, String claimName, boolean ownRegion, String targetPlayer){
+    private boolean checkRegion(Player player, String claimName, boolean ownRegion, String targetName){
         if(ownRegion || player.hasPermission(getPermission()+"-other")){
             final String worldName = player.getWorld().getName();
             final RegionManager regionManager = getRegionContainer(worldName);
@@ -48,7 +49,27 @@ public abstract class DomainSubCommand extends RegionSubCommand {
                 return true;
             }
 
-            modifyRegion(player, region, targetPlayer, ownRegion);
+            modifyRegion(player, region, targetName, ownRegion);
+
+            if(!ownRegion){
+                final Player targetPlayer = Bukkit.getPlayer(claimName);
+                if(targetPlayer != null && player.canSee(targetPlayer)){
+                    messages.sendMessage(
+                            targetPlayer,
+                            "claim."+getName()+"-target",
+                            "%sender%", "%target%",
+                            player.getName(), targetName);
+                }
+                else{
+                    plugin.getMailManager().sendMail(
+                            player,
+                            targetPlayer == null ? claimName : targetPlayer.getName(),
+                            getName(),
+                            targetName
+                    );
+                }
+            }
+
             return true;
         }
         return false;
