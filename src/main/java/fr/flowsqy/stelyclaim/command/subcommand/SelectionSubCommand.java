@@ -24,6 +24,7 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
@@ -33,9 +34,9 @@ import java.util.stream.Collectors;
 public abstract class SelectionSubCommand extends RegionSubCommand {
 
     private final SessionManager sessionManager;
-    //TODO Initialize this with the config
-    private final int maxY = 255;
-    private final int minY = 0;
+    private final boolean expandRegion;
+    private final int maxY;
+    private final int minY;
     private final Map<String, PillarData> pillarData;
 
     private final String pillarMessage;
@@ -49,6 +50,11 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         super(plugin, name, alias, permission, stats, console);
         this.sessionManager = plugin.getSessionManager();
         this.pillarData = plugin.getPillarData();
+
+        final Configuration configuration = plugin.getConfiguration();
+        expandRegion = configuration.getBoolean("expand-selection-y.expand", false);
+        maxY = configuration.getInt("expand-selection-y.max", 255);
+        minY = configuration.getInt("expand-selection-y.min", 0);
 
         pillarMessage = messages.getMessage("pillar.message");
         if(pillarMessage != null) {
@@ -146,15 +152,17 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
             return;
         }
 
-        try {
-            final CuboidRegion cuboidSelection = (CuboidRegion) selection;
-            selection.expand(
-                    BlockVector3.ZERO.withY(maxY-cuboidSelection.getMaximumY()),
-                    BlockVector3.ZERO.withY(minY-cuboidSelection.getMinimumY())
-            );
-        } catch (RegionOperationException e) {
-            messages.sendMessage(player, "util.error", "%error%", "ExtendSelection");
-            return;
+        if(expandRegion) {
+            try {
+                final CuboidRegion cuboidSelection = (CuboidRegion) selection;
+                selection.expand(
+                        BlockVector3.ZERO.withY(maxY - cuboidSelection.getMaximumY()),
+                        BlockVector3.ZERO.withY(minY - cuboidSelection.getMinimumY())
+                );
+            } catch (RegionOperationException e) {
+                messages.sendMessage(player, "util.error", "%error%", "ExpandSelection");
+                return;
+            }
         }
 
         final ProtectedCuboidRegion newRegion = new ProtectedCuboidRegion(regionName,

@@ -1,4 +1,3 @@
-# SubCommands that can send mails : define, redefine, addmember, removemember, addowner, removeowner, remove
 mail:
   define:
     enabled: true
@@ -21,3 +20,9 @@ mail:
   remove:
     enabled: true
     custom-format: false
+
+# La hauteur des claims (la couche la plus haute et la couche la plus basse)
+expand-selection-y:
+  expand: true
+  max: 255
+  min: 0
