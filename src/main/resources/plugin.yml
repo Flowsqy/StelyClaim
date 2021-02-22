@@ -6,6 +6,8 @@ depend:
   - ComponentReplacer
   - WorldEdit
   - WorldGuard
+softdepend:
+  - Essentials
 api-version: 1.13
 commands:
   claim:
