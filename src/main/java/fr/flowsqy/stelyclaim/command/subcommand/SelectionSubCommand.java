@@ -272,8 +272,9 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
         if(sender.hasPermission(getPermission()+"-other") && args.size() == 2){
             final String arg = args.get(1).toLowerCase(Locale.ROOT);
+            final Player player = (Player) sender;
             return Bukkit.getOnlinePlayers().stream()
-                    .filter(((Player) sender)::canSee)
+                    .filter(player::canSee)
                     .map(HumanEntity::getName)
                     .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(arg))
                     .collect(Collectors.toList());
