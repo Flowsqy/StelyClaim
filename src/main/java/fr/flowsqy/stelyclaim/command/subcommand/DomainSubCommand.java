@@ -5,10 +5,13 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 public abstract class DomainSubCommand extends RegionSubCommand {
 
@@ -81,7 +84,25 @@ public abstract class DomainSubCommand extends RegionSubCommand {
 
     @Override
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
-        // TODO Tab completion
-        return Collections.emptyList();
+        final int size = args.size();
+        if(
+                size == 2 ||
+                        (size == 3 &&
+                                (
+                                        sender.getName().toLowerCase(Locale.ROOT).startsWith(args.get(2).toLowerCase(Locale.ROOT)) ||
+                                        sender.hasPermission(getPermission()+"-other")
+                                )
+                        )
+        ){
+            final String arg = args.get(size - 1).toLowerCase(Locale.ROOT);
+            final Player player = (Player) sender;
+            return Bukkit.getOnlinePlayers().stream()
+                    .filter(player::canSee)
+                    .map(HumanEntity::getName)
+                    .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(arg))
+                    .collect(Collectors.toList());
+        }
+        else
+            return Collections.emptyList();
     }
 }
