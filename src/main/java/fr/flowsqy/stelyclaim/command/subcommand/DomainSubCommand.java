@@ -57,7 +57,7 @@ public abstract class DomainSubCommand extends RegionSubCommand {
                 return true;
 
             if(!ownRegion){
-                final Player targetPlayer = Bukkit.getPlayer(claimName);
+                final Player targetPlayer = Bukkit.getPlayerExact(claimName);
                 if(targetPlayer != null && player.canSee(targetPlayer)){
                     messages.sendMessage(
                             targetPlayer,

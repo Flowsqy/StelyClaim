@@ -30,15 +30,16 @@ public class RedefineSubCommand extends SelectionSubCommand {
 
     @Override
     protected void manageRegion(Player player, ProtectedRegion region, ProtectedCuboidRegion newRegion, boolean ownRegion, RegionManager regionManager) {
-        //TODO Setup region by config
 
         if(region instanceof ProtectedCuboidRegion){
             final ProtectedCuboidRegion cuboidRegion = (ProtectedCuboidRegion) region;
             cuboidRegion.setMaximumPoint(newRegion.getMaximumPoint());
             cuboidRegion.setMinimumPoint(newRegion.getMinimumPoint());
+            configModifyRegion(region, "redefine", player);
         }
         else {
             newRegion.copyFrom(region);
+            configModifyRegion(newRegion, "redefine", player);
             regionManager.addRegion(newRegion);
         }
 

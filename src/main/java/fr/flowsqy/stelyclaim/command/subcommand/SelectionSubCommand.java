@@ -10,7 +10,9 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionOperationException;
 import com.sk89q.worldedit.session.SessionManager;
 import com.sk89q.worldedit.world.World;
+import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -240,7 +242,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         // Mail manage
 
         if(!ownRegion){
-            final Player targetPlayer = Bukkit.getPlayer(regionName);
+            final Player targetPlayer = Bukkit.getPlayerExact(regionName);
             if(targetPlayer != null && player.canSee(targetPlayer)){
                 messages.sendMessage(targetPlayer, "claim."+getName()+"-target", "%sender%", player.getName());
             }
@@ -266,6 +268,75 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         final TextComponent component = textComponent.duplicate();
         component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claim pillar " + id));
         replacer.replace(regex, new TextComponent[]{component});
+    }
+
+    protected final void configModifyRegion(ProtectedRegion newRegion, String category, Player sender){
+        final Configuration config = plugin.getConfiguration();
+        final String setTp = config.getString(category + ".set-tp");
+        if(setTp != null){
+            final Location location;
+            final BlockVector3 maxPoint = newRegion.getMaximumPoint();
+            final BlockVector3 minPoint = newRegion.getMinimumPoint();
+
+            final int maxX = Math.max(maxPoint.getBlockX(), minPoint.getBlockX());
+            final int minX = Math.min(maxPoint.getBlockX(), minPoint.getBlockX());
+            final int maxZ = Math.max(maxPoint.getBlockZ(), minPoint.getBlockZ());
+            final int minZ = Math.min(maxPoint.getBlockZ(), minPoint.getBlockZ());
+
+            final org.bukkit.World world = sender.getWorld();
+            switch (setTp) {
+                case "here":
+                    location = sender.getLocation();
+                    break;
+                case "northwest":
+                    location = new Location(world, minX, 0, minZ, -45, 0);
+                    location.add(0.5, world.getHighestBlockYAt(location) + 3, 0.5);
+                    break;
+                case "northeast":
+                    location = new Location(world, maxX, 0, minZ, 45, 0);
+                    location.add(0.5, world.getHighestBlockYAt(location) + 3, 0.5);
+                    break;
+                case "southwest":
+                    location = new Location(world, minX, 0, maxZ, -135, 0);
+                    location.add(0.5, world.getHighestBlockYAt(location) + 3, 0.5);
+                    break;
+                case "southeast":
+                    location = new Location(world, maxX, 0, maxZ, 135, 0);
+                    location.add(0.5, world.getHighestBlockYAt(location) + 3, 0.5);
+                    break;
+                default:
+                    location = null;
+            }
+            if(location != null)
+                newRegion.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(location));
+        }
+
+        final List<String> owners = config.getStringList(category+".owner");
+        final List<String> ownerGroups = config.getStringList(category+".owner-group");
+        if(!owners.isEmpty() || !ownerGroups.isEmpty()){
+            final DefaultDomain ownerDomain = newRegion.getOwners();
+            for(String owner : owners)
+                ownerDomain.addPlayer(
+                        owner
+                                .replace("%sender%", sender.getName())
+                                .replace("%target%", newRegion.getId())
+                );
+            for(String groupOwner : ownerGroups)
+                ownerDomain.addGroup(groupOwner);
+        }
+        final List<String> members = config.getStringList(category+".member");
+        final List<String> memberGroups = config.getStringList(category+".member-group");
+        if(!members.isEmpty() || !memberGroups.isEmpty()){
+            final DefaultDomain memberDomain = newRegion.getMembers();
+            for(String member : members)
+                memberDomain.addPlayer(
+                        member
+                                .replace("%sender%", sender.getName())
+                                .replace("%target%", newRegion.getId())
+                );
+            for(String memberOwner : memberGroups)
+                memberDomain.addGroup(memberOwner);
+        }
     }
 
     @Override

@@ -26,3 +26,25 @@ expand-selection-y:
   expand: true
   max: 255
   min: 0
+
+# Les paramètres à ajouter au claim
+# %sender%  : Joueur qui exécute la commande
+# %target%  : Joueur qui est ciblé par la commande
+# (Ne sont utilisé que pour les joueurs, pas pour les groupes)
+#
+# Valeurs possibles pour 'set-tp' : "none", "here", "northwest", "northeast", "southwest", "southeast"
+define:
+  set-tp: "northwest"
+  owner:
+    - "%target%"
+  owner-group: []
+  member: []
+  member-group:
+    - "modo"
+
+redefine:
+  set-tp: "northwest"
+  owner: []
+  owner-group: []
+  member: []
+  member-group: []

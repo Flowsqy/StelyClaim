@@ -23,7 +23,7 @@ public class DefineSubCommand extends SelectionSubCommand {
 
     @Override
     protected void manageRegion(Player player, ProtectedRegion region, ProtectedCuboidRegion newRegion, boolean ownRegion, RegionManager regionManager) {
-        //TODO Setup region by config
+        configModifyRegion(newRegion, "define", player);
 
         regionManager.addRegion(newRegion);
 
