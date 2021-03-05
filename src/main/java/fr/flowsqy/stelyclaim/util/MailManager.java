@@ -131,4 +131,37 @@ public class MailManager {
         }
     }
 
+    public void sendInfoToTarget(Player sender, String target, String command){
+        final Player targetPlayer = Bukkit.getPlayerExact(target);
+        if(targetPlayer != null && sender.canSee(targetPlayer)){
+            messages.sendMessage(targetPlayer, "claim."+command+"-target", "%sender%", sender.getName());
+        }
+        else{
+            sendMail(
+                    sender,
+                    targetPlayer == null ? target : targetPlayer.getName(),
+                    command
+            );
+        }
+    }
+
+    public void sendInfoToTarget(Player sender, String target, String command, String argTarget){
+        final Player targetPlayer = Bukkit.getPlayerExact(target);
+        if(targetPlayer != null && sender.canSee(targetPlayer)){
+            messages.sendMessage(
+                    targetPlayer,
+                    "claim."+command+"-target",
+                    "%sender%", "%target%",
+                    sender.getName(), argTarget);
+        }
+        else{
+            sendMail(
+                    sender,
+                    targetPlayer == null ? target : targetPlayer.getName(),
+                    command,
+                    argTarget
+            );
+        }
+    }
+
 }

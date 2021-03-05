@@ -57,22 +57,7 @@ public abstract class DomainSubCommand extends RegionSubCommand {
                 return true;
 
             if(!ownRegion){
-                final Player targetPlayer = Bukkit.getPlayerExact(claimName);
-                if(targetPlayer != null && player.canSee(targetPlayer)){
-                    messages.sendMessage(
-                            targetPlayer,
-                            "claim."+getName()+"-target",
-                            "%sender%", "%target%",
-                            player.getName(), targetName);
-                }
-                else{
-                    plugin.getMailManager().sendMail(
-                            player,
-                            targetPlayer == null ? claimName : targetPlayer.getName(),
-                            getName(),
-                            targetName
-                    );
-                }
+                plugin.getMailManager().sendInfoToTarget(player, claimName, getName(), targetName);
             }
 
             return true;

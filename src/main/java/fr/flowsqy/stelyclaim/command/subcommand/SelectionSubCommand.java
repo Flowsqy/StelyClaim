@@ -242,17 +242,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         // Mail manage
 
         if(!ownRegion){
-            final Player targetPlayer = Bukkit.getPlayerExact(regionName);
-            if(targetPlayer != null && player.canSee(targetPlayer)){
-                messages.sendMessage(targetPlayer, "claim."+getName()+"-target", "%sender%", player.getName());
-            }
-            else{
-                plugin.getMailManager().sendMail(
-                        player,
-                        targetPlayer == null ? regionName : targetPlayer.getName(),
-                        getName()
-                        );
-            }
+            plugin.getMailManager().sendInfoToTarget(player, regionName, getName());
         }
 
     }
@@ -284,29 +274,35 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
             final int minZ = Math.min(maxPoint.getBlockZ(), minPoint.getBlockZ());
 
             final org.bukkit.World world = sender.getWorld();
+            final boolean pillar;
             switch (setTp) {
                 case "here":
                     location = sender.getLocation();
+                    pillar = false;
                     break;
                 case "northwest":
                     location = new Location(world, minX, 0, minZ, -45, 0);
-                    location.add(0.5, world.getHighestBlockYAt(location) + 3, 0.5);
+                    pillar = true;
                     break;
                 case "northeast":
                     location = new Location(world, maxX, 0, minZ, 45, 0);
-                    location.add(0.5, world.getHighestBlockYAt(location) + 3, 0.5);
+                    pillar = true;
                     break;
                 case "southwest":
                     location = new Location(world, minX, 0, maxZ, -135, 0);
-                    location.add(0.5, world.getHighestBlockYAt(location) + 3, 0.5);
+                    pillar = true;
                     break;
                 case "southeast":
                     location = new Location(world, maxX, 0, maxZ, 135, 0);
-                    location.add(0.5, world.getHighestBlockYAt(location) + 3, 0.5);
+                    pillar = true;
                     break;
                 default:
                     location = null;
+                    pillar = false;
             }
+            if(pillar)
+                location.add(0.5, world.getHighestBlockYAt(location) + 3, 0.5);
+
             if(location != null)
                 newRegion.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(location));
         }
