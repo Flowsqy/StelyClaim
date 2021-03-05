@@ -66,6 +66,8 @@ claim:
   notpother: "%prefix% &cLe claim de &8%region% &cn'a pas de point de téléportation défini"
   tp: "%prefix% &6Tu as été téléporté à ton claim"
   tpother: "%prefix% &6Tu as été téléporté au claim de &a%region%"
+  remove: "%prefix% &6Tu as supprimé ton claim"
+  removeother: "%prefix% &6Tu as supprimé le claim de &a%region%"
   define-target: "%prefix% &a%sender% &6viens de définir ton claim"
   redefine-target: "%prefix% &a%sender% &6viens de changer la taille de ton claim"
   addmember-target: "%prefix% &a%sender% &6viens d'ajouter &a%target% &6à ton claim"

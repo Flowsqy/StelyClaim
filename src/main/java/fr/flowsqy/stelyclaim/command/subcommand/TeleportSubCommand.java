@@ -2,6 +2,7 @@ package fr.flowsqy.stelyclaim.command.subcommand;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.util.TeleportSync;
@@ -17,7 +18,7 @@ public class TeleportSubCommand extends InteractSubCommand {
     }
 
     @Override
-    protected void interactRegion(Player player, ProtectedRegion region, boolean ownRegion) {
+    protected void interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion) {
         final com.sk89q.worldedit.util.Location weLoc = region.getFlag(Flags.TELE_LOC);
 
         if(weLoc == null){

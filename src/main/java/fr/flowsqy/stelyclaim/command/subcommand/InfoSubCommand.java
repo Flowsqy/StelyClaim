@@ -1,5 +1,6 @@
 package fr.flowsqy.stelyclaim.command.subcommand;
 
+import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import org.bukkit.entity.Player;
@@ -11,7 +12,7 @@ public class InfoSubCommand extends InteractSubCommand {
     }
 
     @Override
-    protected void interactRegion(Player player, ProtectedRegion region, boolean ownRegion) {
+    protected void interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion) {
 
     }
 
