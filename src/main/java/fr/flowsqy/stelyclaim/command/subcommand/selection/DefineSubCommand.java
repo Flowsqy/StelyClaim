@@ -22,12 +22,12 @@ public class DefineSubCommand extends SelectionSubCommand {
     }
 
     @Override
-    protected void manageRegion(Player player, ProtectedRegion region, ProtectedCuboidRegion newRegion, boolean ownRegion, RegionManager regionManager) {
-        configModifyRegion(newRegion, "define", player);
+    protected void manageRegion(Player player, ProtectedRegion region, ProtectedCuboidRegion newRegion, boolean ownRegion, RegionManager regionManager, String regionName) {
+        configModifyRegion(newRegion, "define", player, regionName);
 
         regionManager.addRegion(newRegion);
 
-        messages.sendMessage(player, "claim.define" + (ownRegion ? "" : "other"), "%region%", newRegion.getId());
+        messages.sendMessage(player, "claim.define" + (ownRegion ? "" : "other"), "%region%", regionName);
     }
 
 

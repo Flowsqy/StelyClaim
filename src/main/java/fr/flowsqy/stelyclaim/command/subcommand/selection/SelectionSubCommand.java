@@ -195,7 +195,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
         checkIntegrateRegion(overlapSame, player);
 
-        manageRegion(player, region, newRegion, ownRegion, regionManager);
+        manageRegion(player, region, newRegion, ownRegion, regionManager, regionName);
 
         // Pillars manage
 
@@ -252,7 +252,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
     protected void checkIntegrateRegion(boolean overlapSame, Player player){}
 
-    protected abstract void manageRegion(Player player, ProtectedRegion region, ProtectedCuboidRegion newRegion, boolean ownRegion, RegionManager regionManager);
+    protected abstract void manageRegion(Player player, ProtectedRegion region, ProtectedCuboidRegion newRegion, boolean ownRegion, RegionManager regionManager, String regionName);
 
     private void sendPillarMessage(String regex, TextComponent textComponent, Location location, PillarData pillarData, ComponentReplacer replacer){
         final String id = pillarData.registerLocation(location);
@@ -261,8 +261,10 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         replacer.replace(regex, new TextComponent[]{component});
     }
 
-    protected final void configModifyRegion(ProtectedRegion newRegion, String category, Player sender){
+    protected final void configModifyRegion(ProtectedRegion newRegion, String category, Player sender, String regionNameWithCase){
         final Configuration config = plugin.getConfiguration();
+
+        // Teleportation flag
         final String setTp = config.getString(category + ".set-tp");
         if(setTp != null){
             final Location location;
@@ -308,6 +310,8 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
                 newRegion.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(location));
         }
 
+
+        // Owners
         final List<String> owners = config.getStringList(category+".owner");
         final List<String> ownerGroups = config.getStringList(category+".owner-group");
         if(!owners.isEmpty() || !ownerGroups.isEmpty()){
@@ -321,6 +325,8 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
             for(String groupOwner : ownerGroups)
                 ownerDomain.addGroup(groupOwner);
         }
+
+        // Members
         final List<String> members = config.getStringList(category+".member");
         final List<String> memberGroups = config.getStringList(category+".member-group");
         if(!members.isEmpty() || !memberGroups.isEmpty()){
@@ -334,6 +340,21 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
             for(String memberOwner : memberGroups)
                 memberDomain.addGroup(memberOwner);
         }
+
+        // Greeting flag
+        final String greeting = messages.getMessage(
+                "claim.selection."+category+".greeting",
+                "%region%", regionNameWithCase
+        );
+        newRegion.setFlag(Flags.GREET_MESSAGE, greeting);
+
+        // Farewell flag
+        final String farewell = messages.getMessage(
+                "claim.selection."+category+".farewell",
+                "%region%", regionNameWithCase
+        );
+        newRegion.setFlag(Flags.FAREWELL_MESSAGE, greeting);
+
     }
 
     @Override

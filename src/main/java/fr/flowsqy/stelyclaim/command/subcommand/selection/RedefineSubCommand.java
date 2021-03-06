@@ -29,20 +29,20 @@ public class RedefineSubCommand extends SelectionSubCommand {
     }
 
     @Override
-    protected void manageRegion(Player player, ProtectedRegion region, ProtectedCuboidRegion newRegion, boolean ownRegion, RegionManager regionManager) {
+    protected void manageRegion(Player player, ProtectedRegion region, ProtectedCuboidRegion newRegion, boolean ownRegion, RegionManager regionManager, String regionName) {
 
         if(region instanceof ProtectedCuboidRegion){
             final ProtectedCuboidRegion cuboidRegion = (ProtectedCuboidRegion) region;
             cuboidRegion.setMaximumPoint(newRegion.getMaximumPoint());
             cuboidRegion.setMinimumPoint(newRegion.getMinimumPoint());
-            configModifyRegion(region, "redefine", player);
+            configModifyRegion(region, "redefine", player, regionName);
         }
         else {
             newRegion.copyFrom(region);
-            configModifyRegion(newRegion, "redefine", player);
+            configModifyRegion(newRegion, "redefine", player, regionName);
             regionManager.addRegion(newRegion);
         }
 
-        messages.sendMessage(player, "claim.redefine" + (ownRegion ? "" : "other"), "%region%", newRegion.getId());
+        messages.sendMessage(player, "claim.redefine" + (ownRegion ? "" : "other"), "%region%", regionName);
     }
 }
