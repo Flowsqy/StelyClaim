@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.command.subcommand;
+package fr.flowsqy.stelyclaim.command.subcommand.domain;
 
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;

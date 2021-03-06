@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.command.subcommand;
+package fr.flowsqy.stelyclaim.command.subcommand.selection;
 
 import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.LocalSession;
@@ -18,6 +18,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.command.subcommand.RegionSubCommand;
 import fr.flowsqy.stelyclaim.util.PillarData;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;

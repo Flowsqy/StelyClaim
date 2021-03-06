@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.command.subcommand;
+package fr.flowsqy.stelyclaim.command.subcommand.interact;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.flags.Flags;

@@ -2,6 +2,16 @@ package fr.flowsqy.stelyclaim.command;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.subcommand.*;
+import fr.flowsqy.stelyclaim.command.subcommand.domain.AddMemberSubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.domain.AddOwnerSubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.domain.RemoveMemberSubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.domain.RemoveOwnerSubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.interact.InfoSubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.interact.RemoveSubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.interact.TeleportSubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.selection.DefineSubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.selection.RedefineSubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.statistics.StatsSubCommand;
 import fr.flowsqy.stelyclaim.io.Messages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

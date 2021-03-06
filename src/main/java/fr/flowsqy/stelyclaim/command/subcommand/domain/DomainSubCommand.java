@@ -1,8 +1,9 @@
-package fr.flowsqy.stelyclaim.command.subcommand;
+package fr.flowsqy.stelyclaim.command.subcommand.domain;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.command.subcommand.RegionSubCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;

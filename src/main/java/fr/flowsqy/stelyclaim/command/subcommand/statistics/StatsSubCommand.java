@@ -1,6 +1,7 @@
-package fr.flowsqy.stelyclaim.command.subcommand;
+package fr.flowsqy.stelyclaim.command.subcommand.statistics;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.command.subcommand.SubCommand;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
