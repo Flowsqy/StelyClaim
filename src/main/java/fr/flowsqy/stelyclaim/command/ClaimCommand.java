@@ -53,14 +53,21 @@ public class ClaimCommand implements TabExecutor {
             final SubCommand subCmd = subCommand.get();
             if (isPlayer ? sender.hasPermission(subCmd.getPermission()) : subCmd.isConsole()){
                 subCmd.execute(sender, argsList, argsList.size(), isPlayer);
+                if(subCmd.isStatistic()) {
+                    // TODO Add statistic
+                }
                 return true;
             }
             if(!isPlayer)
                 return messages.sendMessage(sender, "util.onlyplayer");
         }
-        if(sender.hasPermission(helpSubCommand.getPermission()))
+        if(sender.hasPermission(helpSubCommand.getPermission())) {
             // Send help if has perm
             helpSubCommand.execute(sender, argsList, argsList.size(), isPlayer);
+            if(helpSubCommand.isStatistic()) {
+                // TODO Add statistic
+            }
+        }
         return true;
     }
 
