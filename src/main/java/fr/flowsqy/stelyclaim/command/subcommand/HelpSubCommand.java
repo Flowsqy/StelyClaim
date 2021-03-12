@@ -15,8 +15,8 @@ public class HelpSubCommand extends SubCommand {
 
     private final List<SubCommand> subCommands;
 
-    public HelpSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean stats, boolean console, List<SubCommand> subCommands) {
-        super(plugin, name, alias, permission, stats, console);
+    public HelpSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic, List<SubCommand> subCommands) {
+        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
         this.subCommands = subCommands;
     }
 

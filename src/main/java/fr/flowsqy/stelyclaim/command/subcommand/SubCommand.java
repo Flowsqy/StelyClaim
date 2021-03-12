@@ -4,7 +4,9 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.io.Messages;
 import org.bukkit.command.CommandSender;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public abstract class SubCommand {
 
@@ -13,17 +15,19 @@ public abstract class SubCommand {
     protected final String name;
     protected final String alias;
     protected final String permission;
-    protected final boolean stats;
     protected final boolean console;
+    protected final Set<String> allowedWorlds;
+    protected final boolean statistic;
 
-    public SubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean stats, boolean console) {
+    public SubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         this.plugin = plugin;
         this.messages = plugin.getMessages();
         this.name = name;
         this.alias = alias;
         this.permission = permission;
-        this.stats = stats;
         this.console = console;
+        this.allowedWorlds = new HashSet<>(allowedWorlds);
+        this.statistic = statistic;
     }
 
     public String getName() {
@@ -38,12 +42,16 @@ public abstract class SubCommand {
         return permission;
     }
 
-    public boolean isStats() {
-        return stats;
-    }
-
     public boolean isConsole() {
         return console;
+    }
+
+    public Set<String> getAllowedWorlds() {
+        return allowedWorlds;
+    }
+
+    public boolean isStatistic() {
+        return statistic;
     }
 
     public abstract void execute(CommandSender sender, List<String> args, int size, boolean isPlayer);

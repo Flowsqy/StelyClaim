@@ -7,8 +7,8 @@ import org.bukkit.command.CommandSender;
 import java.util.List;
 
 public class StatsSubCommand extends SubCommand {
-    public StatsSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean stats, boolean console) {
-        super(plugin, name, alias, permission, stats, console);
+    public StatsSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
+        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
     }
 
     @Override

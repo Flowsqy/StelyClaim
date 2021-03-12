@@ -16,6 +16,7 @@ import fr.flowsqy.stelyclaim.io.Messages;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -122,13 +123,15 @@ public class ClaimCommand implements TabExecutor {
 
     private void initCommands(StelyClaimPlugin plugin) {
         // SubCommands : help, define, redefine, addmember, removemember, addowner, removeowner, remove, info, teleport, stats, pillar
+        final Configuration config = plugin.getConfiguration();
         final HelpSubCommand helpSubCommand = new HelpSubCommand(
                 plugin,
                 "help",
                 "h",
                 "stelyclaim.claim.help",
-                false,
                 true,
+                config.getStringList("worlds.help"),
+                config.getBoolean("statistic.help"),
                 subCommands
         );
         subCommands.add(helpSubCommand);
@@ -137,56 +140,63 @@ public class ClaimCommand implements TabExecutor {
                 "define",
                 "d",
                 "stelyclaim.claim.define",
-                true,
-                false
+                false,
+                config.getStringList("worlds.define"),
+                config.getBoolean("statistic.define")
         ));
         subCommands.add(new RedefineSubCommand(
                 plugin,
                 "redefine",
                 "rd",
                 "stelyclaim.claim.redefine",
-                true,
-                false
+                false,
+                config.getStringList("worlds.redefine"),
+                config.getBoolean("statistic.redefine")
         ));
         subCommands.add(new AddMemberSubCommand(
                 plugin,
                 "addmember",
                 "am",
                 "stelyclaim.claim.addmember",
-                true,
-                false
+                false,
+                config.getStringList("worlds.addmember"),
+                config.getBoolean("statistic.addmember")
         ));
         subCommands.add(new RemoveMemberSubCommand(
                 plugin,
                 "removemember",
                 "rm",
                 "stelyclaim.claim.removemember",
-                true,
-                false
+                false,
+                config.getStringList("worlds.removemember"),
+                config.getBoolean("statistic.removemember")
         ));
         subCommands.add(new AddOwnerSubCommand(
                 plugin,
                 "addowner",
                 "ao",
                 "stelyclaim.claim.addowner",
-                true,
-                false
+                false,
+                config.getStringList("worlds.addowner"),
+                config.getBoolean("statistic.addowner")
         ));
         subCommands.add(new RemoveOwnerSubCommand(
                 plugin,
                 "removeowner",
                 "ro",
                 "stelyclaim.claim.removeowner",
-                true,
-                false
+                false,
+                config.getStringList("worlds.removeowner"),
+                config.getBoolean("statistic.removeowner")
         ));
         subCommands.add(new RemoveSubCommand(
                 plugin,
                 "remove",
                 "r",
                 "stelyclaim.claim.remove",
-                true,
-                false
+                false,
+                config.getStringList("worlds.remove"),
+                config.getBoolean("statistic.remove")
         ));
         subCommands.add(new InfoSubCommand(
                 plugin,
@@ -194,7 +204,8 @@ public class ClaimCommand implements TabExecutor {
                 "i",
                 "stelyclaim.claim.info",
                 false,
-                false
+                config.getStringList("worlds.info"),
+                config.getBoolean("statistic.info")
         ));
         subCommands.add(new TeleportSubCommand(
                 plugin,
@@ -202,15 +213,17 @@ public class ClaimCommand implements TabExecutor {
                 "tp",
                 "stelyclaim.claim.teleport",
                 false,
-                false
+                config.getStringList("worlds.teleport"),
+                config.getBoolean("statistic.teleport")
         ));
         subCommands.add(new StatsSubCommand(
                 plugin,
                 "stats",
                 "s",
                 "stelyclaim.claim.stats",
-                false,
-                true
+                true,
+                config.getStringList("worlds.stats"),
+                config.getBoolean("statistic.stats")
         ));
         subCommands.add(new PillarSubCommand(
                 plugin,
@@ -218,7 +231,8 @@ public class ClaimCommand implements TabExecutor {
                 "p",
                 "stelyclaim.claim.pillar",
                 false,
-                false,
+                config.getStringList("worlds.pillar"),
+                config.getBoolean("statistic.pillar"),
                 helpSubCommand
         ));
     }

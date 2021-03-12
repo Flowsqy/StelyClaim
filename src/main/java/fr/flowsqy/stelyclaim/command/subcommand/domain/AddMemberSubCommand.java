@@ -5,10 +5,12 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public class AddMemberSubCommand extends DomainSubCommand {
 
-    public AddMemberSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean stats, boolean console) {
-        super(plugin, name, alias, permission, stats, console);
+    public AddMemberSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
+        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
     }
 
     @Override

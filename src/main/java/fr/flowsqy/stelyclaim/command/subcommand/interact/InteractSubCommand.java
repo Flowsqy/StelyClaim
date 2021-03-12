@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 
 public abstract class InteractSubCommand extends RegionSubCommand {
 
-    public InteractSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean stats, boolean console) {
-        super(plugin, name, alias, permission, stats, console);
+    public InteractSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
+        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
     }
 
     @Override

@@ -49,8 +49,8 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
     private final TextComponent pillarSETxtCpnt;
     private final TextComponent pillarCurrentTxtCpnt;
 
-    public SelectionSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean stats, boolean console) {
-        super(plugin, name, alias, permission, stats, console);
+    public SelectionSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
+        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
         this.sessionManager = plugin.getSessionManager();
         this.pillarData = plugin.getPillarData();
 
