@@ -33,6 +33,7 @@ help:
   stats-other: '%prefix% &6/claim stats <show|reset> [Joueur] [Commande]'
 
 claim:
+  notallowedinworld: "%prefix% &cTu ne peux pas faire cette commande dans ce monde"
   worldnothandle: "%prefix% &cLe monde &8%world% &cne gère pas les régions"
   alreadyexist: "%prefix% &cTu as déjà un claim"
   alreadyexistother: "%prefix% &8%region% &ca déjà un claim"

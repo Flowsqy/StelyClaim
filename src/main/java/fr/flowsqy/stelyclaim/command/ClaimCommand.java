@@ -1,7 +1,9 @@
 package fr.flowsqy.stelyclaim.command;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.command.subcommand.*;
+import fr.flowsqy.stelyclaim.command.subcommand.HelpSubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.PillarSubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.SubCommand;
 import fr.flowsqy.stelyclaim.command.subcommand.domain.AddMemberSubCommand;
 import fr.flowsqy.stelyclaim.command.subcommand.domain.AddOwnerSubCommand;
 import fr.flowsqy.stelyclaim.command.subcommand.domain.RemoveMemberSubCommand;
@@ -52,10 +54,7 @@ public class ClaimCommand implements TabExecutor {
             // Redirect to SubCommand's executable
             final SubCommand subCmd = subCommand.get();
             if (isPlayer ? sender.hasPermission(subCmd.getPermission()) : subCmd.isConsole()){
-                subCmd.execute(sender, argsList, argsList.size(), isPlayer);
-                if(subCmd.isStatistic()) {
-                    // TODO Add statistic
-                }
+                executeSubCommand(subCmd, sender, argsList, isPlayer);
                 return true;
             }
             if(!isPlayer)
@@ -63,12 +62,26 @@ public class ClaimCommand implements TabExecutor {
         }
         if(sender.hasPermission(helpSubCommand.getPermission())) {
             // Send help if has perm
-            helpSubCommand.execute(sender, argsList, argsList.size(), isPlayer);
-            if(helpSubCommand.isStatistic()) {
-                // TODO Add statistic
-            }
+            executeSubCommand(helpSubCommand, sender, argsList, isPlayer);
         }
         return true;
+    }
+
+    private void executeSubCommand(SubCommand command, CommandSender sender, List<String> argsList, boolean isPlayer){
+        final Set<String> allowedWorlds = command.getAllowedWorlds();
+        if(
+                !(sender instanceof Player) ||
+                allowedWorlds.isEmpty() ||
+                allowedWorlds.contains(((Player) sender).getWorld().getName()) ||
+                sender.hasPermission("claim." + command.getName() + ".world-bypass")
+        ){
+            command.execute(sender, argsList, argsList.size(), isPlayer);
+            if(command.isStatistic()) {
+                // TODO Add statistic
+            }
+            return;
+        }
+        messages.sendMessage(sender, "claim.notallowedinworld");
     }
 
     @Override
