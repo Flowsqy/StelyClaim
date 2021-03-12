@@ -11,14 +11,14 @@ public class AddOwnerSubCommand extends DomainSubCommand {
     }
 
     @Override
-    protected boolean modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion) {
+    protected boolean modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion, String regionName) {
         final DefaultDomain domain = region.getOwners();
         if(domain.contains(targetPlayer)) {
             messages.sendMessage(
                     sender,
                     "claim.alreadyowner" + (ownRegion ? "" : "other"),
                     "%region%", "%target%",
-                    region.getId(), targetPlayer
+                    regionName, targetPlayer
             );
             return false;
         }
@@ -27,7 +27,7 @@ public class AddOwnerSubCommand extends DomainSubCommand {
                 sender,
                 "claim.addowner" + (ownRegion ? "" : "other"),
                 "%region%", "%target%",
-                region.getId(), targetPlayer
+                regionName, targetPlayer
         );
         return true;
     }

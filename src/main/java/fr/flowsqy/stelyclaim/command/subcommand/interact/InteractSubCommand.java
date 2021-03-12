@@ -65,10 +65,10 @@ public abstract class InteractSubCommand extends RegionSubCommand {
             return;
         }
 
-        interactRegion(player, regionManager, region, ownRegion);
+        interactRegion(player, regionManager, region, ownRegion, regionName);
     }
 
-    protected abstract void interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion);
+    protected abstract void interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion, String regionName);
 
     @Override
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {

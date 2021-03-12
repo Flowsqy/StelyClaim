@@ -12,7 +12,7 @@ public class InfoSubCommand extends InteractSubCommand {
     }
 
     @Override
-    protected void interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion) {
+    protected void interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion, String regionName) {
 
     }
 

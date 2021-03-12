@@ -12,14 +12,14 @@ public class RemoveMemberSubCommand extends DomainSubCommand {
     }
 
     @Override
-    protected boolean modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion) {
+    protected boolean modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion, String regionName) {
         final DefaultDomain domain = region.getMembers();
         if(!domain.contains(targetPlayer)) {
             messages.sendMessage(
                     sender,
                     "claim.notmember" + (ownRegion ? "" : "other"),
                     "%region%", "%target%",
-                    region.getId(), targetPlayer
+                    regionName, targetPlayer
             );
             return false;
         }
@@ -28,7 +28,7 @@ public class RemoveMemberSubCommand extends DomainSubCommand {
                 sender,
                 "claim.removemember" + (ownRegion ? "" : "other"),
                 "%region%", "%target%",
-                region.getId(), targetPlayer
+                regionName, targetPlayer
         );
         return true;
     }

@@ -12,14 +12,14 @@ public class AddMemberSubCommand extends DomainSubCommand {
     }
 
     @Override
-    protected boolean modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion) {
+    protected boolean modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion, String regionName) {
         final DefaultDomain domain = region.getMembers();
         if(domain.contains(targetPlayer)) {
             messages.sendMessage(
                     sender,
                     "claim.alreadymember" + (ownRegion ? "" : "other"),
                     "%region%", "%target%",
-                    region.getId(), targetPlayer
+                    regionName, targetPlayer
             );
             return false;
         }
@@ -28,7 +28,7 @@ public class AddMemberSubCommand extends DomainSubCommand {
                 sender,
                 "claim.addmember" + (ownRegion ? "" : "other"),
                 "%region%", "%target%",
-                region.getId(), targetPlayer
+                regionName, targetPlayer
         );
         return true;
     }

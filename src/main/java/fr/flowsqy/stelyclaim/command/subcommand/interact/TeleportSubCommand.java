@@ -18,17 +18,17 @@ public class TeleportSubCommand extends InteractSubCommand {
     }
 
     @Override
-    protected void interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion) {
+    protected void interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion, String regionName) {
         final com.sk89q.worldedit.util.Location weLoc = region.getFlag(Flags.TELE_LOC);
 
         if(weLoc == null){
-            messages.sendMessage(player, "claim.notp" + (ownRegion ? "" : "other"), "%region%", region.getId());
+            messages.sendMessage(player, "claim.notp" + (ownRegion ? "" : "other"), "%region%", regionName);
             return;
         }
 
         teleportSync.addTeleport(player, BukkitAdapter.adapt(weLoc));
 
-        messages.sendMessage(player, "claim.tp" + (ownRegion ? "" : "other"), "%region%", region.getId());
+        messages.sendMessage(player, "claim.tp" + (ownRegion ? "" : "other"), "%region%", regionName);
     }
 
 }

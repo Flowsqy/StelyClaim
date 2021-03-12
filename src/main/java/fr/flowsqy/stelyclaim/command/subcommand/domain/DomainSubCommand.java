@@ -25,9 +25,9 @@ public abstract class DomainSubCommand extends RegionSubCommand {
         final Player player = (Player) sender;
 
         if(size == 3){
-            final String claimName = args.get(1);
-            final boolean ownRegion = claimName.equalsIgnoreCase(sender.getName());
-            if(checkRegion(player, claimName, ownRegion, args.get(2)))
+            final String regionName = args.get(1);
+            final boolean ownRegion = regionName.equalsIgnoreCase(sender.getName());
+            if(checkRegion(player, regionName, ownRegion, args.get(2)))
                 return;
         }
         else if(size == 2){
@@ -39,7 +39,7 @@ public abstract class DomainSubCommand extends RegionSubCommand {
         messages.sendMessage(player, "help."+getName() + (hasOtherPerm ? "-other" : ""));
     }
 
-    private boolean checkRegion(Player player, String claimName, boolean ownRegion, String targetName){
+    private boolean checkRegion(Player player, String regionName, boolean ownRegion, String targetName){
         if(ownRegion || player.hasPermission(getPermission()+"-other")){
             final String worldName = player.getWorld().getName();
             final RegionManager regionManager = getRegionContainer(worldName);
@@ -48,17 +48,17 @@ public abstract class DomainSubCommand extends RegionSubCommand {
                 return true;
             }
 
-            final ProtectedRegion region = regionManager.getRegion(claimName);
+            final ProtectedRegion region = regionManager.getRegion(regionName);
             if(region == null){
-                messages.sendMessage(player, "claim.notexist" + (ownRegion ? "" : "other"), "%region%", "%world%", claimName, worldName);
+                messages.sendMessage(player, "claim.notexist" + (ownRegion ? "" : "other"), "%region%", "%world%", regionName, worldName);
                 return true;
             }
 
-            if(!modifyRegion(player, region, targetName, ownRegion))
+            if(!modifyRegion(player, region, targetName, ownRegion, regionName))
                 return true;
 
             if(!ownRegion){
-                plugin.getMailManager().sendInfoToTarget(player, claimName, getName(), targetName);
+                plugin.getMailManager().sendInfoToTarget(player, regionName, getName(), targetName);
             }
 
             return true;
@@ -66,7 +66,7 @@ public abstract class DomainSubCommand extends RegionSubCommand {
         return false;
     }
 
-    protected abstract boolean modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion);
+    protected abstract boolean modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion, String regionName);
 
     @Override
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {

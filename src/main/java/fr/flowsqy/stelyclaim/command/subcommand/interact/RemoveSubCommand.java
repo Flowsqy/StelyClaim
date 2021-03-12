@@ -11,11 +11,10 @@ public class RemoveSubCommand extends InteractSubCommand {
     }
 
     @Override
-    protected void interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion) {
-        final String regionName = region.getId();
+    protected void interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion, String regionName) {
         regionManager.removeRegion(region.getId());
 
-        messages.sendMessage(player, "claim.remove" + (ownRegion ? "" : "other"), "%region%", region.getId());
+        messages.sendMessage(player, "claim.remove" + (ownRegion ? "" : "other"), "%region%", regionName);
         if(!ownRegion)
             plugin.getMailManager().sendInfoToTarget(player, regionName, getName());
     }
