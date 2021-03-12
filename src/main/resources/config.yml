@@ -21,11 +21,13 @@ mail:
     enabled: true
     custom-format: false
 
+
 # La hauteur des claims (la couche la plus haute et la couche la plus basse)
 expand-selection-y:
   expand: true
   max: 255
   min: 0
+
 
 # Les paramètres à ajouter au claim
 # %sender%  : Joueur qui exécute la commande
@@ -48,3 +50,51 @@ redefine:
   owner-group: []
   member: []
   member-group: []
+
+
+statistic:
+  help: false
+  define: true
+  redefine: true
+  addmember: true
+  removemember: true
+  addowner: true
+  removeowner: true
+  remove: true
+  info: false
+  teleport: false
+  stats: false
+  pillar: false
+
+
+# Laisser une liste vide autorise la commande dans tous les mondes
+#
+# Si la liste contient un ou plusieurs éléments, la commande n'est
+# autorisée que dans les mondes dont le nom figure dans la liste
+#
+#
+# Exemple:
+#
+# worlds:
+#   help: []
+#   define:
+#     - "map1"
+#     - "map2"
+#
+# La commande help est autorisée partout tandis que la commande define
+# n'est autorisée que dans les mondes 'map1' et 'map2'
+#
+
+worlds:
+  help: []
+  define: []
+  redefine: []
+  addmember: []
+  removemember: []
+  addowner: []
+  removeowner: []
+  remove: []
+  info: []
+  teleport: []
+  stats: []
+  pillar: []
