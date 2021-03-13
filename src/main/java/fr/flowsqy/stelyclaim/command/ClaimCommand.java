@@ -72,8 +72,8 @@ public class ClaimCommand implements TabExecutor {
         if(
                 !(sender instanceof Player) ||
                 allowedWorlds.isEmpty() ||
-                allowedWorlds.contains(((Player) sender).getWorld().getName()) ||
-                sender.hasPermission("claim." + command.getName() + ".world-bypass")
+                allowedWorlds.contains(((Player) sender).getWorld().getName())
+                // || sender.hasPermission("claim." + command.getName() + ".world-bypass")
         ){
             command.execute(sender, argsList, argsList.size(), isPlayer);
             if(command.isStatistic()) {
