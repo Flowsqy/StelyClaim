@@ -19,14 +19,14 @@ public class RedefineSubCommand extends SelectionSubCommand {
         if(regionExist)
             return false;
 
-        messages.sendMessage(player, "claim.notexist" + (ownRegion ? "" : "other"), "%region%", regionName);
+        messages.sendMessage(player, "claim.exist.not" + (ownRegion ? "" : "-other"), "%region%", regionName);
         return true;
     }
 
     @Override
     protected void checkIntegrateRegion(boolean overlapSame, Player player) {
         if(!overlapSame){
-            messages.sendMessage(player, "claim.redefinenotoverlap");
+            messages.sendMessage(player, "claim.selection.redefinenotoverlap");
         }
     }
 
@@ -37,6 +37,6 @@ public class RedefineSubCommand extends SelectionSubCommand {
         configModifyRegion(newRegion, "redefine", player, regionName);
         regionManager.addRegion(newRegion);
 
-        messages.sendMessage(player, "claim.redefine" + (ownRegion ? "" : "other"), "%region%", regionName);
+        messages.sendMessage(player, "claim.command.redefine" + (ownRegion ? "" : "-other"), "%region%", regionName);
     }
 }

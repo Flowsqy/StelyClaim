@@ -46,7 +46,7 @@ public abstract class InteractSubCommand extends RegionSubCommand {
         }
 
         if(!ownRegion && !player.hasPermission(getPermission()+"-other")){
-            messages.sendMessage(player, "help."+getPermission());
+            messages.sendMessage(player, "help."+getName());
             return;
         }
 
@@ -55,18 +55,18 @@ public abstract class InteractSubCommand extends RegionSubCommand {
         final RegionManager regionManager = getRegionManager(world);
         if(regionManager == null){
             messages.sendMessage(player,
-                    "claim.worldnothandle",
+                    "claim.world.nothandle",
                     "%world%", world.getName());
             return;
         }
 
         final ProtectedRegion region = regionManager.getRegion(regionName);
         if(region == null){
-            messages.sendMessage(player, "claim.notexist" + (ownRegion ? "" : "other"), "%region%", regionName);
+            messages.sendMessage(player, "claim.exist.not" + (ownRegion ? "" : "-other"), "%region%", regionName);
             return;
         }
         if(region.getType() == RegionType.GLOBAL){
-            messages.sendMessage(player, "claim.global");
+            messages.sendMessage(player, "claim.interactglobal");
             return;
         }
 

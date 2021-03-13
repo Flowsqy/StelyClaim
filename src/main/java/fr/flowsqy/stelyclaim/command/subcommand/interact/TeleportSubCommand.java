@@ -24,13 +24,13 @@ public class TeleportSubCommand extends InteractSubCommand {
         final com.sk89q.worldedit.util.Location weLoc = region.getFlag(Flags.TELE_LOC);
 
         if(weLoc == null){
-            messages.sendMessage(player, "claim.notp" + (ownRegion ? "" : "other"), "%region%", regionName);
+            messages.sendMessage(player, "claim.tp.notset" + (ownRegion ? "" : "-other"), "%region%", regionName);
             return;
         }
 
         teleportSync.addTeleport(player, BukkitAdapter.adapt(weLoc));
 
-        messages.sendMessage(player, "claim.tp" + (ownRegion ? "" : "other"), "%region%", regionName);
+        messages.sendMessage(player, "claim.command.tp" + (ownRegion ? "" : "-other"), "%region%", regionName);
     }
 
 }

@@ -134,7 +134,7 @@ public class MailManager {
     public void sendInfoToTarget(Player sender, String target, String command){
         final Player targetPlayer = Bukkit.getPlayerExact(target);
         if(targetPlayer != null && sender.canSee(targetPlayer)){
-            messages.sendMessage(targetPlayer, "claim."+command+"-target", "%sender%", sender.getName());
+            messages.sendMessage(targetPlayer, "claim.target."+command, "%sender%", sender.getName());
         }
         else{
             sendMail(
@@ -150,7 +150,7 @@ public class MailManager {
         if(targetPlayer != null && sender.canSee(targetPlayer)){
             messages.sendMessage(
                     targetPlayer,
-                    "claim."+command+"-target",
+                    "claim.target."+command,
                     "%sender%", "%target%",
                     sender.getName(), argTarget);
         }

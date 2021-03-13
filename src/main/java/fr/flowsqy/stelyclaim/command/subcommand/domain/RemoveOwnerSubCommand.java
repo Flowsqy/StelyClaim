@@ -18,7 +18,7 @@ public class RemoveOwnerSubCommand extends DomainSubCommand {
         if(!domain.contains(targetPlayer)){
             messages.sendMessage(
                     sender,
-                    "claim.notowner" + (ownRegion ? "" : "other"),
+                    "claim.domain.owner.not" + (ownRegion ? "" : "-other"),
                     "%region%", "%target%",
                     regionName, targetPlayer
             );
@@ -27,7 +27,7 @@ public class RemoveOwnerSubCommand extends DomainSubCommand {
         domain.removePlayer(targetPlayer);
         messages.sendMessage(
                 sender,
-                "claim.removeowner" + (ownRegion ? "" : "other"),
+                "claim.command.removeowner" + (ownRegion ? "" : "-other"),
                 "%region%", "%target%",
                 regionName, targetPlayer
         );

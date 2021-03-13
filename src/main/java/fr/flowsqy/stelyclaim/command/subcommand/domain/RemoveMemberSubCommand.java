@@ -19,7 +19,7 @@ public class RemoveMemberSubCommand extends DomainSubCommand {
         if(!domain.contains(targetPlayer)) {
             messages.sendMessage(
                     sender,
-                    "claim.notmember" + (ownRegion ? "" : "other"),
+                    "claim.domain.member.not" + (ownRegion ? "" : "-other"),
                     "%region%", "%target%",
                     regionName, targetPlayer
             );
@@ -28,7 +28,7 @@ public class RemoveMemberSubCommand extends DomainSubCommand {
         domain.removePlayer(targetPlayer);
         messages.sendMessage(
                 sender,
-                "claim.removemember" + (ownRegion ? "" : "other"),
+                "claim.command.removemember" + (ownRegion ? "" : "-other"),
                 "%region%", "%target%",
                 regionName, targetPlayer
         );

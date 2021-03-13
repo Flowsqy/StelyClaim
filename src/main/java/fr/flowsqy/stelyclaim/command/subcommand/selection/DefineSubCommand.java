@@ -19,7 +19,7 @@ public class DefineSubCommand extends SelectionSubCommand {
         if(!regionExist)
             return false;
 
-        messages.sendMessage(player, "claim.alreadyexist" + (ownRegion ? "" : "other"), "%region%", regionName);
+        messages.sendMessage(player, "claim.exist.already" + (ownRegion ? "" : "-other"), "%region%", regionName);
         return true;
     }
 
@@ -29,7 +29,7 @@ public class DefineSubCommand extends SelectionSubCommand {
 
         regionManager.addRegion(newRegion);
 
-        messages.sendMessage(player, "claim.define" + (ownRegion ? "" : "other"), "%region%", regionName);
+        messages.sendMessage(player, "claim.command.define" + (ownRegion ? "" : "-other"), "%region%", regionName);
     }
 
 

@@ -81,7 +81,7 @@ public class ClaimCommand implements TabExecutor {
             }
             return;
         }
-        messages.sendMessage(sender, "claim.notallowedinworld");
+        messages.sendMessage(sender, "claim.world.notallowed");
     }
 
     @Override

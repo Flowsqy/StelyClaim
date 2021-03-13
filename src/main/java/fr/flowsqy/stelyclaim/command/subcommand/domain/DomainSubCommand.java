@@ -44,13 +44,13 @@ public abstract class DomainSubCommand extends RegionSubCommand {
             final String worldName = player.getWorld().getName();
             final RegionManager regionManager = getRegionManager(worldName);
             if(regionManager == null){
-                messages.sendMessage(player, "claim.worldnothandle", "%world%", worldName);
+                messages.sendMessage(player, "claim.world.nothandle", "%world%", worldName);
                 return true;
             }
 
             final ProtectedRegion region = regionManager.getRegion(regionName);
             if(region == null){
-                messages.sendMessage(player, "claim.notexist" + (ownRegion ? "" : "other"), "%region%", "%world%", regionName, worldName);
+                messages.sendMessage(player, "claim.exist.not" + (ownRegion ? "" : "-other"), "%region%", "%world%", regionName, worldName);
                 return true;
             }
 

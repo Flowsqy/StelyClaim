@@ -19,7 +19,7 @@ public class AddMemberSubCommand extends DomainSubCommand {
         if(domain.contains(targetPlayer)) {
             messages.sendMessage(
                     sender,
-                    "claim.alreadymember" + (ownRegion ? "" : "other"),
+                    "claim.domain.member.already" + (ownRegion ? "" : "-other"),
                     "%region%", "%target%",
                     regionName, targetPlayer
             );
@@ -28,7 +28,7 @@ public class AddMemberSubCommand extends DomainSubCommand {
         domain.addPlayer(targetPlayer);
         messages.sendMessage(
                 sender,
-                "claim.addmember" + (ownRegion ? "" : "other"),
+                "claim.command.addmember" + (ownRegion ? "" : "-other"),
                 "%region%", "%target%",
                 regionName, targetPlayer
         );

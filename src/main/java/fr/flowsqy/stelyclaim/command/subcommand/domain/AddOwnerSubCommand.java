@@ -18,7 +18,7 @@ public class AddOwnerSubCommand extends DomainSubCommand {
         if(domain.contains(targetPlayer)) {
             messages.sendMessage(
                     sender,
-                    "claim.alreadyowner" + (ownRegion ? "" : "other"),
+                    "claim.domain.owner.already" + (ownRegion ? "" : "-other"),
                     "%region%", "%target%",
                     regionName, targetPlayer
             );
@@ -27,7 +27,7 @@ public class AddOwnerSubCommand extends DomainSubCommand {
         domain.addPlayer(targetPlayer);
         messages.sendMessage(
                 sender,
-                "claim.addowner" + (ownRegion ? "" : "other"),
+                "claim.command.addowner" + (ownRegion ? "" : "-other"),
                 "%region%", "%target%",
                 regionName, targetPlayer
         );

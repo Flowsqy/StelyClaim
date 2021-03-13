@@ -42,7 +42,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
     private final int minY;
     private final Map<String, PillarData> pillarData;
 
-    private final String pillarMessage;
+    protected final String pillarMessage;
     private final TextComponent pillarNWTxtCpnt;
     private final TextComponent pillarNETxtCpnt;
     private final TextComponent pillarSWTxtCpnt;
@@ -117,12 +117,12 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         try {
             selection = session.getSelection(world);
         }catch (IncompleteRegionException exception){
-            messages.sendMessage(player, "claim.noselection");
+            messages.sendMessage(player, "claim.selection.empty");
             return;
         }
 
         if(!(selection instanceof CuboidRegion)){
-            messages.sendMessage(player, "claim.notcuboid");
+            messages.sendMessage(player, "claim.selection.cuboid");
             return;
         }
 
@@ -138,14 +138,14 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         }
 
         if(!ownRegion && !player.hasPermission(getPermission()+"-other")){
-            messages.sendMessage(player, "help."+getPermission());
+            messages.sendMessage(player, "help."+getName());
             return;
         }
 
         final RegionManager regionManager = getRegionManager(world);
         if(regionManager == null){
             messages.sendMessage(player,
-                    "claim.worldnothandle",
+                    "claim.world.nothandle",
                     "%world%", world.getName());
             return;
         }
@@ -182,14 +182,14 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
                 overlapSame = true;
                 continue;
             }
-            if(builder.length() != 0)
+            if(builder.length() > 0)
                 builder.append(", ");
 
             builder.append(overlapRegion.getId());
         }
 
         if(builder.length() != 0){
-            messages.sendMessage(player, "claim.overlap", "%regions%", builder.toString());
+            messages.sendMessage(player, "claim.selection.overlap", "%regions%", builder.toString());
             return;
         }
 
@@ -343,14 +343,14 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
         // Greeting flag
         final String greeting = messages.getMessage(
-                "claim.selection."+category+".greeting",
+                "claim.selection-flag."+category+".greeting",
                 "%region%", regionNameWithCase
         );
         newRegion.setFlag(Flags.GREET_MESSAGE, greeting);
 
         // Farewell flag
         final String farewell = messages.getMessage(
-                "claim.selection."+category+".farewell",
+                "claim.selection-flag."+category+".farewell",
                 "%region%", regionNameWithCase
         );
         newRegion.setFlag(Flags.FAREWELL_MESSAGE, farewell);
