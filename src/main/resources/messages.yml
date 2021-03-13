@@ -76,6 +76,7 @@ claim:
   addowner-target: "%prefix% &a%sender% &6viens d'ajouter &a%target% &6aux propriétaires de ton claim"
   removeowner-target: "%prefix% &a%sender% &6viens de retirer &a%target% &6des propriétaires de ton claim"
   remove-target: "%prefix% &a%sender% &6viens de supprimer ton claim"
+  global: "%prefix% &cTu ne peux pas interagir avec la région globale"
   selection:
     define:
       greeting: "&6Vous rentrez dans le claim de &a%region%"
@@ -83,6 +84,31 @@ claim:
     redefine:
       greeting: "&6Vous rentrez dans le claim de &a%region%"
       farewell: "&6Vous sortez du claim de &a%region%"
+  info:
+    message: "
+    &7==========%prefix%&7==========
+    \n &6Claim: &a%region%
+    \n &6Propriétaires:
+    \n  &7Joueurs: &a%owner-players%
+    \n  &7Groupes: &a%owner-groups%
+    \n &6Membres:
+    \n  &7Joueurs: &a%member-players%
+    \n  &7Groupes: &a%member-groups%
+    \n &6Flags: &a%flags%
+    \n &6Taille: &a%size%
+    "
+    owner-player:
+      separator: "&7, &a"
+      empty: "&cAucun"
+    owner-group:
+      separator: "&7, &a"
+      empty: "&cAucun"
+    member-player:
+      separator: "&7, &a"
+      empty: "&cAucun"
+    member-group:
+      separator: "&7, &a"
+      empty: "&cAucun"
 
 pillar:
   message: "&6Acceder au pillier %northwest%&6, %northeast%&6, %southwest%&6, %southeast%&6 et à %current%"
