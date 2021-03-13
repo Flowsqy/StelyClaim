@@ -353,7 +353,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
                 "claim.selection."+category+".farewell",
                 "%region%", regionNameWithCase
         );
-        newRegion.setFlag(Flags.FAREWELL_MESSAGE, greeting);
+        newRegion.setFlag(Flags.FAREWELL_MESSAGE, farewell);
 
     }
 
