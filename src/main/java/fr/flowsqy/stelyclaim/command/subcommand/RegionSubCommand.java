@@ -37,16 +37,16 @@ public abstract class RegionSubCommand extends SubCommand{
         regionContainer = plugin.getRegionContainer();
     }
 
-    protected final RegionManager getRegionContainer(String worldName){
+    protected final RegionManager getRegionManager(String worldName){
         return regionContainer.get(new WorldName(worldName));
     }
 
-    protected final RegionManager getRegionContainer(com.sk89q.worldedit.world.World world){
+    protected final RegionManager getRegionManager(com.sk89q.worldedit.world.World world){
         return regionContainer.get(world);
     }
 
-    protected final RegionManager getRegionContainer(World world){
-        return getRegionContainer(world.getName());
+    protected final RegionManager getRegionManager(World world){
+        return getRegionManager(world.getName());
     }
 
     private static final class WorldName implements com.sk89q.worldedit.world.World {

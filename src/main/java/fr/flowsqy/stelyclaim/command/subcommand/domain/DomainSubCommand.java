@@ -42,7 +42,7 @@ public abstract class DomainSubCommand extends RegionSubCommand {
     private boolean checkRegion(Player player, String regionName, boolean ownRegion, String targetName){
         if(ownRegion || player.hasPermission(getPermission()+"-other")){
             final String worldName = player.getWorld().getName();
-            final RegionManager regionManager = getRegionContainer(worldName);
+            final RegionManager regionManager = getRegionManager(worldName);
             if(regionManager == null){
                 messages.sendMessage(player, "claim.worldnothandle", "%world%", worldName);
                 return true;

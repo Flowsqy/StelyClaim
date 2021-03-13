@@ -142,7 +142,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
             return;
         }
 
-        final RegionManager regionManager = getRegionContainer(world);
+        final RegionManager regionManager = getRegionManager(world);
         if(regionManager == null){
             messages.sendMessage(player,
                     "claim.worldnothandle",

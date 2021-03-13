@@ -51,7 +51,7 @@ public abstract class InteractSubCommand extends RegionSubCommand {
 
         final World world = player.getWorld();
 
-        final RegionManager regionManager = getRegionContainer(world);
+        final RegionManager regionManager = getRegionManager(world);
         if(regionManager == null){
             messages.sendMessage(player,
                     "claim.worldnothandle",
