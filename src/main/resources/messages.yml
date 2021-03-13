@@ -12,7 +12,7 @@ bedrock:
 help:
   help: '%prefix% &6/claim help [Commande]'
   define: '%prefix% &6/claim define'
-  define-other:  '%prefix% &6/claim define [Claim]'
+  define-other: '%prefix% &6/claim define [Claim]'
   redefine: '%prefix% &6/claim redefine'
   redefine-other: '%prefix% &6/claim redefine [Claim]'
   addowner: '%prefix% &6/claim addowner <Joueur>'
@@ -120,22 +120,37 @@ claim:
       empty: "&cAucun"
 
 pillar:
-  message: "&6Acceder au pillier %northwest%&6, %northeast%&6, %southwest%&6, %southeast%&6 et à %current%"
-  northwest:
-    message: "&aNord Ouest"
-    hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Nord Ouest"
-  northeast:
-    message: "&aNord Est"
-    hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Nord Est"
-  southwest:
-    message: "&aSud Ouest"
-    hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Sud Ouest"
-  southeast:
-    message: "&aSud Est"
-    hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Sud Est"
-  current:
-    message: "&ata position actuelle"
-    hover: "&7En cliquant sur ce message tu seras directement téléporté à la position où tu as effectué la commande"
+  previous:
+    message: "&7Ancien pilliers: %northwest%&r&7, %northeast%&r&7, %southwest%&r&7, %southeast%&r&7"
+    northwest:
+      message: "&oNord Ouest"
+      hover: "&7En cliquant sur ce message tu seras directement téléporté à l'ancien pillier &8Nord Ouest"
+    northeast:
+      message: "&oNord Est"
+      hover: "&7En cliquant sur ce message tu seras directement téléporté à l'ancien pillier &8Nord Est"
+    southwest:
+      message: "&oSud Ouest"
+      hover: "&7En cliquant sur ce message tu seras directement téléporté à l'ancien pillier &8Sud Ouest"
+    southeast:
+      message: "&oSud Est"
+      hover: "&7En cliquant sur ce message tu seras directement téléporté à l'ancien pillier &8Sud Est"
+  new:
+    message: "&6Pilliers: %northwest%&6, %northeast%&6, %southwest%&6, %southeast%&6 et %current%"
+    northwest:
+      message: "&aNord Ouest"
+      hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Nord Ouest"
+    northeast:
+      message: "&aNord Est"
+      hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Nord Est"
+    southwest:
+      message: "&aSud Ouest"
+      hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Sud Ouest"
+    southeast:
+      message: "&aSud Est"
+      hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Sud Est"
+    current:
+      message: "&ata position actuelle"
+      hover: "&7En cliquant sur ce message tu seras directement téléporté à la position où tu as effectué la commande"
 
 ## Cette configuration là est aussi possible (une position par ligne)
 #

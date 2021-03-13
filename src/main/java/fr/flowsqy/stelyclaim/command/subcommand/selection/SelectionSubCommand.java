@@ -19,6 +19,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.subcommand.RegionSubCommand;
+import fr.flowsqy.stelyclaim.util.PillarCoordinate;
 import fr.flowsqy.stelyclaim.util.PillarData;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -40,9 +41,9 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
     private final boolean expandRegion;
     private final int maxY;
     private final int minY;
-    private final Map<String, PillarData> pillarData;
+    protected final Map<String, PillarData> pillarData;
 
-    protected final String pillarMessage;
+    private final String pillarMessage;
     private final TextComponent pillarNWTxtCpnt;
     private final TextComponent pillarNETxtCpnt;
     private final TextComponent pillarSWTxtCpnt;
@@ -59,13 +60,13 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         maxY = configuration.getInt("expand-selection-y.max", 255);
         minY = configuration.getInt("expand-selection-y.min", 0);
 
-        pillarMessage = messages.getMessage("pillar.message");
+        pillarMessage = messages.getMessage("pillar.new.message");
         if(pillarMessage != null) {
-            pillarNWTxtCpnt = createTextComponent("northwest");
-            pillarNETxtCpnt = createTextComponent("northeast");
-            pillarSWTxtCpnt = createTextComponent("southwest");
-            pillarSETxtCpnt = createTextComponent("southeast");
-            pillarCurrentTxtCpnt = createTextComponent("current");
+            pillarNWTxtCpnt = createTextComponent("new", "northwest");
+            pillarNETxtCpnt = createTextComponent("new", "northeast");
+            pillarSWTxtCpnt = createTextComponent("new", "southwest");
+            pillarSETxtCpnt = createTextComponent("new", "southeast");
+            pillarCurrentTxtCpnt = createTextComponent("new", "current");
         }
         else{
             pillarNWTxtCpnt = null;
@@ -76,8 +77,8 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         }
     }
 
-    private TextComponent createTextComponent(String direction){
-        final String message = messages.getMessage("pillar."+direction+".message");
+    protected TextComponent createTextComponent(String category, String direction){
+        final String message = messages.getMessage("pillar."+category+"."+direction+".message");
         final TextComponent textComponent = new TextComponent();
         if(message == null)
             return textComponent;
@@ -86,7 +87,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
                         TextComponent.fromLegacyText(message)
                 ))
         );
-        final String text = messages.getMessage("pillar."+direction+".hover");
+        final String text = messages.getMessage("pillar."+category+"."+direction+".hover");
         if(text != null){
             textComponent.setHoverEvent(
                     new HoverEvent(
@@ -200,41 +201,29 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         // Pillars manage
 
         if(pillarMessage != null) {
-            PillarData pillarData = this.pillarData.get(sender.getName());
+            final PillarCoordinate pillarCoordinate = new PillarCoordinate(newRegion, player.getWorld());
+            PillarData pillarData = this.pillarData.get(player.getName());
             if(pillarData == null){
                 pillarData = new PillarData();
-                this.pillarData.put(sender.getName(), pillarData);
+                this.pillarData.put(player.getName(), pillarData);
             }
-            final BlockVector3 maxPoint = newRegion.getMaximumPoint();
-            final BlockVector3 minPoint = newRegion.getMinimumPoint();
-
-            final int maxX = Math.max(maxPoint.getBlockX(), minPoint.getBlockX());
-            final int minX = Math.min(maxPoint.getBlockX(), minPoint.getBlockX());
-            final int maxZ = Math.max(maxPoint.getBlockZ(), minPoint.getBlockZ());
-            final int minZ = Math.min(maxPoint.getBlockZ(), minPoint.getBlockZ());
-
-            final org.bukkit.World pillarWorld = player.getWorld();
 
             final ComponentReplacer replacer = new ComponentReplacer(pillarMessage);
 
             if (pillarNWTxtCpnt != null) {
-                final Location pillar = new Location(pillarWorld, minX, 0, minZ, -45, 0);
-                sendPillarMessage("%northwest%", pillarNWTxtCpnt, pillar, pillarData, replacer);
+                buildPillarMessage("%northwest%", pillarNWTxtCpnt, pillarCoordinate.getNorthWestBlockLocation(), pillarData, replacer);
             }
             if (pillarNETxtCpnt != null) {
-                final Location pillar = new Location(pillarWorld, maxX, 0, minZ, 45, 0);
-                sendPillarMessage("%northeast%", pillarNETxtCpnt, pillar, pillarData, replacer);
+                buildPillarMessage("%northeast%", pillarNETxtCpnt, pillarCoordinate.getNorthEastBlockLocation(), pillarData, replacer);
             }
             if (pillarSWTxtCpnt != null) {
-                final Location pillar = new Location(pillarWorld, minX, 0, maxZ, -135, 0);
-                sendPillarMessage("%southwest%", pillarSWTxtCpnt, pillar, pillarData, replacer);
+                buildPillarMessage("%southwest%", pillarSWTxtCpnt, pillarCoordinate.getSouthWestBlockLocation(), pillarData, replacer);
             }
             if (pillarSETxtCpnt != null) {
-                final Location pillar = new Location(pillarWorld, maxX, 0, maxZ, 135, 0);
-                sendPillarMessage("%southeast%", pillarSETxtCpnt, pillar, pillarData, replacer);
+                buildPillarMessage("%southeast%", pillarSETxtCpnt, pillarCoordinate.getSouthEastBlockLocation(), pillarData, replacer);
             }
             if (pillarCurrentTxtCpnt != null) {
-                sendPillarMessage("%current%", pillarCurrentTxtCpnt, player.getLocation(), pillarData, replacer);
+                buildPillarMessage("%current%", pillarCurrentTxtCpnt, player.getLocation(), pillarData, replacer);
             }
 
             player.spigot().sendMessage(replacer.create());
@@ -254,57 +243,41 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
     protected abstract void manageRegion(Player player, ProtectedRegion region, ProtectedCuboidRegion newRegion, boolean ownRegion, RegionManager regionManager, String regionName);
 
-    private void sendPillarMessage(String regex, TextComponent textComponent, Location location, PillarData pillarData, ComponentReplacer replacer){
+    protected void buildPillarMessage(String regex, TextComponent textComponent, Location location, PillarData pillarData, ComponentReplacer replacer){
         final String id = pillarData.registerLocation(location);
         final TextComponent component = textComponent.duplicate();
         component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claim pillar " + id));
         replacer.replace(regex, new TextComponent[]{component});
     }
 
-    protected final void configModifyRegion(ProtectedRegion newRegion, String category, Player sender, String regionNameWithCase){
+    protected final void configModifyRegion(ProtectedCuboidRegion newRegion, String category, Player sender, String regionNameWithCase){
         final Configuration config = plugin.getConfiguration();
 
         // Teleportation flag
         final String setTp = config.getString(category + ".set-tp");
         if(setTp != null){
+            final PillarCoordinate pillarCoordinate = new PillarCoordinate(newRegion, sender.getWorld());
             final Location location;
-            final BlockVector3 maxPoint = newRegion.getMaximumPoint();
-            final BlockVector3 minPoint = newRegion.getMinimumPoint();
 
-            final int maxX = Math.max(maxPoint.getBlockX(), minPoint.getBlockX());
-            final int minX = Math.min(maxPoint.getBlockX(), minPoint.getBlockX());
-            final int maxZ = Math.max(maxPoint.getBlockZ(), minPoint.getBlockZ());
-            final int minZ = Math.min(maxPoint.getBlockZ(), minPoint.getBlockZ());
-
-            final org.bukkit.World world = sender.getWorld();
-            final boolean pillar;
             switch (setTp) {
                 case "here":
                     location = sender.getLocation();
-                    pillar = false;
                     break;
                 case "northwest":
-                    location = new Location(world, minX, 0, minZ, -45, 0);
-                    pillar = true;
+                    location = pillarCoordinate.getNorthWestLocation();
                     break;
                 case "northeast":
-                    location = new Location(world, maxX, 0, minZ, 45, 0);
-                    pillar = true;
+                    location = pillarCoordinate.getNorthEastLocation();
                     break;
                 case "southwest":
-                    location = new Location(world, minX, 0, maxZ, -135, 0);
-                    pillar = true;
+                    location = pillarCoordinate.getSouthWestLocation();
                     break;
                 case "southeast":
-                    location = new Location(world, maxX, 0, maxZ, 135, 0);
-                    pillar = true;
+                    location = pillarCoordinate.getSouthEastLocation();
                     break;
                 default:
                     location = null;
-                    pillar = false;
             }
-            if(pillar)
-                location.add(0.5, world.getHighestBlockYAt(location) + 3, 0.5);
 
             if(location != null)
                 newRegion.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(location));
