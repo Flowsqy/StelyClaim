@@ -1,7 +1,7 @@
 package fr.flowsqy.stelyclaim.util;
 
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -13,7 +13,7 @@ public class PillarCoordinate {
     private final int maxZ;
     private final int minZ;
 
-    public PillarCoordinate(ProtectedCuboidRegion region, World world) {
+    public PillarCoordinate(ProtectedRegion region, World world) {
         this.world = world;
         final BlockVector3 maxPoint = region.getMaximumPoint();
         final BlockVector3 minPoint = region.getMinimumPoint();

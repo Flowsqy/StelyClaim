@@ -121,21 +121,22 @@ claim:
 
 pillar:
   previous:
-    message: "&7Ancien pilliers: %northwest%&r&7, %northeast%&r&7, %southwest%&r&7, %southeast%&r&7"
+    message: "&7Ancien pilliers: %northwest%&7, %northeast%&7, %southwest%&7, %southeast%&7"
     northwest:
-      message: "&oNord Ouest"
+      message: "&7&oNord Ouest&r"
       hover: "&7En cliquant sur ce message tu seras directement téléporté à l'ancien pillier &8Nord Ouest"
     northeast:
-      message: "&oNord Est"
+      message: "&7&oNord Est&r"
       hover: "&7En cliquant sur ce message tu seras directement téléporté à l'ancien pillier &8Nord Est"
     southwest:
-      message: "&oSud Ouest"
+      message: "&7&oSud Ouest&r"
       hover: "&7En cliquant sur ce message tu seras directement téléporté à l'ancien pillier &8Sud Ouest"
     southeast:
-      message: "&oSud Est"
+      message: "&7&oSud Est&r"
       hover: "&7En cliquant sur ce message tu seras directement téléporté à l'ancien pillier &8Sud Est"
   new:
-    message: "&6Pilliers: %northwest%&6, %northeast%&6, %southwest%&6, %southeast%&6 et %current%"
+    message: "&6Pilliers: %northwest%&6, %northeast%&6, %southwest%&6, %southeast%&6
+     \n%current%"
     northwest:
       message: "&aNord Ouest"
       hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Nord Ouest"
@@ -149,7 +150,7 @@ pillar:
       message: "&aSud Est"
       hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Sud Est"
     current:
-      message: "&ata position actuelle"
+      message: "&6&oTa position actuelle&r"
       hover: "&7En cliquant sur ce message tu seras directement téléporté à la position où tu as effectué la commande"
 
 ## Cette configuration là est aussi possible (une position par ligne)

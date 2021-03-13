@@ -65,7 +65,7 @@ public class RedefineSubCommand extends SelectionSubCommand {
         // Previous pillar manage
 
         if(pillarMessage != null) {
-            final PillarCoordinate pillarCoordinate = new PillarCoordinate(newRegion, player.getWorld());
+            final PillarCoordinate pillarCoordinate = new PillarCoordinate(region, player.getWorld());
             PillarData pillarData = this.pillarData.get(player.getName());
             if(pillarData == null){
                 pillarData = new PillarData();

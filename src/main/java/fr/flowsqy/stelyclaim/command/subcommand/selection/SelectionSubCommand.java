@@ -316,14 +316,14 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
         // Greeting flag
         final String greeting = messages.getMessage(
-                "claim.selection-flag."+category+".greeting",
+                "claim.selection-flags."+category+".greeting",
                 "%region%", regionNameWithCase
         );
         newRegion.setFlag(Flags.GREET_MESSAGE, greeting);
 
         // Farewell flag
         final String farewell = messages.getMessage(
-                "claim.selection-flag."+category+".farewell",
+                "claim.selection-flags."+category+".farewell",
                 "%region%", regionNameWithCase
         );
         newRegion.setFlag(Flags.FAREWELL_MESSAGE, farewell);
