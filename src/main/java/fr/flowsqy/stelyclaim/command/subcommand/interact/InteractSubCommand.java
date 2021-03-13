@@ -2,6 +2,7 @@ package fr.flowsqy.stelyclaim.command.subcommand.interact;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionType;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.subcommand.RegionSubCommand;
 import org.bukkit.Bukkit;
@@ -62,6 +63,10 @@ public abstract class InteractSubCommand extends RegionSubCommand {
         final ProtectedRegion region = regionManager.getRegion(regionName);
         if(region == null){
             messages.sendMessage(player, "claim.notexist" + (ownRegion ? "" : "other"), "%region%", regionName);
+            return;
+        }
+        if(region.getType() == RegionType.GLOBAL){
+            messages.sendMessage(player, "claim.global");
             return;
         }
 
