@@ -39,6 +39,26 @@ public class PillarCoordinate {
         }
     }
 
+    public World getWorld() {
+        return world;
+    }
+
+    public int getMaxX() {
+        return maxX;
+    }
+
+    public int getMinX() {
+        return minX;
+    }
+
+    public int getMaxZ() {
+        return maxZ;
+    }
+
+    public int getMinZ() {
+        return minZ;
+    }
+
     public Location getNorthWestBlockLocation(){
         return new Location(world, minX, 0, minZ, -45, 0);
     }

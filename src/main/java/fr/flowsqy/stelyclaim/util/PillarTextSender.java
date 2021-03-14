@@ -73,9 +73,12 @@ public class PillarTextSender {
         return textComponent;
     }
 
-    public boolean sendMessage(Player player, ProtectedRegion newRegion){
+    public ComponentReplacer getReplacer(Player player, ProtectedRegion newRegion){
+        return getReplacer(player, new PillarCoordinate(newRegion, player.getWorld()));
+    }
+
+    public ComponentReplacer getReplacer(Player player, PillarCoordinate pillarCoordinate){
         if(baseMessage != null) {
-            final PillarCoordinate pillarCoordinate = new PillarCoordinate(newRegion, player.getWorld());
             PillarData pillarData = this.pillarData.get(player.getName());
             if(pillarData == null){
                 pillarData = new PillarData();
@@ -100,6 +103,18 @@ public class PillarTextSender {
                 buildPillarMessage("%current%", currentTxtCpnt, player.getLocation(), pillarData, replacer);
             }
 
+            return replacer;
+        }
+        return null;
+    }
+
+    public boolean sendMessage(Player player, ProtectedRegion newRegion){
+        return sendMessage(player, new PillarCoordinate(newRegion, player.getWorld()));
+    }
+
+    public boolean sendMessage(Player player, PillarCoordinate pillarCoordinate){
+        final ComponentReplacer replacer = getReplacer(player, pillarCoordinate);
+        if(replacer != null){
             player.spigot().sendMessage(replacer.create());
             return true;
         }

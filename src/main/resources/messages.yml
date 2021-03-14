@@ -103,8 +103,12 @@ claim:
     \n &6Membres:
     \n  &7Joueurs: &a%member-players%
     \n  &7Groupes: &a%member-groups%
-    \n &6Flags: &a%flags%
-    \n &6Taille: &a%size%
+    \n &6Taille: &ax: %x-size%&6, &ay: %y-size%&6, &az: %z-size%
+    \n &6Pilliers:
+    &aNO&7(%northwest-x%;%northwest-z%)&6,
+    &aNE&7(%northeast-x%;%northeast-z%)&6,
+    &aSO&7(%southwest-x%;%southwest-z%)&6,
+    &aSE&7(%southeast-x%;%southeast-z%)
     "
     owner-player:
       separator: "&7, &a"

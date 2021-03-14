@@ -4,7 +4,9 @@ import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.util.PillarCoordinate;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -51,10 +53,16 @@ public class InfoSubCommand extends InteractSubCommand {
                 memberPlayerEmpty, memberGroupEmpty
         );
 
+        final PillarCoordinate pillarCoordinate = new PillarCoordinate(region, player.getWorld());
+
+        message = replaceSize(message, pillarCoordinate, region);
+
+        message = replacePillar(message, pillarCoordinate);
+
         player.sendMessage(message);
     }
-    
-    protected String replaceDomainInfo(
+
+    private String replaceDomainInfo(
             String message,
             DefaultDomain domain,
             String player, String group,
@@ -69,7 +77,7 @@ public class InfoSubCommand extends InteractSubCommand {
                 .replace(group, groupBuilder.length() == 0 ? emptyGroup : groupBuilder);
     }
     
-    protected void getDomainInfo(DefaultDomain domain, StringBuilder player, StringBuilder group, String memberSeparator, String groupSeparator){
+    private void getDomainInfo(DefaultDomain domain, StringBuilder player, StringBuilder group, String memberSeparator, String groupSeparator){
         for(String memberPlayer : domain.getPlayers()){
             if(player.length() > 0){
                 player.append(memberSeparator);
@@ -90,5 +98,35 @@ public class InfoSubCommand extends InteractSubCommand {
         }
     }
 
+    private String replaceSize(String message, PillarCoordinate pillarCoordinate, ProtectedRegion region){
+        final int xSize = pillarCoordinate.getMaxX() - pillarCoordinate.getMinX() + 1;
+        final int zSize = pillarCoordinate.getMaxZ() - pillarCoordinate.getMinZ() + 1;
+
+        final int maxY = region.getMaximumPoint().getBlockY();
+        final int minY = region.getMinimumPoint().getBlockY();
+        final int ySize = ((maxY > minY) ? (maxY - minY) : (minY - maxY)) + 1;
+
+        return message
+                .replace("%x-size%", String.valueOf(xSize))
+                .replace("%y-size%", String.valueOf(ySize))
+                .replace("%z-size%", String.valueOf(zSize));
+    }
+
+    private String replacePillar(String message, PillarCoordinate pillarCoordinate) {
+        final Location northwest = pillarCoordinate.getNorthWestBlockLocation();
+        final Location northeast = pillarCoordinate.getNorthEastBlockLocation();
+        final Location southwest = pillarCoordinate.getSouthWestBlockLocation();
+        final Location southeast = pillarCoordinate.getSouthEastBlockLocation();
+
+        return message
+                .replace("%northwest-x%", String.valueOf(northwest.getBlockX()))
+                .replace("%northwest-z%", String.valueOf(northwest.getBlockZ()))
+                .replace("%northeast-x%", String.valueOf(northeast.getBlockX()))
+                .replace("%northeast-z%", String.valueOf(northeast.getBlockZ()))
+                .replace("%southwest-x%", String.valueOf(southwest.getBlockX()))
+                .replace("%southwest-z%", String.valueOf(southwest.getBlockZ()))
+                .replace("%southeast-x%", String.valueOf(southeast.getBlockX()))
+                .replace("%southeast-z%", String.valueOf(southeast.getBlockZ()));
+    }
 
 }
