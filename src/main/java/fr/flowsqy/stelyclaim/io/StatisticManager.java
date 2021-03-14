@@ -40,8 +40,14 @@ public class StatisticManager {
             final ConfigurationSection section = (ConfigurationSection) entry.getValue();
             final Map<String, Integer> stats = new HashMap<>();
             for(Map.Entry<String, Object> commandEntry : section.getValues(false).entrySet()){
-                if(commands.contains(commandEntry.getKey()) && commandEntry.getValue() instanceof Integer){
-                    stats.put(commandEntry.getKey(), (Integer) commandEntry.getValue());
+                final int value;
+                try{
+                    value = Integer.parseInt(commandEntry.getValue().toString());
+                }catch (NumberFormatException ignored){
+                    continue;
+                }
+                if(commands.contains(commandEntry.getKey())){
+                    stats.put(commandEntry.getKey(), value);
                 }
             }
             if(!stats.isEmpty())

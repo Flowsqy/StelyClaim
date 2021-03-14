@@ -68,6 +68,8 @@ public class StelyClaimPlugin extends JavaPlugin {
         new DisconnectListener(this);
 
         new CommandManager(this);
+
+        this.statisticManager.initData();
     }
 
     private boolean checkDataFolder(File dataFolder) {
