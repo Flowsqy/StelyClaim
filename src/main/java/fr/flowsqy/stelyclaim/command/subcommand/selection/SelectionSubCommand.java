@@ -16,15 +16,10 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.subcommand.RegionSubCommand;
 import fr.flowsqy.stelyclaim.util.PillarCoordinate;
-import fr.flowsqy.stelyclaim.util.PillarData;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
+import fr.flowsqy.stelyclaim.util.PillarTextSender;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -32,7 +27,9 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public abstract class SelectionSubCommand extends RegionSubCommand {
@@ -41,62 +38,19 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
     private final boolean expandRegion;
     private final int maxY;
     private final int minY;
-    protected final Map<String, PillarData> pillarData;
 
-    private final String pillarMessage;
-    private final TextComponent pillarNWTxtCpnt;
-    private final TextComponent pillarNETxtCpnt;
-    private final TextComponent pillarSWTxtCpnt;
-    private final TextComponent pillarSETxtCpnt;
-    private final TextComponent pillarCurrentTxtCpnt;
+    private final PillarTextSender newPillarTxtSender;
 
     public SelectionSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         super(plugin, name, alias, permission, console, allowedWorlds, statistic);
         this.sessionManager = plugin.getSessionManager();
-        this.pillarData = plugin.getPillarData();
 
         final Configuration configuration = plugin.getConfiguration();
         expandRegion = configuration.getBoolean("expand-selection-y.expand", false);
         maxY = configuration.getInt("expand-selection-y.max", 255);
         minY = configuration.getInt("expand-selection-y.min", 0);
 
-        pillarMessage = messages.getMessage("pillar.new.message");
-        if(pillarMessage != null) {
-            pillarNWTxtCpnt = createTextComponent("new", "northwest");
-            pillarNETxtCpnt = createTextComponent("new", "northeast");
-            pillarSWTxtCpnt = createTextComponent("new", "southwest");
-            pillarSETxtCpnt = createTextComponent("new", "southeast");
-            pillarCurrentTxtCpnt = createTextComponent("new", "current");
-        }
-        else{
-            pillarNWTxtCpnt = null;
-            pillarNETxtCpnt = null;
-            pillarSWTxtCpnt = null;
-            pillarSETxtCpnt = null;
-            pillarCurrentTxtCpnt = null;
-        }
-    }
-
-    protected TextComponent createTextComponent(String category, String direction){
-        final String message = messages.getMessage("pillar."+category+"."+direction+".message");
-        final TextComponent textComponent = new TextComponent();
-        if(message == null)
-            return textComponent;
-        textComponent.setExtra(
-                new ArrayList<>(Arrays.asList(
-                        TextComponent.fromLegacyText(message)
-                ))
-        );
-        final String text = messages.getMessage("pillar."+category+"."+direction+".hover");
-        if(text != null){
-            textComponent.setHoverEvent(
-                    new HoverEvent(
-                            HoverEvent.Action.SHOW_TEXT,
-                            new Text(text)
-                    )
-            );
-        }
-        return textComponent;
+        this.newPillarTxtSender = new PillarTextSender(messages, "new", plugin.getPillarData());
     }
 
     @Override
@@ -200,34 +154,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
         // Pillars manage
 
-        if(pillarMessage != null) {
-            final PillarCoordinate pillarCoordinate = new PillarCoordinate(newRegion, player.getWorld());
-            PillarData pillarData = this.pillarData.get(player.getName());
-            if(pillarData == null){
-                pillarData = new PillarData();
-                this.pillarData.put(player.getName(), pillarData);
-            }
-
-            final ComponentReplacer replacer = new ComponentReplacer(pillarMessage);
-
-            if (pillarNWTxtCpnt != null) {
-                buildPillarMessage("%northwest%", pillarNWTxtCpnt, pillarCoordinate.getNorthWestBlockLocation(), pillarData, replacer);
-            }
-            if (pillarNETxtCpnt != null) {
-                buildPillarMessage("%northeast%", pillarNETxtCpnt, pillarCoordinate.getNorthEastBlockLocation(), pillarData, replacer);
-            }
-            if (pillarSWTxtCpnt != null) {
-                buildPillarMessage("%southwest%", pillarSWTxtCpnt, pillarCoordinate.getSouthWestBlockLocation(), pillarData, replacer);
-            }
-            if (pillarSETxtCpnt != null) {
-                buildPillarMessage("%southeast%", pillarSETxtCpnt, pillarCoordinate.getSouthEastBlockLocation(), pillarData, replacer);
-            }
-            if (pillarCurrentTxtCpnt != null) {
-                buildPillarMessage("%current%", pillarCurrentTxtCpnt, player.getLocation(), pillarData, replacer);
-            }
-
-            player.spigot().sendMessage(replacer.create());
-        }
+        newPillarTxtSender.sendMessage(player, newRegion);
 
         // Mail manage
 
@@ -242,13 +169,6 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
     protected void checkIntegrateRegion(boolean overlapSame, Player player){}
 
     protected abstract void manageRegion(Player player, ProtectedRegion region, ProtectedCuboidRegion newRegion, boolean ownRegion, RegionManager regionManager, String regionName);
-
-    protected void buildPillarMessage(String regex, TextComponent textComponent, Location location, PillarData pillarData, ComponentReplacer replacer){
-        final String id = pillarData.registerLocation(location);
-        final TextComponent component = textComponent.duplicate();
-        component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claim pillar " + id));
-        replacer.replace(regex, new TextComponent[]{component});
-    }
 
     protected final void configModifyRegion(ProtectedCuboidRegion newRegion, String category, Player sender, String regionNameWithCase){
         final Configuration config = plugin.getConfiguration();

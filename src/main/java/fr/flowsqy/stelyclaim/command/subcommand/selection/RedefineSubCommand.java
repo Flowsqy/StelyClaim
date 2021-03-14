@@ -3,38 +3,20 @@ package fr.flowsqy.stelyclaim.command.subcommand.selection;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.util.PillarCoordinate;
-import fr.flowsqy.stelyclaim.util.PillarData;
-import net.md_5.bungee.api.chat.TextComponent;
+import fr.flowsqy.stelyclaim.util.PillarTextSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public class RedefineSubCommand extends SelectionSubCommand {
 
-    private final String pillarMessage;
-    private final TextComponent pillarNWTxtCpnt;
-    private final TextComponent pillarNETxtCpnt;
-    private final TextComponent pillarSWTxtCpnt;
-    private final TextComponent pillarSETxtCpnt;
+    private final PillarTextSender previousPillarTxtSender;
 
     public RedefineSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         super(plugin, name, alias, permission, console, allowedWorlds, statistic);
-        pillarMessage = messages.getMessage("pillar.previous.message");
-        if(pillarMessage != null) {
-            pillarNWTxtCpnt = createTextComponent("previous", "northwest");
-            pillarNETxtCpnt = createTextComponent("previous", "northeast");
-            pillarSWTxtCpnt = createTextComponent("previous", "southwest");
-            pillarSETxtCpnt = createTextComponent("previous", "southeast");
-        }
-        else{
-            pillarNWTxtCpnt = null;
-            pillarNETxtCpnt = null;
-            pillarSWTxtCpnt = null;
-            pillarSETxtCpnt = null;
-        }
+
+        this.previousPillarTxtSender = new PillarTextSender(messages, "previous", plugin.getPillarData());
     }
 
     @Override
@@ -64,30 +46,6 @@ public class RedefineSubCommand extends SelectionSubCommand {
 
         // Previous pillar manage
 
-        if(pillarMessage != null) {
-            final PillarCoordinate pillarCoordinate = new PillarCoordinate(region, player.getWorld());
-            PillarData pillarData = this.pillarData.get(player.getName());
-            if(pillarData == null){
-                pillarData = new PillarData();
-                this.pillarData.put(player.getName(), pillarData);
-            }
-
-            final ComponentReplacer replacer = new ComponentReplacer(pillarMessage);
-
-            if (pillarNWTxtCpnt != null) {
-                buildPillarMessage("%northwest%", pillarNWTxtCpnt, pillarCoordinate.getNorthWestBlockLocation(), pillarData, replacer);
-            }
-            if (pillarNETxtCpnt != null) {
-                buildPillarMessage("%northeast%", pillarNETxtCpnt, pillarCoordinate.getNorthEastBlockLocation(), pillarData, replacer);
-            }
-            if (pillarSWTxtCpnt != null) {
-                buildPillarMessage("%southwest%", pillarSWTxtCpnt, pillarCoordinate.getSouthWestBlockLocation(), pillarData, replacer);
-            }
-            if (pillarSETxtCpnt != null) {
-                buildPillarMessage("%southeast%", pillarSETxtCpnt, pillarCoordinate.getSouthEastBlockLocation(), pillarData, replacer);
-            }
-
-            player.spigot().sendMessage(replacer.create());
-        }
+        previousPillarTxtSender.sendMessage(player, region);
     }
 }

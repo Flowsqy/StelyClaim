@@ -155,7 +155,7 @@ pillar:
 
 ## Cette configuration là est aussi possible (une position par ligne)
 #
-#pillar:
+#
 #  message: "%northwest%\n%northeast%\n%southwest%\n%southeast%\n%current%"
 #  northwest:
 #    message: "&6Acceder au pillier &aNord Ouest"
