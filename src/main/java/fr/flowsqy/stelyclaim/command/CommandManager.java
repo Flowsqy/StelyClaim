@@ -1,12 +1,11 @@
 package fr.flowsqy.stelyclaim.command;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.io.Messages;
 import org.bukkit.command.PluginCommand;
 
 public class CommandManager {
 
-    public CommandManager(StelyClaimPlugin plugin, Messages messages) {
+    public CommandManager(StelyClaimPlugin plugin) {
 
         final PluginCommand claimCmd = plugin.getCommand("claim");
         final PluginCommand bedrockCmd = plugin.getCommand("bedrock");
@@ -14,7 +13,7 @@ public class CommandManager {
         assert claimCmd != null;
         assert bedrockCmd != null;
 
-        final String configNoPerm = messages.getMessage("util.noperm");
+        final String configNoPerm = plugin.getMessages().getMessage("util.noperm");
 
         claimCmd.setPermissionMessage(configNoPerm);
         bedrockCmd.setPermissionMessage(configNoPerm);

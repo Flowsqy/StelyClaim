@@ -7,6 +7,7 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import fr.flowsqy.stelyclaim.command.CommandManager;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
 import fr.flowsqy.stelyclaim.io.Messages;
+import fr.flowsqy.stelyclaim.io.StatisticManager;
 import fr.flowsqy.stelyclaim.util.DisconnectListener;
 import fr.flowsqy.stelyclaim.util.MailManager;
 import fr.flowsqy.stelyclaim.util.PillarData;
@@ -30,6 +31,7 @@ public class StelyClaimPlugin extends JavaPlugin {
     private YamlConfiguration configuration;
     private Messages messages;
     private BedrockManager breakManager;
+    private StatisticManager statisticManager;
     private RegionContainer regionContainer;
     private SessionManager sessionManager;
     private TeleportSync teleportSync;
@@ -56,7 +58,8 @@ public class StelyClaimPlugin extends JavaPlugin {
 
         this.configuration = initFile(dataFolder, "config.yml");
         this.messages = new Messages(initFile(dataFolder, "messages.yml"));
-        this.breakManager = new BedrockManager(getDataFolder());
+        this.breakManager = new BedrockManager(dataFolder);
+        this.statisticManager = new StatisticManager(dataFolder);
         this.regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
         this.sessionManager = WorldEdit.getInstance().getSessionManager();
         this.teleportSync = new TeleportSync(this);
@@ -64,7 +67,7 @@ public class StelyClaimPlugin extends JavaPlugin {
 
         new DisconnectListener(this);
 
-        new CommandManager(this, messages);
+        new CommandManager(this);
     }
 
     private boolean checkDataFolder(File dataFolder) {
@@ -95,6 +98,10 @@ public class StelyClaimPlugin extends JavaPlugin {
 
     public BedrockManager getBreakManager() {
         return breakManager;
+    }
+
+    public StatisticManager getStatisticManager() {
+        return statisticManager;
     }
 
     public RegionContainer getRegionContainer() {
