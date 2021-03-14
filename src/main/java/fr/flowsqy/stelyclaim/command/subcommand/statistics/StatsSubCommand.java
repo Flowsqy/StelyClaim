@@ -17,8 +17,8 @@ public class StatsSubCommand extends SubCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
-
+    public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
+        return true;
     }
 
     @Override

@@ -23,14 +23,14 @@ public abstract class InteractSubCommand extends RegionSubCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
+    public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
         if(size != 1 && size != 2){
             messages.sendMessage(sender,
                     "help."
                             + getName()
                             + (sender.hasPermission(getPermission()+"-other") ? "-other" : "")
             );
-            return;
+            return false;
         }
         final Player player = (Player) sender;
 
@@ -47,7 +47,7 @@ public abstract class InteractSubCommand extends RegionSubCommand {
 
         if(!ownRegion && !player.hasPermission(getPermission()+"-other")){
             messages.sendMessage(player, "help."+getName());
-            return;
+            return false;
         }
 
         final World world = player.getWorld();
@@ -57,23 +57,23 @@ public abstract class InteractSubCommand extends RegionSubCommand {
             messages.sendMessage(player,
                     "claim.world.nothandle",
                     "%world%", world.getName());
-            return;
+            return false;
         }
 
         final ProtectedRegion region = regionManager.getRegion(regionName);
         if(region == null){
             messages.sendMessage(player, "claim.exist.not" + (ownRegion ? "" : "-other"), "%region%", regionName);
-            return;
+            return false;
         }
         if(region.getType() == RegionType.GLOBAL){
             messages.sendMessage(player, "claim.interactglobal");
-            return;
+            return false;
         }
 
-        interactRegion(player, regionManager, region, ownRegion, regionName);
+        return interactRegion(player, regionManager, region, ownRegion, regionName);
     }
 
-    protected abstract void interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion, String regionName);
+    protected abstract boolean interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion, String regionName);
 
     @Override
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {

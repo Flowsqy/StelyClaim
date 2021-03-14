@@ -36,7 +36,7 @@ public class InfoSubCommand extends InteractSubCommand {
     }
 
     @Override
-    protected void interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion, String regionName) {
+    protected boolean interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion, String regionName) {
         String message = messages.getMessage("claim.info.message", "%region%", regionName);
         message = replaceDomainInfo(
                 message,
@@ -60,6 +60,8 @@ public class InfoSubCommand extends InteractSubCommand {
         message = replacePillar(message, pillarCoordinate);
 
         player.sendMessage(message);
+
+        return true;
     }
 
     private String replaceDomainInfo(

@@ -54,7 +54,7 @@ public abstract class SubCommand {
         return statistic;
     }
 
-    public abstract void execute(CommandSender sender, List<String> args, int size, boolean isPlayer);
+    public abstract boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer);
 
     public abstract List<String> tab(CommandSender sender, List<String> args, boolean isPlayer);
 

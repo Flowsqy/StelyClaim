@@ -25,28 +25,28 @@ public class PillarSubCommand extends SubCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
+    public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
         if(args.size() != 2){
             helpSubCommand.execute(sender, args, size, isPlayer);
-            return;
+            return false;
         }
         final PillarData pillarData = this.pillarData.get(sender.getName());
         if(pillarData == null){
             helpSubCommand.execute(sender, args, size, isPlayer);
-            return;
+            return false;
         }
         final String arg = args.get(1);
         if(arg.length() != 1){
             helpSubCommand.execute(sender, args, size, isPlayer);
-            return;
+            return false;
         }
         final Location loc = pillarData.getLocations().get(arg);
         if(loc == null){
             helpSubCommand.execute(sender, args, size, isPlayer);
-            return;
+            return false;
         }
         if(loc.getWorld() == null) // Normally impossible
-            return;
+            return false;
 
         final Location teleportLoc = loc.clone();
         if(teleportLoc.getX() == Math.floor(teleportLoc.getX())){
@@ -55,6 +55,7 @@ public class PillarSubCommand extends SubCommand {
             teleportLoc.add(0.5, 1, 0.5);
         }
         teleportSync.addTeleport((Player) sender, teleportLoc);
+        return true;
     }
 
     @Override

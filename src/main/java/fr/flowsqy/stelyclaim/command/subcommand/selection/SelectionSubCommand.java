@@ -54,14 +54,14 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
+    public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
         if(size != 1 && size != 2){
             messages.sendMessage(sender,
                     "help."
                             + getName()
                             + (sender.hasPermission(getPermission()+"-other") ? "-other" : "")
             );
-            return;
+            return false;
         }
         final Player player = (Player) sender;
 
@@ -73,12 +73,12 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
             selection = session.getSelection(world);
         }catch (IncompleteRegionException exception){
             messages.sendMessage(player, "claim.selection.empty");
-            return;
+            return false;
         }
 
         if(!(selection instanceof CuboidRegion)){
             messages.sendMessage(player, "claim.selection.cuboid");
-            return;
+            return false;
         }
 
         final String regionName;
@@ -94,7 +94,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
         if(!ownRegion && !player.hasPermission(getPermission()+"-other")){
             messages.sendMessage(player, "help."+getName());
-            return;
+            return false;
         }
 
         final RegionManager regionManager = getRegionManager(world);
@@ -102,12 +102,12 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
             messages.sendMessage(player,
                     "claim.world.nothandle",
                     "%world%", world.getName());
-            return;
+            return false;
         }
 
         final ProtectedRegion region = regionManager.getRegion(regionName);
         if(checkExistRegion(region != null, player, ownRegion, regionName, world.getName())){
-            return;
+            return false;
         }
 
         if(expandRegion) {
@@ -119,7 +119,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
                 );
             } catch (RegionOperationException e) {
                 messages.sendMessage(player, "util.error", "%error%", "ExpandSelection");
-                return;
+                return false;
             }
         }
 
@@ -145,7 +145,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
         if(builder.length() != 0){
             messages.sendMessage(player, "claim.selection.overlap", "%regions%", builder.toString());
-            return;
+            return false;
         }
 
         checkIntegrateRegion(overlapSame, player);
@@ -162,6 +162,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
             plugin.getMailManager().sendInfoToTarget(player, regionName, getName());
         }
 
+        return true;
     }
 
     protected abstract boolean checkExistRegion(boolean regionExist, Player player, boolean ownRegion, String regionName, String worldName);

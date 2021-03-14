@@ -21,7 +21,7 @@ public class HelpSubCommand extends SubCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
+    public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
         final int argsSize = args.size();
         if(argsSize > 2){
             // Wrong call
@@ -29,7 +29,7 @@ public class HelpSubCommand extends SubCommand {
             if(firstArg.equalsIgnoreCase(getName()) || firstArg.equalsIgnoreCase(getAlias())){
                 // Check if help was called to display only help's help
                 messages.sendMessage(sender, "help.help");
-                return;
+                return true;
             }
         }
         else if (argsSize == 2){
@@ -61,7 +61,7 @@ public class HelpSubCommand extends SubCommand {
                             sender.hasPermission(subCommand.getPermission()+"-other") ?
                                     "-other" : "";
                     messages.sendMessage(sender, "help." + subCommand.getName() + other);
-                    return;
+                    return true;
                 }
             }
         }
@@ -83,7 +83,7 @@ public class HelpSubCommand extends SubCommand {
                     .skip(1)
                     .filter(SubCommand::isConsole)
                     .forEach(cmd -> messages.sendMessage(sender, "help."+cmd.getName()+"-other"));
-
+        return true;
     }
 
     @Override
