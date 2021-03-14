@@ -123,6 +123,11 @@ claim:
       separator: "&7, &a"
       empty: "&cAucun"
 
+
+# 'previous' est le message pour les anciens pilliers lors d'un redefine
+# 'current' est le message pour les pilliers actuels lors d'un remove
+# 'new' est le message pour les nouveaux pilliers lors d'un define et d'un redefine
+
 pillar:
   previous:
     message: "&7Ancien pilliers: %northwest%&7, %northeast%&7, %southwest%&7, %southeast%&7"
@@ -138,6 +143,24 @@ pillar:
     southeast:
       message: "&7&oSud Est&r"
       hover: "&7En cliquant sur ce message tu seras directement téléporté à l'ancien pillier &8Sud Est"
+  current:
+    message: "&7Pilliers: %northwest%&7, %northeast%&7, %southwest%&7, %southeast%&7
+    \n%current%"
+    northwest:
+      message: "&7&oNord Ouest&r"
+      hover: "&7En cliquant sur ce message tu seras directement téléporté à l'ancien pillier &8Nord Ouest"
+    northeast:
+      message: "&7&oNord Est&r"
+      hover: "&7En cliquant sur ce message tu seras directement téléporté à l'ancien pillier &8Nord Est"
+    southwest:
+      message: "&7&oSud Ouest&r"
+      hover: "&7En cliquant sur ce message tu seras directement téléporté à l'ancien pillier &8Sud Ouest"
+    southeast:
+      message: "&7&oSud Est&r"
+      hover: "&7En cliquant sur ce message tu seras directement téléporté à l'ancien pillier &8Sud Est"
+    current:
+      message: "&7&oTa position actuelle&r"
+      hover: "&7En cliquant sur ce message tu seras directement téléporté à la position où tu as effectué la commande"
   new:
     message: "&6Pilliers: %northwest%&6, %northeast%&6, %southwest%&6, %southeast%&6
      \n%current%"
