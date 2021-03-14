@@ -59,7 +59,7 @@ public class StelyClaimPlugin extends JavaPlugin {
         this.configuration = initFile(dataFolder, "config.yml");
         this.messages = new Messages(initFile(dataFolder, "messages.yml"));
         this.breakManager = new BedrockManager(dataFolder);
-        this.statisticManager = new StatisticManager(dataFolder);
+        this.statisticManager = new StatisticManager(this, dataFolder);
         this.regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
         this.sessionManager = WorldEdit.getInstance().getSessionManager();
         this.teleportSync = new TeleportSync(this);

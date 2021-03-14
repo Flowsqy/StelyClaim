@@ -82,6 +82,7 @@ public class ClaimCommand implements TabExecutor {
             command.execute(sender, argsList, argsList.size(), isPlayer);
             if(command.isStatistic()) {
                 statisticManager.add(sender, command.getName());
+                statisticManager.saveTask();
             }
             return;
         }

@@ -1,9 +1,11 @@
 package fr.flowsqy.stelyclaim.io;
 
 import fr.flowsqy.stelyclaim.command.subcommand.SubCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,13 +16,17 @@ import java.util.Set;
 
 public class StatisticManager {
 
+    private final Plugin plugin;
     private final File file;
     private final YamlConfiguration config;
     private final Set<String> commands;
     private final Map<String, Map<String, Integer>> data;
 
-    public StatisticManager(File dataFolder){
-        this.file = new File(dataFolder, "bedrock.yml");
+    private boolean launch = false;
+
+    public StatisticManager(Plugin plugin, File dataFolder){
+        this.plugin = plugin;
+        this.file = new File(dataFolder, "statistics.yml");
         this.config = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
         this.commands = new HashSet<>();
         this.data = new HashMap<>();
@@ -41,6 +47,16 @@ public class StatisticManager {
             if(!stats.isEmpty())
                 data.put(entry.getKey(), stats);
         }
+    }
+
+    public void saveTask(){
+        if(launch)
+            return;
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () ->{
+            saveFile();
+            launch = false;
+        }, 20L);
+        launch = true;
     }
 
     public void saveFile() {
@@ -66,7 +82,7 @@ public class StatisticManager {
         if(!commands.contains(command))
             return -1;
         final Map<String, Integer> playerData = data.computeIfAbsent(player.getName(), key -> new HashMap<>());
-        final int stat =  playerData.merge(command, 1, (key, value) -> value + 1);
+        final int stat =  playerData.merge(command, 1, Integer::sum);
         config.set(getPath(player.getName(), command), stat);
         return stat;
     }
