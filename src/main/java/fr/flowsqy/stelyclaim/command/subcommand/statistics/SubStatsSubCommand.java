@@ -50,7 +50,7 @@ public abstract class SubStatsSubCommand extends SubCommand {
                 own = target.equals(sender.getName());
                 break;
             default:
-                messages.sendMessage(sender, "help."+getName()+(sender.hasPermission(getPermission()+"-other") ? "-other" : ""));
+                messages.sendMessage(sender, "help.stats"+(sender.hasPermission(getPermission()+"-other") ? "-other" : ""));
                 return false;
         }
         if(!own && !sender.hasPermission(getPermission()+"-other")){
