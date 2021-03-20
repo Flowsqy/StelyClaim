@@ -127,12 +127,20 @@ claim:
       separator: "&7, &a"
       empty: "&cAucun"
   stats:
-    commandnotexist: "%prefix% &cLa commande &7%command% &cn'existe pas"
-    commandnotstat: "%prefix% &cLa commande &7%command% &cne répertorie pas de statistiques"
+    commandnotexist: "%prefix% &cLa commande &8%command% &cn'existe pas"
+    commandnotstat: "%prefix% &cLa commande &8%command% &cne répertorie pas de statistiques"
+    nodata: "%prefix% &cTu n'as jamais fait la commande &8%command%"
+    nodata-other: "%prefix% &8%target% &cn'a jamais fait la commande &8%command%"
+    nodata-all: "%prefix% &cTu n'as pas de statistique"
+    nodata-all-other: "%prefix% &8%target% &cn'a pas de statistiques"
     show: "%prefix% &6Tu as effectué &a%stat% &6fois la commande &6%command%"
     show-other: "%prefix% &a%target% &6a effectué &a%stat% &6fois la commande &6%command%"
     show-total: "%prefix% &6Le total des commandes que tu as effectué est de &a%stat%"
     show-total-other: "%prefix% &6Le total des commandes que &a%target% &6a effectué est de &a%stat%"
+    reset: "%prefix% &6Tu as réinitialisé tes statistiques de la commande &a%command%"
+    reset-other: "%prefix% &6Tu as réinitialisé les statistiques de la commande &a%command% &6de &a%target%"
+    reset-all: "%prefix% &6Tu as réinitialisé tes statistiques"
+    reset-all-other: "%prefix% &6Tu as réinitialisé les statistiques de &a%target%"
 
 # 'previous' est le message pour les anciens pilliers lors d'un redefine
 # 'current' est le message pour les pilliers actuels lors d'un remove

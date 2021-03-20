@@ -14,6 +14,22 @@ public class ResetStatsSubCommand extends SubStatsSubCommand{
 
     @Override
     protected boolean executeSub(CommandSender sender, boolean own, String command, String target) {
+        final String other = own ? "" : "-other";
+        if(command == null){
+            if(statisticManager.remove(target)){
+                messages.sendMessage(sender, "claim.stats.reset-all" + other, "%target%", target);
+                statisticManager.saveTask();
+                return true;
+            }
+            messages.sendMessage(sender, "claim.stats.nodata-all" + other, "%target%", target);
+        }else{
+            if(statisticManager.removeStat(target, command)){
+                messages.sendMessage(sender, "claim.stats.reset" + other, "%target%", "%command%", target, command);
+                statisticManager.saveTask();
+                return true;
+            }
+            messages.sendMessage(sender, "claim.stats.nodata" + other, "%target%", "%command%", target, command);
+        }
         return false;
     }
 }
