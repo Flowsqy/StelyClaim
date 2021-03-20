@@ -91,19 +91,19 @@ public class StatsSubCommand extends SubCommand {
         if(args.size() > 1){
             final String arg = args.get(1);
             final SubStatsSubCommand subCommand = getSubCommand(arg);
-            if(subCommand != null){
+            if(subCommand != null && args.size() > 2 && sender.hasPermission(subCommand.getPermission())){
                 return subCommand.tab(sender, args, isPlayer);
             }
             final List<String> completions = new ArrayList<>();
-            fillList(completions, arg, resetStatsSubCommand);
-            fillList(completions, arg, showStatsSubCommand);
+            fillList(sender, completions, arg, resetStatsSubCommand);
+            fillList(sender, completions, arg, showStatsSubCommand);
             return completions;
         }
         return Collections.emptyList();
     }
 
-    private void fillList(List<String> completions, String arg, SubStatsSubCommand subCommand){
-        if(subCommand.getName().startsWith(arg.toLowerCase(Locale.ROOT)))
+    private void fillList(CommandSender sender, List<String> completions, String arg, SubStatsSubCommand subCommand){
+        if(subCommand.getName().startsWith(arg.toLowerCase(Locale.ROOT)) && sender.hasPermission(subCommand.getPermission()))
             completions.add(subCommand.getName());
     }
 
