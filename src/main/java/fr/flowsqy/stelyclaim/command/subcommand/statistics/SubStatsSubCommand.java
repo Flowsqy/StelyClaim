@@ -37,16 +37,24 @@ public abstract class SubStatsSubCommand extends SubCommand {
             case 2:
                 own = true;
                 command = null;
-                target = null;
+                target = sender.getName();
                 break;
             case 3:
-                own = true;
-                command = args.get(2);
-                target = null;
+                final String secondArg = args.get(2);
+                if(statisticManager.allowStats(secondArg) || !sender.hasPermission(getPermission() + "-other")){
+                    command = secondArg;
+                    target = sender.getName();
+                    own = true;
+                }
+                else{
+                    command = null;
+                    target = secondArg;
+                    own = target.equals(sender.getName());
+                }
                 break;
             case 4:
-                command = args.get(2);
-                target = args.get(3);
+                command = args.get(3);
+                target = args.get(2);
                 own = target.equals(sender.getName());
                 break;
             default:
@@ -76,14 +84,9 @@ public abstract class SubStatsSubCommand extends SubCommand {
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
         switch (args.size()){
             case 3:
-                final String command = args.get(2).toLowerCase(Locale.ROOT);
-                return statisticManager.getCommands().stream()
-                        .filter(cmd -> cmd.startsWith(command))
-                        .collect(Collectors.toList());
-            case 4:
                 if(!sender.hasPermission(getPermission()+"-other"))
                     return Collections.emptyList();
-                final String target = args.get(3).toLowerCase(Locale.ROOT);
+                final String target = args.get(2).toLowerCase(Locale.ROOT);
                 final List<String> completions = new ArrayList<>();
                 for(OfflinePlayer offlinePlayer : Bukkit.getOnlinePlayers()){
                     final String playerName = offlinePlayer.getName();
@@ -93,6 +96,11 @@ public abstract class SubStatsSubCommand extends SubCommand {
                         completions.add(playerName);
                 }
                 return completions;
+            case 4:
+                final String command = args.get(3).toLowerCase(Locale.ROOT);
+                return statisticManager.getCommands().stream()
+                        .filter(cmd -> cmd.startsWith(command))
+                        .collect(Collectors.toList());
             default:
                 return Collections.emptyList();
         }

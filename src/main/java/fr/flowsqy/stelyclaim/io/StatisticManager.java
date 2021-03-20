@@ -102,7 +102,7 @@ public class StatisticManager {
 
     public int getTotal(String playerName){
         final Map<String, Integer> playerData = data.get(playerName);
-        return playerData.values().stream().mapToInt(value -> value).sum();
+        return playerData == null ? 0 : playerData.values().stream().mapToInt(value -> value).sum();
     }
 
     public boolean remove(String playerName){

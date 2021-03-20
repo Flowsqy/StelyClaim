@@ -30,11 +30,11 @@ help:
   teleport: '%prefix% &6/claim tp'
   teleport-other: '%prefix% &6/claim tp [Claim]'
   stats: '%prefix% &6/claim stats <sous-commande> [Commande]'
-  stats-other: '%prefix% &6/claim stats <sous-commande> [Commande] [Joueur]'
+  stats-other: '%prefix% &6/claim stats <sous-commande> [Joueur] [Commande]'
   stats_reset: '%prefix% &6/claim stats reset [Commande]'
-  stats_reset-other: '%prefix% &6/claim stats reset [Commande] [Joueur]'
+  stats_reset-other: '%prefix% &6/claim stats reset [Joueur] [Commande]'
   stats_show: '%prefix% &6/claim stats show [Commande]'
-  stats_show-other: '%prefix% &6/claim stats show [Commande] [Joueur]'
+  stats_show-other: '%prefix% &6/claim stats show [Joueur] [Commande]'
 
 claim:
   world:
