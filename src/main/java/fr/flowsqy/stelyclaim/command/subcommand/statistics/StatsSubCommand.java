@@ -9,7 +9,6 @@ import java.util.*;
 
 public class StatsSubCommand extends SubCommand {
 
-    private final StatisticManager statisticManager;
     private final ResetStatsSubCommand resetStatsSubCommand;
     private final ShowStatsSubCommand showStatsSubCommand;
 
@@ -26,7 +25,6 @@ public class StatsSubCommand extends SubCommand {
                 ),
                 statistic
         );
-        this.statisticManager = statisticManager;
         this.resetStatsSubCommand = new ResetStatsSubCommand(
                 plugin,
                 "reset",
