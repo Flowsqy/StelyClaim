@@ -33,7 +33,8 @@ permissions:
       stelyclaim.claim.remove-other: true
       stelyclaim.claim.info-other: true
       stelyclaim.claim.teleport-other: true
-      stelyclaim.claim.stats-other: true
+      stelyclaim.claim.stats.reset-other: true
+      stelyclaim.claim.stats.show-other: true
   stelyclaim.claim.help:
     children:
       stelyclaim.claim: true
@@ -94,9 +95,20 @@ permissions:
   stelyclaim.claim.teleport:
     children:
       stelyclaim.claim: true
-  stelyclaim.claim.stats-other:
-    children:
-      stelyclaim.stats: true
   stelyclaim.claim.stats:
     children:
       stelyclaim.claim: true
+  stelyclaim.claim.stats.reset:
+    children:
+      stelyclaim.claim.stats: true
+  stelyclaim.claim.stats.show:
+    children:
+      stelyclaim.claim.stats: true
+  stelyclaim.claim.stats.reset-other:
+    children:
+      stelyclaim.stats.stats.reset: true
+      stelyclaim.stats.stats-other: true
+  stelyclaim.claim.stats.show-other:
+    children:
+      stelyclaim.stats.stats.show: true
+      stelyclaim.stats.stats-other: true

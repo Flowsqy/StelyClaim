@@ -96,5 +96,7 @@ worlds:
   remove: []
   info: []
   teleport: []
-  stats: []
+  stats:
+    reset: []
+    show: []
   pillar: []

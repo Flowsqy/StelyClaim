@@ -247,7 +247,6 @@ public class ClaimCommand implements TabExecutor {
                 "s",
                 "stelyclaim.claim.stats",
                 true,
-                config.getStringList("worlds.stats"),
                 config.getBoolean("statistic.stats"),
                 statisticManager
         ));
