@@ -21,11 +21,11 @@ public class TeleportSync {
         this.plugin = plugin;
     }
 
-    public void addTeleport(Player player, Location location){
+    public void addTeleport(Player player, Location location) {
         teleportLocation.put(player, location);
-        if(!launched){
+        if (!launched) {
             scheduler.runTask(plugin, () -> {
-                for(Map.Entry<Player, Location> entry : teleportLocation.entrySet()){
+                for (Map.Entry<Player, Location> entry : teleportLocation.entrySet()) {
                     entry.getKey().teleport(entry.getValue());
                 }
                 launched = false;

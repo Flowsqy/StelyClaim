@@ -55,11 +55,11 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
     @Override
     public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
-        if(size != 1 && size != 2){
+        if (size != 1 && size != 2) {
             messages.sendMessage(sender,
                     "help."
                             + getName()
-                            + (sender.hasPermission(getPermission()+"-other") ? "-other" : "")
+                            + (sender.hasPermission(getPermission() + "-other") ? "-other" : "")
             );
             return false;
         }
@@ -71,34 +71,33 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         final Region selection;
         try {
             selection = session.getSelection(world);
-        }catch (IncompleteRegionException exception){
+        } catch (IncompleteRegionException exception) {
             messages.sendMessage(player, "claim.selection.empty");
             return false;
         }
 
-        if(!(selection instanceof CuboidRegion)){
+        if (!(selection instanceof CuboidRegion)) {
             messages.sendMessage(player, "claim.selection.cuboid");
             return false;
         }
 
         final String regionName;
         final boolean ownRegion;
-        if(size == 1){
+        if (size == 1) {
             regionName = player.getName();
             ownRegion = true;
-        }
-        else{
+        } else {
             regionName = args.get(1);
             ownRegion = regionName.equalsIgnoreCase(player.getName());
         }
 
-        if(!ownRegion && !player.hasPermission(getPermission()+"-other")){
-            messages.sendMessage(player, "help."+getName());
+        if (!ownRegion && !player.hasPermission(getPermission() + "-other")) {
+            messages.sendMessage(player, "help." + getName());
             return false;
         }
 
         final RegionManager regionManager = getRegionManager(world);
-        if(regionManager == null){
+        if (regionManager == null) {
             messages.sendMessage(player,
                     "claim.world.nothandle",
                     "%world%", world.getName());
@@ -106,11 +105,11 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         }
 
         final ProtectedRegion region = regionManager.getRegion(regionName);
-        if(checkExistRegion(region != null, player, ownRegion, regionName, world.getName())){
+        if (checkExistRegion(region != null, player, ownRegion, regionName, world.getName())) {
             return false;
         }
 
-        if(expandRegion) {
+        if (expandRegion) {
             try {
                 final CuboidRegion cuboidSelection = (CuboidRegion) selection;
                 selection.expand(
@@ -132,18 +131,18 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
         boolean overlapSame = false;
         final StringBuilder builder = new StringBuilder();
-        for(ProtectedRegion overlapRegion : intersecting){
-            if(overlapRegion == region) {
+        for (ProtectedRegion overlapRegion : intersecting) {
+            if (overlapRegion == region) {
                 overlapSame = true;
                 continue;
             }
-            if(builder.length() > 0)
+            if (builder.length() > 0)
                 builder.append(", ");
 
             builder.append(overlapRegion.getId());
         }
 
-        if(builder.length() != 0){
+        if (builder.length() != 0) {
             messages.sendMessage(player, "claim.selection.overlap", "%regions%", builder.toString());
             return false;
         }
@@ -158,7 +157,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
         // Mail manage
 
-        if(!ownRegion){
+        if (!ownRegion) {
             plugin.getMailManager().sendInfoToTarget(player, regionName, getName());
         }
 
@@ -167,16 +166,17 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
     protected abstract boolean checkExistRegion(boolean regionExist, Player player, boolean ownRegion, String regionName, String worldName);
 
-    protected void checkIntegrateRegion(boolean overlapSame, Player player){}
+    protected void checkIntegrateRegion(boolean overlapSame, Player player) {
+    }
 
     protected abstract void manageRegion(Player player, ProtectedRegion region, ProtectedCuboidRegion newRegion, boolean ownRegion, RegionManager regionManager, String regionName);
 
-    protected final void configModifyRegion(ProtectedCuboidRegion newRegion, String category, Player sender, String regionNameWithCase){
+    protected final void configModifyRegion(ProtectedCuboidRegion newRegion, String category, Player sender, String regionNameWithCase) {
         final Configuration config = plugin.getConfiguration();
 
         // Teleportation flag
         final String setTp = config.getString(category + ".set-tp");
-        if(setTp != null){
+        if (setTp != null) {
             final PillarCoordinate pillarCoordinate = new PillarCoordinate(newRegion, sender.getWorld());
             final Location location;
 
@@ -200,51 +200,51 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
                     location = null;
             }
 
-            if(location != null)
+            if (location != null)
                 newRegion.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(location));
         }
 
 
         // Owners
-        final List<String> owners = config.getStringList(category+".owner");
-        final List<String> ownerGroups = config.getStringList(category+".owner-group");
-        if(!owners.isEmpty() || !ownerGroups.isEmpty()){
+        final List<String> owners = config.getStringList(category + ".owner");
+        final List<String> ownerGroups = config.getStringList(category + ".owner-group");
+        if (!owners.isEmpty() || !ownerGroups.isEmpty()) {
             final DefaultDomain ownerDomain = newRegion.getOwners();
-            for(String owner : owners)
+            for (String owner : owners)
                 ownerDomain.addPlayer(
                         owner
                                 .replace("%sender%", sender.getName())
                                 .replace("%target%", newRegion.getId())
                 );
-            for(String groupOwner : ownerGroups)
+            for (String groupOwner : ownerGroups)
                 ownerDomain.addGroup(groupOwner);
         }
 
         // Members
-        final List<String> members = config.getStringList(category+".member");
-        final List<String> memberGroups = config.getStringList(category+".member-group");
-        if(!members.isEmpty() || !memberGroups.isEmpty()){
+        final List<String> members = config.getStringList(category + ".member");
+        final List<String> memberGroups = config.getStringList(category + ".member-group");
+        if (!members.isEmpty() || !memberGroups.isEmpty()) {
             final DefaultDomain memberDomain = newRegion.getMembers();
-            for(String member : members)
+            for (String member : members)
                 memberDomain.addPlayer(
                         member
                                 .replace("%sender%", sender.getName())
                                 .replace("%target%", newRegion.getId())
                 );
-            for(String memberOwner : memberGroups)
+            for (String memberOwner : memberGroups)
                 memberDomain.addGroup(memberOwner);
         }
 
         // Greeting flag
         final String greeting = messages.getMessage(
-                "claim.selection-flags."+category+".greeting",
+                "claim.selection-flags." + category + ".greeting",
                 "%region%", regionNameWithCase
         );
         newRegion.setFlag(Flags.GREET_MESSAGE, greeting);
 
         // Farewell flag
         final String farewell = messages.getMessage(
-                "claim.selection-flags."+category+".farewell",
+                "claim.selection-flags." + category + ".farewell",
                 "%region%", regionNameWithCase
         );
         newRegion.setFlag(Flags.FAREWELL_MESSAGE, farewell);
@@ -253,7 +253,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
     @Override
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
-        if(sender.hasPermission(getPermission()+"-other") && args.size() == 2){
+        if (sender.hasPermission(getPermission() + "-other") && args.size() == 2) {
             final String arg = args.get(1).toLowerCase(Locale.ROOT);
             final Player player = (Player) sender;
             return Bukkit.getOnlinePlayers().stream()
@@ -261,8 +261,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
                     .map(HumanEntity::getName)
                     .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(arg))
                     .collect(Collectors.toList());
-        }
-        else
+        } else
             return Collections.emptyList();
     }
 

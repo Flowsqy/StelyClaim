@@ -19,7 +19,7 @@ public class DisconnectListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public final void onQuit(PlayerQuitEvent e){
+    public final void onQuit(PlayerQuitEvent e) {
         pillarData.remove(e.getPlayer().getName());
     }
 

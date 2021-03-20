@@ -22,9 +22,9 @@ public class MailManager {
     private final boolean enabled;
     private final Map<String, Boolean> commands;
 
-    public MailManager(Messages messages, Configuration config){
+    public MailManager(Messages messages, Configuration config) {
         final Plugin plugin = Bukkit.getPluginManager().getPlugin("Essentials");
-        if(!(plugin instanceof Essentials)){
+        if (!(plugin instanceof Essentials)) {
             this.messages = null;
             essentials = null;
             enabled = false;
@@ -38,11 +38,11 @@ public class MailManager {
         initCustomFormat(config);
     }
 
-    private void initCustomFormat(Configuration config){
+    private void initCustomFormat(Configuration config) {
         // SubCommands that can send mails : define, redefine, addmember, removemember, addowner, removeowner, remove
-        for(String command : Arrays.asList("define", "redefine", "addmember", "removemember", "addowner", "removeowner", "remove")){
-            if(config.getBoolean("mail."+command+".enabled"))
-                commands.put(command, config.getBoolean("mail."+command+".custom-format"));
+        for (String command : Arrays.asList("define", "redefine", "addmember", "removemember", "addowner", "removeowner", "remove")) {
+            if (config.getBoolean("mail." + command + ".enabled"))
+                commands.put(command, config.getBoolean("mail." + command + ".custom-format"));
         }
     }
 
@@ -50,70 +50,69 @@ public class MailManager {
         return enabled;
     }
 
-    public void sendMail(Player from, String to, String command){
+    public void sendMail(Player from, String to, String command) {
         sendMail(from, to, command, null);
     }
 
-    public void sendMail(Player from, Player to, String command){
+    public void sendMail(Player from, Player to, String command) {
         sendMail(from, to, command, null);
     }
 
-    public void sendMail(Player from, String to, String command, String target){
-        if(!enabled)
+    public void sendMail(Player from, String to, String command, String target) {
+        if (!enabled)
             return;
         final Boolean customFormat = commands.get(command);
-        if(customFormat == null) // Command does not enable mail
+        if (customFormat == null) // Command does not enable mail
             return;
         final User userTo = essentials.getUser(to);
-        if(userTo == null)
+        if (userTo == null)
             return;
-        if(customFormat){
+        if (customFormat) {
             sendMail(null, from, userTo, command, false, target);
             return;
         }
         final User userFrom = essentials.getUser(from);
-        if(userFrom == null)
+        if (userFrom == null)
             return;
         sendMail(userFrom, from, userTo, command, true, target);
     }
 
-    public void sendMail(Player from, Player to, String command, String target){
-        if(!enabled)
+    public void sendMail(Player from, Player to, String command, String target) {
+        if (!enabled)
             return;
         final Boolean customFormat = commands.get(command);
-        if(customFormat == null) // Command does not enable mail
+        if (customFormat == null) // Command does not enable mail
             return;
         final User userTo = essentials.getUser(to);
-        if(userTo == null)
+        if (userTo == null)
             return;
-        if(customFormat){
+        if (customFormat) {
             sendMail(null, from, userTo, command, false, target);
             return;
         }
         final User userFrom = essentials.getUser(from);
-        if(userFrom == null)
+        if (userFrom == null)
             return;
         sendMail(userFrom, from, userTo, command, true, target);
     }
 
-    private void sendMail(User fromUser, Player fromPlayer, User to, String command, boolean useEssentialsSyntax, String target){
+    private void sendMail(User fromUser, Player fromPlayer, User to, String command, boolean useEssentialsSyntax, String target) {
         final String mailMessage;
-        if(target != null){
+        if (target != null) {
             mailMessage = messages.getMessage(
-                    "mail."+command,
+                    "mail." + command,
                     "%from%", "%to%", "%target%",
                     fromPlayer.getName(), to.getName(), target
             );
-        }
-        else {
+        } else {
             mailMessage = messages.getMessage(
-                    "mail."+command,
+                    "mail." + command,
                     "%from%", "%to%",
                     fromPlayer.getName(), to.getName()
             );
         }
 
-        if(useEssentialsSyntax) {
+        if (useEssentialsSyntax) {
             to.addMail(
                     I18n.tl(
                             "mailFormat",
@@ -125,18 +124,16 @@ public class MailManager {
                             )
                     )
             );
-        }
-        else{
+        } else {
             to.addMail(mailMessage);
         }
     }
 
-    public void sendInfoToTarget(Player sender, String target, String command){
+    public void sendInfoToTarget(Player sender, String target, String command) {
         final Player targetPlayer = Bukkit.getPlayerExact(target);
-        if(targetPlayer != null && sender.canSee(targetPlayer)){
-            messages.sendMessage(targetPlayer, "claim.target."+command, "%sender%", sender.getName());
-        }
-        else{
+        if (targetPlayer != null && sender.canSee(targetPlayer)) {
+            messages.sendMessage(targetPlayer, "claim.target." + command, "%sender%", sender.getName());
+        } else {
             sendMail(
                     sender,
                     targetPlayer == null ? target : targetPlayer.getName(),
@@ -145,16 +142,15 @@ public class MailManager {
         }
     }
 
-    public void sendInfoToTarget(Player sender, String target, String command, String argTarget){
+    public void sendInfoToTarget(Player sender, String target, String command, String argTarget) {
         final Player targetPlayer = Bukkit.getPlayerExact(target);
-        if(targetPlayer != null && sender.canSee(targetPlayer)){
+        if (targetPlayer != null && sender.canSee(targetPlayer)) {
             messages.sendMessage(
                     targetPlayer,
-                    "claim.target."+command,
+                    "claim.target." + command,
                     "%sender%", "%target%",
                     sender.getName(), argTarget);
-        }
-        else{
+        } else {
             sendMail(
                     sender,
                     targetPlayer == null ? target : targetPlayer.getName(),

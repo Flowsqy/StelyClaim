@@ -31,16 +31,15 @@ public class PillarTextSender {
 
     private final Map<String, PillarData> pillarData;
 
-    public PillarTextSender(Messages messages, String category, Map<String, PillarData> pillarData){
-        baseMessage = messages.getMessage("pillar."+category+".message");
-        if(baseMessage != null) {
+    public PillarTextSender(Messages messages, String category, Map<String, PillarData> pillarData) {
+        baseMessage = messages.getMessage("pillar." + category + ".message");
+        if (baseMessage != null) {
             northwestTxtCpnt = createTextComponent(messages, category, NORTHWEST);
             northeastTxtCpnt = createTextComponent(messages, category, NORTHEAST);
             southwestTxtCpnt = createTextComponent(messages, category, SOUTHWEST);
             southeastTxtCpnt = createTextComponent(messages, category, SOUTHEAST);
             currentTxtCpnt = createTextComponent(messages, category, CURRENT);
-        }
-        else{
+        } else {
             northwestTxtCpnt = null;
             northeastTxtCpnt = null;
             southwestTxtCpnt = null;
@@ -51,18 +50,18 @@ public class PillarTextSender {
         this.pillarData = pillarData;
     }
 
-    private TextComponent createTextComponent(Messages messages, String category, String direction){
-        final String message = messages.getMessage("pillar."+category+"."+direction+".message");
+    private TextComponent createTextComponent(Messages messages, String category, String direction) {
+        final String message = messages.getMessage("pillar." + category + "." + direction + ".message");
         final TextComponent textComponent = new TextComponent();
-        if(message == null)
+        if (message == null)
             return textComponent;
         textComponent.setExtra(
                 new ArrayList<>(Arrays.asList(
                         TextComponent.fromLegacyText(message)
                 ))
         );
-        final String text = messages.getMessage("pillar."+category+"."+direction+".hover");
-        if(text != null){
+        final String text = messages.getMessage("pillar." + category + "." + direction + ".hover");
+        if (text != null) {
             textComponent.setHoverEvent(
                     new HoverEvent(
                             HoverEvent.Action.SHOW_TEXT,
@@ -73,14 +72,14 @@ public class PillarTextSender {
         return textComponent;
     }
 
-    public ComponentReplacer getReplacer(Player player, ProtectedRegion newRegion){
+    public ComponentReplacer getReplacer(Player player, ProtectedRegion newRegion) {
         return getReplacer(player, new PillarCoordinate(newRegion, player.getWorld()));
     }
 
-    public ComponentReplacer getReplacer(Player player, PillarCoordinate pillarCoordinate){
-        if(baseMessage != null) {
+    public ComponentReplacer getReplacer(Player player, PillarCoordinate pillarCoordinate) {
+        if (baseMessage != null) {
             PillarData pillarData = this.pillarData.get(player.getName());
-            if(pillarData == null){
+            if (pillarData == null) {
                 pillarData = new PillarData();
                 this.pillarData.put(player.getName(), pillarData);
             }
@@ -108,20 +107,20 @@ public class PillarTextSender {
         return null;
     }
 
-    public boolean sendMessage(Player player, ProtectedRegion newRegion){
+    public boolean sendMessage(Player player, ProtectedRegion newRegion) {
         return sendMessage(player, new PillarCoordinate(newRegion, player.getWorld()));
     }
 
-    public boolean sendMessage(Player player, PillarCoordinate pillarCoordinate){
+    public boolean sendMessage(Player player, PillarCoordinate pillarCoordinate) {
         final ComponentReplacer replacer = getReplacer(player, pillarCoordinate);
-        if(replacer != null){
+        if (replacer != null) {
             player.spigot().sendMessage(replacer.create());
             return true;
         }
         return false;
     }
 
-    private void buildPillarMessage(String regex, TextComponent textComponent, Location location, PillarData pillarData, ComponentReplacer replacer){
+    private void buildPillarMessage(String regex, TextComponent textComponent, Location location, PillarData pillarData, ComponentReplacer replacer) {
         final String id = pillarData.registerLocation(location);
         final TextComponent component = textComponent.duplicate();
         component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claim pillar " + id));

@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 public class StelyClaimPlugin extends JavaPlugin {
 
     private static StelyClaimPlugin instance;
+    private final Map<String, PillarData> pillarData = new HashMap<>();
     private YamlConfiguration configuration;
     private Messages messages;
     private BedrockManager breakManager;
@@ -36,7 +37,6 @@ public class StelyClaimPlugin extends JavaPlugin {
     private SessionManager sessionManager;
     private TeleportSync teleportSync;
     private MailManager mailManager;
-    private final Map<String, PillarData> pillarData = new HashMap<>();
 
     public static StelyClaimPlugin getInstance() {
         return instance;

@@ -15,7 +15,7 @@ public class RemoveOwnerSubCommand extends DomainSubCommand {
     @Override
     protected boolean modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion, String regionName) {
         final DefaultDomain domain = region.getOwners();
-        if(!domain.contains(targetPlayer)){
+        if (!domain.contains(targetPlayer)) {
             messages.sendMessage(
                     sender,
                     "claim.domain.owner.not" + (ownRegion ? "" : "-other"),

@@ -23,7 +23,7 @@ public class TeleportSubCommand extends InteractSubCommand {
     protected boolean interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion, String regionName) {
         final com.sk89q.worldedit.util.Location weLoc = region.getFlag(Flags.TELE_LOC);
 
-        if(weLoc == null){
+        if (weLoc == null) {
             messages.sendMessage(player, "claim.tp.notset" + (ownRegion ? "" : "-other"), "%region%", regionName);
             return false;
         }

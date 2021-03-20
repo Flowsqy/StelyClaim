@@ -23,26 +23,25 @@ public class HelpSubCommand extends SubCommand {
     @Override
     public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
         final int argsSize = args.size();
-        if(argsSize > 2){
+        if (argsSize > 2) {
             // Wrong call
             final String firstArg = args.get(0);
-            if(firstArg.equalsIgnoreCase(getName()) || firstArg.equalsIgnoreCase(getAlias())){
+            if (firstArg.equalsIgnoreCase(getName()) || firstArg.equalsIgnoreCase(getAlias())) {
                 // Check if help was called to display only help's help
                 messages.sendMessage(sender, "help.help");
                 return true;
             }
-        }
-        else if (argsSize == 2){
+        } else if (argsSize == 2) {
             final String firstArg = args.get(0).toLowerCase(Locale.ROOT);
             final String secondArg = args.get(1).toLowerCase(Locale.ROOT);
 
-            if(
+            if (
                     (firstArg.equalsIgnoreCase(getName()) || firstArg.equalsIgnoreCase(getAlias()))
-                    && !secondArg.isEmpty()
-            ){
+                            && !secondArg.isEmpty()
+            ) {
                 // Want help of the second argument
                 final Stream<SubCommand> subCommandStream;
-                if(sender instanceof Player)
+                if (sender instanceof Player)
                     subCommandStream = subCommands.stream()
                             .filter(cmd -> sender.hasPermission(cmd.getPermission()));
                 else
@@ -53,12 +52,12 @@ public class HelpSubCommand extends SubCommand {
                         .limit(11) // Exclude Pillar
                         .filter(cmd -> cmd.getName().equalsIgnoreCase(secondArg) || cmd.getAlias().equalsIgnoreCase(secondArg))
                         .findAny();
-                if(optionalSubCommand.isPresent()) {
+                if (optionalSubCommand.isPresent()) {
                     // Display the help
                     final SubCommand subCommand = optionalSubCommand.get();
                     final String other =
                             !(subCommand instanceof HelpSubCommand) &&
-                            sender.hasPermission(subCommand.getPermission()+"-other") ?
+                                    sender.hasPermission(subCommand.getPermission() + "-other") ?
                                     "-other" : "";
                     messages.sendMessage(sender, "help." + subCommand.getName() + other);
                     return true;
@@ -67,14 +66,14 @@ public class HelpSubCommand extends SubCommand {
         }
         // Display all help
         messages.sendMessage(sender, "help.help");
-        if(sender instanceof Player)
+        if (sender instanceof Player)
             subCommands.stream()
                     .limit(11) // Exclude Pillar
                     .skip(1)
                     .filter(cmd -> sender.hasPermission(cmd.getPermission()))
                     .forEach(cmd -> {
-                                final boolean other = sender.hasPermission(cmd.getPermission()+"-other");
-                                messages.sendMessage(sender, "help."+cmd.getName()+(other ? "-other" : ""));
+                                final boolean other = sender.hasPermission(cmd.getPermission() + "-other");
+                                messages.sendMessage(sender, "help." + cmd.getName() + (other ? "-other" : ""));
                             }
                     );
         else
@@ -82,7 +81,7 @@ public class HelpSubCommand extends SubCommand {
                     .limit(11) // Exclude Pillar
                     .skip(1)
                     .filter(SubCommand::isConsole)
-                    .forEach(cmd -> messages.sendMessage(sender, "help."+cmd.getName()+"-other"));
+                    .forEach(cmd -> messages.sendMessage(sender, "help." + cmd.getName() + "-other"));
         return true;
     }
 
@@ -103,7 +102,7 @@ public class HelpSubCommand extends SubCommand {
                     .limit(11) // Exclude Pillar
                     .filter(SubCommand::isConsole);
         final String arg = args.get(1).toLowerCase(Locale.ROOT);
-        if(arg.isEmpty())
+        if (arg.isEmpty())
             return subCommandsStream
                     .map(SubCommand::getName)
                     .collect(Collectors.toList());

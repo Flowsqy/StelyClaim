@@ -70,7 +70,7 @@ public class InfoSubCommand extends InteractSubCommand {
             String player, String group,
             String memberSeparator, String groupSeparator,
             String emptyPlayer, String emptyGroup
-    ){
+    ) {
         final StringBuilder playerBuilder = new StringBuilder();
         final StringBuilder groupBuilder = new StringBuilder();
         getDomainInfo(domain, playerBuilder, groupBuilder, memberSeparator, groupSeparator);
@@ -78,29 +78,29 @@ public class InfoSubCommand extends InteractSubCommand {
                 .replace(player, playerBuilder.length() == 0 ? emptyPlayer : playerBuilder)
                 .replace(group, groupBuilder.length() == 0 ? emptyGroup : groupBuilder);
     }
-    
-    private void getDomainInfo(DefaultDomain domain, StringBuilder player, StringBuilder group, String memberSeparator, String groupSeparator){
-        for(String memberPlayer : domain.getPlayers()){
-            if(player.length() > 0){
+
+    private void getDomainInfo(DefaultDomain domain, StringBuilder player, StringBuilder group, String memberSeparator, String groupSeparator) {
+        for (String memberPlayer : domain.getPlayers()) {
+            if (player.length() > 0) {
                 player.append(memberSeparator);
             }
             player.append(memberPlayer);
         }
-        for(UUID memberUuid : domain.getUniqueIds()){
-            if(player.length() > 0){
+        for (UUID memberUuid : domain.getUniqueIds()) {
+            if (player.length() > 0) {
                 player.append(memberSeparator);
             }
             player.append(Bukkit.getOfflinePlayer(memberUuid).getName());
         }
-        for(String memberGroup : domain.getGroups()){
-            if(group.length() > 0){
+        for (String memberGroup : domain.getGroups()) {
+            if (group.length() > 0) {
                 group.append(groupSeparator);
             }
             group.append(memberGroup);
         }
     }
 
-    private String replaceSize(String message, PillarCoordinate pillarCoordinate, ProtectedRegion region){
+    private String replaceSize(String message, PillarCoordinate pillarCoordinate, ProtectedRegion region) {
         final int xSize = pillarCoordinate.getMaxX() - pillarCoordinate.getMinX() + 1;
         final int zSize = pillarCoordinate.getMaxZ() - pillarCoordinate.getMinZ() + 1;
 

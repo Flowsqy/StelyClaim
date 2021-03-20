@@ -24,7 +24,7 @@ public class StatisticManager {
 
     private boolean launch = false;
 
-    public StatisticManager(Plugin plugin, File dataFolder){
+    public StatisticManager(Plugin plugin, File dataFolder) {
         this.plugin = plugin;
         this.file = new File(dataFolder, "statistics.yml");
         this.config = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
@@ -33,32 +33,32 @@ public class StatisticManager {
         initData();
     }
 
-    public void initData(){
-        for(Map.Entry<String, Object> entry : config.getValues(false).entrySet()){
-            if(!(entry.getValue() instanceof ConfigurationSection))
+    public void initData() {
+        for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {
+            if (!(entry.getValue() instanceof ConfigurationSection))
                 continue;
             final ConfigurationSection section = (ConfigurationSection) entry.getValue();
             final Map<String, Integer> stats = new HashMap<>();
-            for(Map.Entry<String, Object> commandEntry : section.getValues(false).entrySet()){
+            for (Map.Entry<String, Object> commandEntry : section.getValues(false).entrySet()) {
                 final int value;
-                try{
+                try {
                     value = Integer.parseInt(commandEntry.getValue().toString());
-                }catch (NumberFormatException ignored){
+                } catch (NumberFormatException ignored) {
                     continue;
                 }
-                if(commands.contains(commandEntry.getKey())){
+                if (commands.contains(commandEntry.getKey())) {
                     stats.put(commandEntry.getKey(), value);
                 }
             }
-            if(!stats.isEmpty())
+            if (!stats.isEmpty())
                 data.put(entry.getKey(), stats);
         }
     }
 
-    public void saveTask(){
-        if(launch)
+    public void saveTask() {
+        if (launch)
             return;
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () ->{
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
             saveFile();
             launch = false;
         }, 20L);
@@ -72,57 +72,57 @@ public class StatisticManager {
         }
     }
 
-    private String getPath(String player, String command){
+    private String getPath(String player, String command) {
         return player + "." + command;
     }
 
-    public void initSubCommands(Iterable<SubCommand> subCommands){
+    public void initSubCommands(Iterable<SubCommand> subCommands) {
         commands.clear();
-        for(SubCommand subCommand : subCommands){
-            if(subCommand.isStatistic())
+        for (SubCommand subCommand : subCommands) {
+            if (subCommand.isStatistic())
                 commands.add(subCommand.getName());
         }
     }
 
-    public int add(CommandSender player, String command){
-        if(!commands.contains(command))
+    public int add(CommandSender player, String command) {
+        if (!commands.contains(command))
             return -1;
         final Map<String, Integer> playerData = data.computeIfAbsent(player.getName(), key -> new HashMap<>());
-        final int stat =  playerData.merge(command, 1, Integer::sum);
+        final int stat = playerData.merge(command, 1, Integer::sum);
         config.set(getPath(player.getName(), command), stat);
         return stat;
     }
 
-    public int get(String playerName, String command){
-        if(!commands.contains(command))
+    public int get(String playerName, String command) {
+        if (!commands.contains(command))
             return -1;
         final Map<String, Integer> playerData = data.get(playerName);
         return playerData == null ? 0 : playerData.getOrDefault(command, 0);
     }
 
-    public int getTotal(String playerName){
+    public int getTotal(String playerName) {
         final Map<String, Integer> playerData = data.get(playerName);
         return playerData == null ? 0 : playerData.values().stream().mapToInt(value -> value).sum();
     }
 
-    public boolean remove(String playerName){
-        final boolean result =  data.remove(playerName) != null;
-        if(result)
+    public boolean remove(String playerName) {
+        final boolean result = data.remove(playerName) != null;
+        if (result)
             config.set(playerName, null);
         return result;
     }
 
-    public boolean removeStat(String playerName, String command){
-        if(!commands.contains(command))
+    public boolean removeStat(String playerName, String command) {
+        if (!commands.contains(command))
             return false;
         final Map<String, Integer> playerData = data.get(playerName);
-        final boolean result =  playerData != null && playerData.remove(command) != null;
-        if(result)
+        final boolean result = playerData != null && playerData.remove(command) != null;
+        if (result)
             config.set(getPath(playerName, command), null);
         return result;
     }
 
-    public boolean allowStats(String command){
+    public boolean allowStats(String command) {
         return commands.contains(command);
     }
 

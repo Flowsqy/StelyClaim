@@ -24,11 +24,11 @@ public abstract class InteractSubCommand extends RegionSubCommand {
 
     @Override
     public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
-        if(size != 1 && size != 2){
+        if (size != 1 && size != 2) {
             messages.sendMessage(sender,
                     "help."
                             + getName()
-                            + (sender.hasPermission(getPermission()+"-other") ? "-other" : "")
+                            + (sender.hasPermission(getPermission() + "-other") ? "-other" : "")
             );
             return false;
         }
@@ -36,24 +36,23 @@ public abstract class InteractSubCommand extends RegionSubCommand {
 
         final String regionName;
         final boolean ownRegion;
-        if(size == 1){
+        if (size == 1) {
             regionName = player.getName();
             ownRegion = true;
-        }
-        else{
+        } else {
             regionName = args.get(1);
             ownRegion = regionName.equalsIgnoreCase(player.getName());
         }
 
-        if(!ownRegion && !player.hasPermission(getPermission()+"-other")){
-            messages.sendMessage(player, "help."+getName());
+        if (!ownRegion && !player.hasPermission(getPermission() + "-other")) {
+            messages.sendMessage(player, "help." + getName());
             return false;
         }
 
         final World world = player.getWorld();
 
         final RegionManager regionManager = getRegionManager(world);
-        if(regionManager == null){
+        if (regionManager == null) {
             messages.sendMessage(player,
                     "claim.world.nothandle",
                     "%world%", world.getName());
@@ -61,11 +60,11 @@ public abstract class InteractSubCommand extends RegionSubCommand {
         }
 
         final ProtectedRegion region = regionManager.getRegion(regionName);
-        if(region == null){
+        if (region == null) {
             messages.sendMessage(player, "claim.exist.not" + (ownRegion ? "" : "-other"), "%region%", regionName);
             return false;
         }
-        if(region.getType() == RegionType.GLOBAL){
+        if (region.getType() == RegionType.GLOBAL) {
             messages.sendMessage(player, "claim.interactglobal");
             return false;
         }
@@ -77,15 +76,14 @@ public abstract class InteractSubCommand extends RegionSubCommand {
 
     @Override
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
-        if(sender.hasPermission(getPermission()+"-other") && args.size() == 2){
+        if (sender.hasPermission(getPermission() + "-other") && args.size() == 2) {
             final String arg = args.get(1).toLowerCase(Locale.ROOT);
             return Bukkit.getOnlinePlayers().stream()
                     .filter(((Player) sender)::canSee)
                     .map(HumanEntity::getName)
                     .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(arg))
                     .collect(Collectors.toList());
-        }
-        else
+        } else
             return Collections.emptyList();
     }
 }

@@ -33,7 +33,7 @@ public class ClaimCommand implements TabExecutor {
     private final List<SubCommand> subCommands;
     private final SubCommand helpSubCommand;
 
-    public ClaimCommand(StelyClaimPlugin plugin){
+    public ClaimCommand(StelyClaimPlugin plugin) {
         this.messages = plugin.getMessages();
         this.statisticManager = plugin.getStatisticManager();
         subCommands = new ArrayList<>();
@@ -54,33 +54,33 @@ public class ClaimCommand implements TabExecutor {
                         argsList.get(0).toLowerCase(Locale.ROOT);
         final Optional<SubCommand> subCommand = getSubCommand(arg);
         final boolean isPlayer = sender instanceof Player;
-        if(subCommand.isPresent()) {
+        if (subCommand.isPresent()) {
             // Redirect to SubCommand's executable
             final SubCommand subCmd = subCommand.get();
-            if (isPlayer ? sender.hasPermission(subCmd.getPermission()) : subCmd.isConsole()){
+            if (isPlayer ? sender.hasPermission(subCmd.getPermission()) : subCmd.isConsole()) {
                 executeSubCommand(subCmd, sender, argsList, isPlayer);
                 return true;
             }
-            if(!isPlayer)
+            if (!isPlayer)
                 return messages.sendMessage(sender, "util.onlyplayer");
         }
-        if(sender.hasPermission(helpSubCommand.getPermission())) {
+        if (sender.hasPermission(helpSubCommand.getPermission())) {
             // Send help if has perm
             executeSubCommand(helpSubCommand, sender, argsList, isPlayer);
         }
         return true;
     }
 
-    private void executeSubCommand(SubCommand command, CommandSender sender, List<String> argsList, boolean isPlayer){
+    private void executeSubCommand(SubCommand command, CommandSender sender, List<String> argsList, boolean isPlayer) {
         final Set<String> allowedWorlds = command.getAllowedWorlds();
-        if(
+        if (
                 !(sender instanceof Player) ||
-                allowedWorlds.isEmpty() ||
-                allowedWorlds.contains(((Player) sender).getWorld().getName())
-                // || sender.hasPermission("claim." + command.getName() + ".world-bypass")
-        ){
+                        allowedWorlds.isEmpty() ||
+                        allowedWorlds.contains(((Player) sender).getWorld().getName())
+            // || sender.hasPermission("claim." + command.getName() + ".world-bypass")
+        ) {
             final boolean success = command.execute(sender, argsList, argsList.size(), isPlayer);
-            if(success && command.isStatistic()) {
+            if (success && command.isStatistic()) {
                 statisticManager.add(sender, command.getName());
                 statisticManager.saveTask();
             }
@@ -100,21 +100,19 @@ public class ClaimCommand implements TabExecutor {
                         "" :
                         argsList.get(0).toLowerCase(Locale.ROOT);
         final Optional<SubCommand> subCommand = getSubCommand(arg);
-        if(subCommand.isPresent()) {
+        if (subCommand.isPresent()) {
             // Tab a SubCommand
             final SubCommand subCmd = subCommand.get();
             final boolean isPlayer = sender instanceof Player;
             if (isPlayer ? sender.hasPermission(subCmd.getPermission()) : subCmd.isConsole()) {
                 return subCmd.tab(sender, argsList, isPlayer);
-            }
-            else {
+            } else {
                 return Collections.emptyList();
             }
-        }
-        else if (argsList.size() < 2) {
+        } else if (argsList.size() < 2) {
             // Tab all SubCommands
             final Stream<SubCommand> subCommandStream;
-            if(sender instanceof Player)
+            if (sender instanceof Player)
                 subCommandStream = subCommands.stream()
                         .limit(11)  // Exclude Pillar
                         .filter(cmd -> sender.hasPermission(cmd.getPermission()));
@@ -123,7 +121,7 @@ public class ClaimCommand implements TabExecutor {
                         .limit(11)  // Exclude Pillar
                         .filter(SubCommand::isConsole);
             }
-            if(arg.isEmpty())
+            if (arg.isEmpty())
                 return subCommandStream
                         .map(SubCommand::getName)
                         .collect(Collectors.toList());
@@ -132,13 +130,12 @@ public class ClaimCommand implements TabExecutor {
                         .map(SubCommand::getName)
                         .filter(cmd -> cmd.startsWith(arg))
                         .collect(Collectors.toList());
-        }
-        else
+        } else
             // Wrong subCommandName, do nothing
             return Collections.emptyList();
     }
 
-    private Optional<SubCommand> getSubCommand(String arg){
+    private Optional<SubCommand> getSubCommand(String arg) {
         if (arg.isEmpty())
             return Optional.empty();
         return subCommands.stream()

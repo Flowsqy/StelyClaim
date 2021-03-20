@@ -21,19 +21,17 @@ public class PillarCoordinate {
         final int maxZ = maxPoint.getBlockZ();
         final int minX = minPoint.getBlockX();
         final int minZ = minPoint.getBlockZ();
-        if(maxX > minX){
+        if (maxX > minX) {
             this.maxX = maxX;
             this.minX = minX;
-        }
-        else{
+        } else {
             this.maxX = minX;
             this.minX = maxX;
         }
-        if(maxZ > minZ){
+        if (maxZ > minZ) {
             this.maxZ = maxZ;
             this.minZ = minZ;
-        }
-        else{
+        } else {
             this.maxZ = minZ;
             this.minZ = maxZ;
         }
@@ -59,39 +57,39 @@ public class PillarCoordinate {
         return minZ;
     }
 
-    public Location getNorthWestBlockLocation(){
+    public Location getNorthWestBlockLocation() {
         return new Location(world, minX, 0, minZ, -45, 0);
     }
 
-    public Location getNorthEastBlockLocation(){
+    public Location getNorthEastBlockLocation() {
         return new Location(world, maxX, 0, minZ, 45, 0);
     }
 
-    public Location getSouthWestBlockLocation(){
+    public Location getSouthWestBlockLocation() {
         return new Location(world, minX, 0, maxZ, -135, 0);
     }
 
-    public Location getSouthEastBlockLocation(){
+    public Location getSouthEastBlockLocation() {
         return new Location(world, maxX, 0, maxZ, 135, 0);
     }
 
-    public Location getNorthWestLocation(){
+    public Location getNorthWestLocation() {
         return getTeleportLocation(getNorthWestBlockLocation());
     }
 
-    public Location getNorthEastLocation(){
+    public Location getNorthEastLocation() {
         return getTeleportLocation(getNorthEastBlockLocation());
     }
 
-    public Location getSouthWestLocation(){
+    public Location getSouthWestLocation() {
         return getTeleportLocation(getSouthWestBlockLocation());
     }
 
-    public Location getSouthEastLocation(){
+    public Location getSouthEastLocation() {
         return getTeleportLocation(getSouthEastBlockLocation());
     }
-    
-    public Location getTeleportLocation(Location blockLocation){
+
+    public Location getTeleportLocation(Location blockLocation) {
         return blockLocation.add(0.5, world.getHighestBlockYAt(blockLocation) + 1, 0.5);
     }
 

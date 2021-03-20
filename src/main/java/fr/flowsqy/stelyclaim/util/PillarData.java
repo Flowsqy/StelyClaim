@@ -23,14 +23,14 @@ public class PillarData {
         return locations;
     }
 
-    public int next(){
+    public int next() {
         nextPillarId++;
-        if(nextPillarId > 9)
+        if (nextPillarId > 9)
             nextPillarId = 0;
         return nextPillarId;
     }
 
-    public String registerLocation(Location location){
+    public String registerLocation(Location location) {
         final String id = String.valueOf(next());
         locations.put(id, location);
         return id;

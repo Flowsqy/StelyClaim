@@ -21,7 +21,7 @@ public class RedefineSubCommand extends SelectionSubCommand {
 
     @Override
     protected boolean checkExistRegion(boolean regionExist, Player player, boolean ownRegion, String regionName, String worldName) {
-        if(regionExist)
+        if (regionExist)
             return false;
 
         messages.sendMessage(player, "claim.exist.not" + (ownRegion ? "" : "-other"), "%region%", regionName);
@@ -30,7 +30,7 @@ public class RedefineSubCommand extends SelectionSubCommand {
 
     @Override
     protected void checkIntegrateRegion(boolean overlapSame, Player player) {
-        if(!overlapSame){
+        if (!overlapSame) {
             messages.sendMessage(player, "claim.selection.redefinenotoverlap");
         }
     }

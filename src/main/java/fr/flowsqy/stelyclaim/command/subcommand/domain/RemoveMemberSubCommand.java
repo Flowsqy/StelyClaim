@@ -16,7 +16,7 @@ public class RemoveMemberSubCommand extends DomainSubCommand {
     @Override
     protected boolean modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion, String regionName) {
         final DefaultDomain domain = region.getMembers();
-        if(!domain.contains(targetPlayer)) {
+        if (!domain.contains(targetPlayer)) {
             messages.sendMessage(
                     sender,
                     "claim.domain.member.not" + (ownRegion ? "" : "-other"),

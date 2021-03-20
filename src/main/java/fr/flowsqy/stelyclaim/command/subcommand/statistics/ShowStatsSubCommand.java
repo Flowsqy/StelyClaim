@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-public class ShowStatsSubCommand extends SubStatsSubCommand{
+public class ShowStatsSubCommand extends SubStatsSubCommand {
 
     public ShowStatsSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic, StatisticManager statisticManager) {
         super(plugin, name, alias, permission, console, allowedWorlds, statistic, statisticManager);
@@ -14,10 +14,10 @@ public class ShowStatsSubCommand extends SubStatsSubCommand{
 
     @Override
     protected boolean executeSub(CommandSender sender, boolean own, String command, String target) {
-        if(command == null){
+        if (command == null) {
             final String other = (own ? "" : "-other");
             final String path = "claim.stats.show" + other;
-            for(String statCommand : statisticManager.getCommands()){
+            for (String statCommand : statisticManager.getCommands()) {
                 messages.sendMessage(
                         sender,
                         path,
@@ -31,8 +31,7 @@ public class ShowStatsSubCommand extends SubStatsSubCommand{
                     "%target%", "%stat%",
                     target, String.valueOf(statisticManager.getTotal(target))
             );
-        }
-        else {
+        } else {
             messages.sendMessage(
                     sender,
                     "claim.stats.show" + (own ? "" : "-other"),

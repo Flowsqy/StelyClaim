@@ -21,7 +21,7 @@ public abstract class SubStatsSubCommand extends SubCommand {
         this.commandsName = new HashSet<>();
     }
 
-    public void initSubCommands(List<SubCommand> subCommands){
+    public void initSubCommands(List<SubCommand> subCommands) {
         this.commandsName.clear();
         subCommands.stream()
                 .map(SubCommand::getName)
@@ -33,7 +33,7 @@ public abstract class SubStatsSubCommand extends SubCommand {
         final boolean own;
         final String command;
         final String target;
-        switch (size){
+        switch (size) {
             case 2:
                 own = true;
                 command = null;
@@ -41,12 +41,11 @@ public abstract class SubStatsSubCommand extends SubCommand {
                 break;
             case 3:
                 final String secondArg = args.get(2);
-                if(statisticManager.allowStats(secondArg) || !sender.hasPermission(getPermission() + "-other")){
+                if (statisticManager.allowStats(secondArg) || !sender.hasPermission(getPermission() + "-other")) {
                     command = secondArg;
                     target = sender.getName();
                     own = true;
-                }
-                else{
+                } else {
                     command = null;
                     target = secondArg;
                     own = target.equals(sender.getName());
@@ -58,19 +57,19 @@ public abstract class SubStatsSubCommand extends SubCommand {
                 own = target.equals(sender.getName());
                 break;
             default:
-                messages.sendMessage(sender, "help.stats_"+getName()+(sender.hasPermission(getPermission()+"-other") ? "-other" : ""));
+                messages.sendMessage(sender, "help.stats_" + getName() + (sender.hasPermission(getPermission() + "-other") ? "-other" : ""));
                 return false;
         }
-        if(!own && !sender.hasPermission(getPermission()+"-other")){
-            messages.sendMessage(sender, "help."+getName());
+        if (!own && !sender.hasPermission(getPermission() + "-other")) {
+            messages.sendMessage(sender, "help." + getName());
             return false;
         }
-        if(command != null){
-            if(!commandsName.contains(command)){
+        if (command != null) {
+            if (!commandsName.contains(command)) {
                 messages.sendMessage(sender, "claim.stats.commandnotexist", "%command%", command);
                 return false;
             }
-            if(!statisticManager.allowStats(command)){
+            if (!statisticManager.allowStats(command)) {
                 messages.sendMessage(sender, "claim.stats.commandnotstat", "%command%", command);
                 return false;
             }
@@ -82,17 +81,17 @@ public abstract class SubStatsSubCommand extends SubCommand {
 
     @Override
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
-        switch (args.size()){
+        switch (args.size()) {
             case 3:
-                if(!sender.hasPermission(getPermission()+"-other"))
+                if (!sender.hasPermission(getPermission() + "-other"))
                     return Collections.emptyList();
                 final String target = args.get(2).toLowerCase(Locale.ROOT);
                 final List<String> completions = new ArrayList<>();
-                for(OfflinePlayer offlinePlayer : Bukkit.getOnlinePlayers()){
+                for (OfflinePlayer offlinePlayer : Bukkit.getOnlinePlayers()) {
                     final String playerName = offlinePlayer.getName();
-                    if(playerName == null)
+                    if (playerName == null)
                         continue;
-                    if(playerName.toLowerCase(Locale.ROOT).startsWith(target))
+                    if (playerName.toLowerCase(Locale.ROOT).startsWith(target))
                         completions.add(playerName);
                 }
                 return completions;

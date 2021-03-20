@@ -28,7 +28,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
-public abstract class RegionSubCommand extends SubCommand{
+public abstract class RegionSubCommand extends SubCommand {
 
     protected final RegionContainer regionContainer;
 
@@ -37,15 +37,15 @@ public abstract class RegionSubCommand extends SubCommand{
         regionContainer = plugin.getRegionContainer();
     }
 
-    protected final RegionManager getRegionManager(String worldName){
+    protected final RegionManager getRegionManager(String worldName) {
         return regionContainer.get(new WorldName(worldName));
     }
 
-    protected final RegionManager getRegionManager(com.sk89q.worldedit.world.World world){
+    protected final RegionManager getRegionManager(com.sk89q.worldedit.world.World world) {
         return regionContainer.get(world);
     }
 
-    protected final RegionManager getRegionManager(World world){
+    protected final RegionManager getRegionManager(World world) {
         return getRegionManager(world.getName());
     }
 
@@ -159,13 +159,13 @@ public abstract class RegionSubCommand extends SubCommand{
         }
 
         @Override
-        public long getRemainingWeatherDuration() {
-            return 0;
+        public void setWeather(WeatherType weatherType) {
+
         }
 
         @Override
-        public void setWeather(WeatherType weatherType) {
-
+        public long getRemainingWeatherDuration() {
+            return 0;
         }
 
         @Override

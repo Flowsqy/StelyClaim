@@ -26,30 +26,30 @@ public class PillarSubCommand extends SubCommand {
 
     @Override
     public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
-        if(args.size() != 2){
+        if (args.size() != 2) {
             helpSubCommand.execute(sender, args, size, isPlayer);
             return false;
         }
         final PillarData pillarData = this.pillarData.get(sender.getName());
-        if(pillarData == null){
+        if (pillarData == null) {
             helpSubCommand.execute(sender, args, size, isPlayer);
             return false;
         }
         final String arg = args.get(1);
-        if(arg.length() != 1){
+        if (arg.length() != 1) {
             helpSubCommand.execute(sender, args, size, isPlayer);
             return false;
         }
         final Location loc = pillarData.getLocations().get(arg);
-        if(loc == null){
+        if (loc == null) {
             helpSubCommand.execute(sender, args, size, isPlayer);
             return false;
         }
-        if(loc.getWorld() == null) // Normally impossible
+        if (loc.getWorld() == null) // Normally impossible
             return false;
 
         final Location teleportLoc = loc.clone();
-        if(teleportLoc.getX() == Math.floor(teleportLoc.getX())){
+        if (teleportLoc.getX() == Math.floor(teleportLoc.getX())) {
             // Correct position only for pillar loc (exclude current position)
             teleportLoc.setY(loc.getWorld().getHighestBlockYAt(loc));
             teleportLoc.add(0.5, 1, 0.5);
@@ -62,5 +62,5 @@ public class PillarSubCommand extends SubCommand {
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
         return Collections.emptyList();
     }
-    
+
 }

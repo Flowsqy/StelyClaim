@@ -16,7 +16,7 @@ public class DefineSubCommand extends SelectionSubCommand {
 
     @Override
     protected boolean checkExistRegion(boolean regionExist, Player player, boolean ownRegion, String regionName, String worldName) {
-        if(!regionExist)
+        if (!regionExist)
             return false;
 
         messages.sendMessage(player, "claim.exist.already" + (ownRegion ? "" : "-other"), "%region%", regionName);
