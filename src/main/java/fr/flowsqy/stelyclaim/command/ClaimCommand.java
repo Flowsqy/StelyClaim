@@ -241,7 +241,7 @@ public class ClaimCommand implements TabExecutor {
                 config.getStringList("worlds.teleport"),
                 config.getBoolean("statistic.teleport")
         ));
-        subCommands.add(new StatsSubCommand(
+        final StatsSubCommand statsSubCommand = new StatsSubCommand(
                 plugin,
                 "stats",
                 "s",
@@ -249,7 +249,8 @@ public class ClaimCommand implements TabExecutor {
                 true,
                 config.getBoolean("statistic.stats"),
                 statisticManager
-        ));
+        );
+        subCommands.add(statsSubCommand);
         subCommands.add(new PillarSubCommand(
                 plugin,
                 "pillar",
@@ -260,6 +261,8 @@ public class ClaimCommand implements TabExecutor {
                 config.getBoolean("statistic.pillar"),
                 helpSubCommand
         ));
+
+        statsSubCommand.initSubCommands(subCommands);
     }
 
 }

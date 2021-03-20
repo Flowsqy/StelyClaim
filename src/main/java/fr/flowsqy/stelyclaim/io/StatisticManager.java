@@ -122,4 +122,11 @@ public class StatisticManager {
         return result;
     }
 
+    public boolean allowStats(String command){
+        return commands.contains(command);
+    }
+
+    public Set<String> getCommands() {
+        return commands;
+    }
 }

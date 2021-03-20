@@ -122,7 +122,9 @@ claim:
     member-group:
       separator: "&7, &a"
       empty: "&cAucun"
-
+  stats:
+    commandnotexist: "%prefix% &cLa commande &7%command% &cn'existe pas"
+    commandnotstat: "%prefix% &cLa commande &7%command% &cne répertorie pas de statistiques"
 
 # 'previous' est le message pour les anciens pilliers lors d'un redefine
 # 'current' est le message pour les pilliers actuels lors d'un remove

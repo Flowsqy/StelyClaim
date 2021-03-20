@@ -57,6 +57,11 @@ public class StatsSubCommand extends SubCommand {
         return new ArrayList<>(worlds);
     }
 
+    public void initSubCommands(List<SubCommand> subCommands){
+        resetStatsSubCommand.initSubCommands(subCommands);
+        showStatsSubCommand.initSubCommands(subCommands);
+    }
+
     @Override
     public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
         if(size > 1){
