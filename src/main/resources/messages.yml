@@ -30,7 +30,7 @@ help:
   teleport: '%prefix% &6/claim tp'
   teleport-other: '%prefix% &6/claim tp [Claim]'
   stats: '%prefix% &6/claim stats <show|reset> [Commande]'
-  stats-other: '%prefix% &6/claim stats <show|reset> [Joueur] [Commande]'
+  stats-other: '%prefix% &6/claim stats <show|reset> [Commande] [Joueur]'
 
 claim:
   world:

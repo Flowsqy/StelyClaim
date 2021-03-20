@@ -59,7 +59,13 @@ public class StatsSubCommand extends SubCommand {
 
     @Override
     public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
-        return true;
+        if(size > 1){
+            final SubStatsSubCommand subCommand = getSubCommand(args.get(1));
+            if(subCommand != null)
+                return subCommand.execute(sender, args, size, isPlayer);
+        }
+        messages.sendMessage(sender, "help."+getName()+(sender.hasPermission(getPermission()+"-other") ? "-other" : ""));
+        return false;
     }
 
     private boolean matchSubCommand(SubStatsSubCommand subCommand, String arg){
