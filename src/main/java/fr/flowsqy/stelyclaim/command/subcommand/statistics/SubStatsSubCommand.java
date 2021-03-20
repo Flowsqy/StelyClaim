@@ -3,11 +3,12 @@ package fr.flowsqy.stelyclaim.command.subcommand.statistics;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.subcommand.SubCommand;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class SubStatsSubCommand extends SubCommand {
 
@@ -73,6 +74,27 @@ public abstract class SubStatsSubCommand extends SubCommand {
 
     @Override
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
-        return null;
+        switch (args.size()){
+            case 3:
+                final String command = args.get(2).toLowerCase(Locale.ROOT);
+                return statisticManager.getCommands().stream()
+                        .filter(cmd -> cmd.startsWith(command))
+                        .collect(Collectors.toList());
+            case 4:
+                if(!sender.hasPermission(getPermission()+"-other"))
+                    return Collections.emptyList();
+                final String target = args.get(3).toLowerCase(Locale.ROOT);
+                final List<String> completions = new ArrayList<>();
+                for(OfflinePlayer offlinePlayer : Bukkit.getOnlinePlayers()){
+                    final String playerName = offlinePlayer.getName();
+                    if(playerName == null)
+                        continue;
+                    if(playerName.toLowerCase(Locale.ROOT).startsWith(target))
+                        completions.add(playerName);
+                }
+                return completions;
+            default:
+                return Collections.emptyList();
+        }
     }
 }
