@@ -82,7 +82,7 @@ permissions:
       stelyclaim.claim.remove: true
   stelyclaim.claim.remove:
     children:
-      stelyclaim.claim: true
+      stelyclaim.claim.pillar: true
   stelyclaim.claim.info-other:
     children:
       stelyclaim.claim.info: true
