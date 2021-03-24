@@ -37,6 +37,10 @@ expand-selection-y:
 # Valeurs possibles pour 'set-tp' : "none", "here", "northwest", "northeast", "southwest", "southeast"
 define:
   set-tp: "northwest"
+  tp-modifier:
+    x: 0.0
+    y: 0.0
+    z: 0.0
   owner:
     - "%target%"
   owner-group: []
@@ -46,6 +50,10 @@ define:
 
 redefine:
   set-tp: "northwest"
+  tp-modifier:
+    x: 0.0
+    y: 0.0
+    z: 0.0
   owner: []
   owner-group: []
   member: []

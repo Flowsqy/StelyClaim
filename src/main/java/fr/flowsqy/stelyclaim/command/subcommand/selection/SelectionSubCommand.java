@@ -26,6 +26,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.util.Collections;
 import java.util.List;
@@ -178,6 +179,7 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         final String setTp = config.getString(category + ".set-tp");
         if (setTp != null) {
             final PillarCoordinate pillarCoordinate = new PillarCoordinate(newRegion, sender.getWorld());
+
             final Location location;
 
             switch (setTp) {
@@ -200,8 +202,14 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
                     location = null;
             }
 
-            if (location != null)
-                newRegion.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(location));
+            if (location != null) {
+                final Vector tpModifier = new Vector(
+                        config.getDouble(category + ".tp-modifier.x", 0d),
+                        config.getDouble(category + ".tp-modifier.y", 0d),
+                        config.getDouble(category + ".tp-modifier.z", 0d)
+                );
+                newRegion.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(location.add(tpModifier)));
+            }
         }
 
 
