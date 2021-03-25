@@ -28,6 +28,7 @@ public class TeleportSync {
                 for (Map.Entry<Player, Location> entry : teleportLocation.entrySet()) {
                     entry.getKey().teleport(entry.getValue());
                 }
+                teleportLocation.clear();
                 launched = false;
             });
             launched = true;
