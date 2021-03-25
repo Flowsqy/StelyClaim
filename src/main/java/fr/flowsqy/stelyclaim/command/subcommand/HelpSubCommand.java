@@ -8,16 +8,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class HelpSubCommand extends SubCommand {
 
     private final List<SubCommand> subCommands;
+    private final Supplier<Integer> getTabLimitSupplier;
 
-    public HelpSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic, List<SubCommand> subCommands) {
+    public HelpSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic, List<SubCommand> subCommands, Supplier<Integer> getTabLimitSupplier) {
         super(plugin, name, alias, permission, console, allowedWorlds, statistic);
         this.subCommands = subCommands;
+        this.getTabLimitSupplier = getTabLimitSupplier;
     }
 
     @Override
@@ -49,7 +52,7 @@ public class HelpSubCommand extends SubCommand {
                             .filter(SubCommand::isConsole);
                 // Get the optional SubCommand
                 final Optional<SubCommand> optionalSubCommand = subCommandStream
-                        .limit(11) // Exclude Pillar
+                        .limit(getTabLimitSupplier.get()) // Exclude non tab commands
                         .filter(cmd -> cmd.getName().equalsIgnoreCase(secondArg) || cmd.getAlias().equalsIgnoreCase(secondArg))
                         .findAny();
                 if (optionalSubCommand.isPresent()) {
@@ -68,7 +71,7 @@ public class HelpSubCommand extends SubCommand {
         messages.sendMessage(sender, "help.help");
         if (sender instanceof Player)
             subCommands.stream()
-                    .limit(11) // Exclude Pillar
+                    .limit(getTabLimitSupplier.get()) // Exclude non tab commands
                     .skip(1)
                     .filter(cmd -> sender.hasPermission(cmd.getPermission()))
                     .forEach(cmd -> {
@@ -78,7 +81,7 @@ public class HelpSubCommand extends SubCommand {
                     );
         else
             subCommands.stream()
-                    .limit(11) // Exclude Pillar
+                    .limit(getTabLimitSupplier.get()) // Exclude non tab commands
                     .skip(1)
                     .filter(SubCommand::isConsole)
                     .forEach(cmd -> messages.sendMessage(sender, "help." + cmd.getName() + "-other"));
@@ -95,11 +98,11 @@ public class HelpSubCommand extends SubCommand {
         final Stream<SubCommand> subCommandsStream;
         if (isPlayer)
             subCommandsStream = subCommands.stream()
-                    .limit(11) // Exclude Pillar
+                    .limit(getTabLimitSupplier.get()) // Exclude non tab commands
                     .filter(subCommand -> sender.hasPermission(subCommand.getPermission()));
         else
             subCommandsStream = subCommands.stream()
-                    .limit(11) // Exclude Pillar
+                    .limit(getTabLimitSupplier.get()) // Exclude non tab commands
                     .filter(SubCommand::isConsole);
         final String arg = args.get(1).toLowerCase(Locale.ROOT);
         if (arg.isEmpty())

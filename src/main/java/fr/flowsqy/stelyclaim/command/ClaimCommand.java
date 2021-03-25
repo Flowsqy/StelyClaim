@@ -32,6 +32,7 @@ public class ClaimCommand implements TabExecutor {
     private final StatisticManager statisticManager;
     private final List<SubCommand> subCommands;
     private final SubCommand helpSubCommand;
+    private int tabLimit;
 
     public ClaimCommand(StelyClaimPlugin plugin) {
         this.messages = plugin.getMessages();
@@ -40,6 +41,10 @@ public class ClaimCommand implements TabExecutor {
         initCommands(plugin);
         this.statisticManager.initSubCommands(subCommands);
         helpSubCommand = subCommands.get(0);
+    }
+
+    public int getTabLimit() {
+        return tabLimit;
     }
 
     @Override
@@ -114,11 +119,11 @@ public class ClaimCommand implements TabExecutor {
             final Stream<SubCommand> subCommandStream;
             if (sender instanceof Player)
                 subCommandStream = subCommands.stream()
-                        .limit(11)  // Exclude Pillar
+                        .limit(tabLimit)  // Exclude non tab commands
                         .filter(cmd -> sender.hasPermission(cmd.getPermission()));
             else {
                 subCommandStream = subCommands.stream()
-                        .limit(11)  // Exclude Pillar
+                        .limit(tabLimit)  // Exclude non tab commands
                         .filter(SubCommand::isConsole);
             }
             if (arg.isEmpty())
@@ -154,7 +159,8 @@ public class ClaimCommand implements TabExecutor {
                 true,
                 config.getStringList("worlds.help"),
                 config.getBoolean("statistic.help"),
-                subCommands
+                subCommands,
+                this::getTabLimit
         );
         subCommands.add(helpSubCommand);
         subCommands.add(new DefineSubCommand(
@@ -248,6 +254,8 @@ public class ClaimCommand implements TabExecutor {
                 statisticManager
         );
         subCommands.add(statsSubCommand);
+        tabLimit = subCommands.size();
+        // End of tab commands
         subCommands.add(new PillarSubCommand(
                 plugin,
                 "pillar",
@@ -258,8 +266,16 @@ public class ClaimCommand implements TabExecutor {
                 config.getBoolean("statistic.pillar"),
                 helpSubCommand
         ));
-
         statsSubCommand.initSubCommands(subCommands);
+    }
+
+    public void registerCommand(SubCommand subCommand, boolean canTabComplete) {
+        if (canTabComplete) {
+            subCommands.add(tabLimit, subCommand);
+            tabLimit++;
+        } else {
+            subCommands.add(subCommand);
+        }
     }
 
 }
