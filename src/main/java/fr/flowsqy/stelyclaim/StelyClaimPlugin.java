@@ -37,6 +37,7 @@ public class StelyClaimPlugin extends JavaPlugin {
     private SessionManager sessionManager;
     private TeleportSync teleportSync;
     private MailManager mailManager;
+    private CommandManager commandManager;
 
     public static StelyClaimPlugin getInstance() {
         return instance;
@@ -67,7 +68,7 @@ public class StelyClaimPlugin extends JavaPlugin {
 
         new DisconnectListener(this);
 
-        new CommandManager(this);
+        this.commandManager = new CommandManager(this);
 
         this.statisticManager.initData();
     }
@@ -124,5 +125,9 @@ public class StelyClaimPlugin extends JavaPlugin {
 
     public Map<String, PillarData> getPillarData() {
         return pillarData;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
     }
 }
