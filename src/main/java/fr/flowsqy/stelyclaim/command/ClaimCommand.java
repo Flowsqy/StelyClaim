@@ -2,6 +2,7 @@ package fr.flowsqy.stelyclaim.command;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.subcommand.HelpSubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.HereSubCommand;
 import fr.flowsqy.stelyclaim.command.subcommand.PillarSubCommand;
 import fr.flowsqy.stelyclaim.command.subcommand.SubCommand;
 import fr.flowsqy.stelyclaim.command.subcommand.domain.AddMemberSubCommand;

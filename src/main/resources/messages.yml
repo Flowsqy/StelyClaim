@@ -83,6 +83,14 @@ claim:
   tp:
     notset: "%prefix% &cTon claim n'a pas de point de téléportation défini"
     notset-other: "%prefix% &cLe claim de &8%region% &cn'a pas de point de téléportation défini"
+  here:
+    inside: "%prefix% &6Tu es dans ton claim"
+    not-inside: "%prefix% &cTu n'es pas dans ton claim"
+    nothing: "%prefix% &cTu n'es dans aucune région"
+    message: "%prefix% &6Tu es dans la region de %regions%"
+    separator: "&6, "
+    text: "&a%region%"
+    hover: "&7Clique ici pour te téléporter au claim de &8%region%"
   target:
     define: "%prefix% &a%sender% &6viens de définir ton claim"
     redefine: "%prefix% &a%sender% &6viens de changer la taille de ton claim"
