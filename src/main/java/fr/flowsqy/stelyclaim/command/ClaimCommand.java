@@ -244,6 +244,15 @@ public class ClaimCommand implements TabExecutor {
                 config.getStringList("worlds.teleport"),
                 config.getBoolean("statistic.teleport")
         ));
+        subCommands.add(new HereSubCommand(
+                plugin,
+                "here",
+                "hr",
+                "stelyclaim.claim.here",
+                false,
+                config.getStringList("worlds.here"),
+                config.getBoolean("statistic.here")
+        ));
         final StatsSubCommand statsSubCommand = new StatsSubCommand(
                 plugin,
                 "stats",

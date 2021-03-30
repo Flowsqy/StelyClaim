@@ -70,6 +70,7 @@ statistic:
   removeowner: true
   remove: true
   info: false
+  here: false
   teleport: false
   stats: false
   pillar: false
@@ -104,6 +105,7 @@ worlds:
   remove: []
   info: []
   teleport: []
+  here: []
   stats:
     reset: []
     show: []
