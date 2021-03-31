@@ -90,7 +90,7 @@ claim:
     message: "%prefix% &6Tu es dans la region de %regions%"
     separator: "&6, "
     text: "&a%region%"
-    hover: "&7Clique ici pour te téléporter au claim de &8%region%"
+    hover: "&7Clique ici pour voir les informations du claim de &8%region%"
   target:
     define: "%prefix% &a%sender% &6viens de définir ton claim"
     redefine: "%prefix% &a%sender% &6viens de changer la taille de ton claim"
