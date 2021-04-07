@@ -1,5 +1,6 @@
 package fr.flowsqy.stelyclaim;
 
+import com.earth2me.essentials.Essentials;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.session.SessionManager;
 import com.sk89q.worldguard.WorldGuard;
@@ -8,12 +9,10 @@ import fr.flowsqy.stelyclaim.command.CommandManager;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
 import fr.flowsqy.stelyclaim.io.Messages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
-import fr.flowsqy.stelyclaim.util.DisconnectListener;
-import fr.flowsqy.stelyclaim.util.MailManager;
-import fr.flowsqy.stelyclaim.util.PillarData;
-import fr.flowsqy.stelyclaim.util.TeleportSync;
+import fr.flowsqy.stelyclaim.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -36,6 +35,7 @@ public class StelyClaimPlugin extends JavaPlugin {
     private RegionContainer regionContainer;
     private SessionManager sessionManager;
     private TeleportSync teleportSync;
+    private EssentialsManager essentialsManager;
     private MailManager mailManager;
     private CommandManager commandManager;
 
@@ -64,7 +64,9 @@ public class StelyClaimPlugin extends JavaPlugin {
         this.regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
         this.sessionManager = WorldEdit.getInstance().getSessionManager();
         this.teleportSync = new TeleportSync(this);
-        this.mailManager = new MailManager(messages, configuration);
+        final Plugin plugin = Bukkit.getPluginManager().getPlugin("Essentials");
+        this.essentialsManager = plugin instanceof Essentials ? new EssentialsManagerImpl(plugin, messages) : new EssentialsManager();
+        this.mailManager = new MailManager(messages, configuration, essentialsManager);
 
         new DisconnectListener(this);
 

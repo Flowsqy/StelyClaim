@@ -34,6 +34,7 @@ permissions:
       stelyclaim.claim.info-other: true
       stelyclaim.claim.teleport-other: true
       stelyclaim.claim.here-other: true
+      stelyclaim.claim.listadd-other: true
       stelyclaim.claim.stats.reset-other: true
       stelyclaim.claim.stats.show-other: true
   stelyclaim.claim.help:
@@ -100,6 +101,12 @@ permissions:
     children:
       stelyclaim.claim.here: true
   stelyclaim.claim.here:
+    children:
+      stelyclaim.claim: true
+  stelyclaim.claim.listadd-other:
+    children:
+      stelyclaim.claim.listadd: true
+  stelyclaim.claim.listadd:
     children:
       stelyclaim.claim: true
   stelyclaim.claim.stats-other:

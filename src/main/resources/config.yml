@@ -70,8 +70,9 @@ statistic:
   removeowner: true
   remove: true
   info: false
-  here: false
   teleport: false
+  here: false
+  listadd: false
   stats: false
   pillar: false
 
@@ -106,6 +107,7 @@ worlds:
   info: []
   teleport: []
   here: []
+  listadd: []
   stats:
     reset: []
     show: []

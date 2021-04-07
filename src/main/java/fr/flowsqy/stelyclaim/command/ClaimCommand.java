@@ -1,10 +1,7 @@
 package fr.flowsqy.stelyclaim.command;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.command.subcommand.HelpSubCommand;
-import fr.flowsqy.stelyclaim.command.subcommand.HereSubCommand;
-import fr.flowsqy.stelyclaim.command.subcommand.PillarSubCommand;
-import fr.flowsqy.stelyclaim.command.subcommand.SubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.*;
 import fr.flowsqy.stelyclaim.command.subcommand.domain.AddMemberSubCommand;
 import fr.flowsqy.stelyclaim.command.subcommand.domain.AddOwnerSubCommand;
 import fr.flowsqy.stelyclaim.command.subcommand.domain.RemoveMemberSubCommand;
@@ -253,6 +250,15 @@ public class ClaimCommand implements TabExecutor {
                 false,
                 config.getStringList("worlds.here"),
                 config.getBoolean("statistic.here")
+        ));
+        subCommands.add(new ListAddSubCommand(
+                plugin,
+                "listadd",
+                "la",
+                "stelyclaim.claim.listadd",
+                false,
+                config.getStringList("worlds.listadd"),
+                config.getBoolean("statistic.listadd")
         ));
         final StatsSubCommand statsSubCommand = new StatsSubCommand(
                 plugin,
