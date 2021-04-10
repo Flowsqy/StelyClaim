@@ -59,6 +59,15 @@ redefine:
   member: []
   member-group: []
 
+listadd:
+  # Le temps pendant lequel doit être gardé en mémoire le résulat
+  # de la commande pour un joueur donné dans un monde donné.
+  # Exprimé en milliseconde
+  cache-period: 4000
+  # Le nombre d'entrée pour lequel il faut nettoyer le cache inutile
+  cache-size-clear-check: 4
+  # Le nombre de régions par page
+  region-by-page: 10
 
 statistic:
   help: false

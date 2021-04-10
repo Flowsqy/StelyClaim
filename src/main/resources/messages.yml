@@ -31,6 +31,8 @@ help:
   teleport-other: '%prefix% &6/claim tp [Claim]'
   here: '%prefix% &6/claim here'
   here-other: '%prefix% &6/claim here'
+  listadd: '%prefix% &6/claim listadd [Page]'
+  listadd-other: '%prefix% &6/claim listadd [Joueur] [Page]'
   stats: '%prefix% &6/claim stats <sous-commande> [Commande]'
   stats-other: '%prefix% &6/claim stats <sous-commande> [Joueur] [Commande]'
   stats_reset: '%prefix% &6/claim stats reset [Commande]'
@@ -136,6 +138,20 @@ claim:
     member-group:
       separator: "&7, &a"
       empty: "&cAucun"
+  listadd:
+    not-a-number: "%prefix% &8%arg% &cn'est pas un nombre"
+    invalid-page: "%prefix% &8%page% &cn'est pas un numéro de page valide. Il doit être supérieur ou égal à 1"
+    no-region: "%prefix% &cTu ne fais parti d'aucun claim"
+    no-region-other: "%prefix% &8%player% &cne fait parti d'aucun claim"
+    not-enough-page: "%prefix% &cLa dernière page est &8%page%&c. Tu ne peux pas consulter la page &8%arg%&c."
+    region-message: "&a%region%"
+    page-message: "%previous% &7[&6%page%&7]&r %next%"
+    previous-text: "&7 Page précédente"
+    previous-hover: "&7Clique ici pour afficher la page précédente"
+    next-text: "&7Page suivante"
+    next-hover: "&7Clique ici pour afficher la page suivante"
+    no-previous: "&7==============="
+    no-next: "&7==============="
   stats:
     commandnotexist: "%prefix% &cLa commande &8%command% &cn'existe pas"
     commandnotstat: "%prefix% &cLa commande &8%command% &cne répertorie pas de statistiques"
