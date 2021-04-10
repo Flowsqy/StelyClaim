@@ -9,9 +9,11 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -243,6 +245,20 @@ public class ListAddSubCommand extends RegionSubCommand {
 
     @Override
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
+        if (args.size() == 2 && sender.hasPermission(getPermission() + "-other")) {
+            final String arg = args.get(1).toLowerCase(Locale.ROOT);
+            final Player player = (Player) sender;
+            if (arg.isEmpty())
+                return Bukkit.getOnlinePlayers().stream()
+                        .filter(player::canSee)
+                        .map(HumanEntity::getName)
+                        .collect(Collectors.toList());
+            return Bukkit.getOnlinePlayers().stream()
+                    .filter(player::canSee)
+                    .map(HumanEntity::getName)
+                    .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(arg))
+                    .collect(Collectors.toList());
+        }
         return Collections.emptyList();
     }
 
