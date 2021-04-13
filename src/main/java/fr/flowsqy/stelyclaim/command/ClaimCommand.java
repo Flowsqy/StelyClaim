@@ -14,11 +14,13 @@ import fr.flowsqy.stelyclaim.command.subcommand.selection.RedefineSubCommand;
 import fr.flowsqy.stelyclaim.command.subcommand.statistics.StatsSubCommand;
 import fr.flowsqy.stelyclaim.io.Messages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -286,6 +288,21 @@ public class ClaimCommand implements TabExecutor {
     }
 
     public void registerCommand(SubCommand subCommand, boolean canTabComplete) {
+        final Permission globalPerm = Bukkit.getPluginManager().getPermission("stelyclaim.claim.*");
+        final Permission basePerm = Bukkit.getPluginManager().getPermission("stelyclaim.claim");
+        if (globalPerm == null || basePerm == null)
+            throw new RuntimeException(
+                    "Can not register '"
+                            + subCommand.getName()
+                            + "' subcommand because global perm or base perm are not registered"
+            );
+        final Permission commandPerm = new Permission(subCommand.getPermission());
+        final Permission commandOtherPerm = new Permission(subCommand.getPermission() + "-other");
+
+        basePerm.addParent(commandPerm, true);
+        commandPerm.addParent(commandOtherPerm, true);
+        commandOtherPerm.addParent(globalPerm, true);
+
         if (canTabComplete) {
             subCommands.add(tabLimit, subCommand);
             tabLimit++;
