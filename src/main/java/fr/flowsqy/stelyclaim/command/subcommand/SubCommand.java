@@ -20,8 +20,12 @@ public abstract class SubCommand {
     protected final boolean statistic;
 
     public SubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
+        this(plugin, plugin.getMessages(), name, alias, permission, console, allowedWorlds, statistic);
+    }
+
+    public SubCommand(StelyClaimPlugin plugin, Messages messages, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         this.plugin = plugin;
-        this.messages = plugin.getMessages();
+        this.messages = messages;
         this.name = name;
         this.alias = alias;
         this.permission = permission;
