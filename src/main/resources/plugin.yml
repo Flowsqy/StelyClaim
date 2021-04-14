@@ -21,6 +21,8 @@ commands:
     description: Provide instant bedrock break for survival players
     usage: /bedrock
 permissions:
+  stelyclaim.claim:
+    description: Base permission for StelyClaim command
   stelyclaim.claim.*:
     children:
       stelyclaim.claim.help: true
