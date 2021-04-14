@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public abstract class SubCommand {
@@ -24,6 +25,7 @@ public abstract class SubCommand {
     }
 
     public SubCommand(StelyClaimPlugin plugin, Messages messages, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
+        Objects.requireNonNull(messages);
         this.plugin = plugin;
         this.messages = messages;
         this.name = name;

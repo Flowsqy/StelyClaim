@@ -62,7 +62,7 @@ public class HelpSubCommand extends SubCommand {
                             !(subCommand instanceof HelpSubCommand) &&
                                     sender.hasPermission(subCommand.getPermission() + "-other") ?
                                     "-other" : "";
-                    messages.sendMessage(sender, "help." + subCommand.getName() + other);
+                    subCommand.messages.sendMessage(sender, "help." + subCommand.getName() + other);
                     return true;
                 }
             }
@@ -76,7 +76,7 @@ public class HelpSubCommand extends SubCommand {
                     .filter(cmd -> sender.hasPermission(cmd.getPermission()))
                     .forEach(cmd -> {
                                 final boolean other = sender.hasPermission(cmd.getPermission() + "-other");
-                                messages.sendMessage(sender, "help." + cmd.getName() + (other ? "-other" : ""));
+                                cmd.messages.sendMessage(sender, "help." + cmd.getName() + (other ? "-other" : ""));
                             }
                     );
         else
@@ -84,7 +84,7 @@ public class HelpSubCommand extends SubCommand {
                     .limit(getTabLimitSupplier.get()) // Exclude non tab commands
                     .skip(1)
                     .filter(SubCommand::isConsole)
-                    .forEach(cmd -> messages.sendMessage(sender, "help." + cmd.getName() + "-other"));
+                    .forEach(cmd -> cmd.messages.sendMessage(sender, "help." + cmd.getName() + "-other"));
         return true;
     }
 
