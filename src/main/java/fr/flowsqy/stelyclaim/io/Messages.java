@@ -9,9 +9,9 @@ public class Messages {
     private final YamlConfiguration yamlConfiguration;
     private final String prefix;
 
-    public Messages(YamlConfiguration yamlConfiguration) {
+    public Messages(YamlConfiguration yamlConfiguration, String defaultPrefix) {
         this.yamlConfiguration = yamlConfiguration;
-        final String originalPrefix = yamlConfiguration.getString("prefix", "&7[&5StelyClaim&7]&f");
+        final String originalPrefix = yamlConfiguration.getString("prefix", defaultPrefix);
         assert originalPrefix != null;
         this.prefix = ChatColor.translateAlternateColorCodes('&', originalPrefix);
     }
