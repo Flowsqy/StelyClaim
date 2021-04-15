@@ -21,6 +21,7 @@ import com.sk89q.worldedit.world.weather.WeatherType;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.io.Messages;
 import org.bukkit.World;
 
 import javax.annotation.Nullable;
@@ -35,6 +36,11 @@ public abstract class RegionSubCommand extends SubCommand {
     public RegionSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         super(plugin, name, alias, permission, console, allowedWorlds, statistic);
         regionContainer = plugin.getRegionContainer();
+    }
+
+    public RegionSubCommand(StelyClaimPlugin plugin, Messages messages, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic, RegionContainer regionContainer) {
+        super(plugin, messages, name, alias, permission, console, allowedWorlds, statistic);
+        this.regionContainer = regionContainer;
     }
 
     protected final RegionManager getRegionManager(String worldName) {
