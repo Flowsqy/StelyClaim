@@ -137,7 +137,7 @@ public class ListAddSubCommand extends RegionSubCommand {
         }
 
         // Send region list
-        for (int index = (page - 1) * REGION_BY_PAGE, i = 0; index < result.size() && i < 5; index++, i++) {
+        for (int index = (page - 1) * REGION_BY_PAGE, i = 0; index < result.size() && i < REGION_BY_PAGE; index++, i++) {
             player.sendMessage(regionMessage.replace("%region%", result.get(index)));
         }
 
