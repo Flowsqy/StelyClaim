@@ -10,9 +10,13 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionOperationException;
 import com.sk89q.worldedit.session.SessionManager;
 import com.sk89q.worldedit.world.World;
+import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -24,6 +28,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -31,6 +36,7 @@ import org.bukkit.util.Vector;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class SelectionSubCommand extends RegionSubCommand {
@@ -257,6 +263,30 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
         );
         newRegion.setFlag(Flags.FAREWELL_MESSAGE, farewell);
 
+        // States flags
+        final ConfigurationSection section = config.getConfigurationSection(category + ".flags");
+        if (section != null) {
+            final FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
+            for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+                if (!(entry.getValue() instanceof Boolean))
+                    continue;
+                final Flag<?> flag = registry.get(entry.getKey());
+                if (!(flag instanceof StateFlag))
+                    continue;
+                final StateFlag stateFlag = (StateFlag) flag;
+                final boolean value = (boolean) entry.getValue();
+                if (value && newRegion.getFlag(stateFlag) == StateFlag.State.ALLOW)
+                    continue;
+                if (
+                        (stateFlag.getDefault() == StateFlag.State.ALLOW && value)
+                                || (stateFlag.getDefault() == null && !value)
+                ) {
+                    newRegion.setFlag(stateFlag, null);
+                } else {
+                    newRegion.setFlag(stateFlag, value ? StateFlag.State.ALLOW : StateFlag.State.DENY);
+                }
+            }
+        }
     }
 
     @Override

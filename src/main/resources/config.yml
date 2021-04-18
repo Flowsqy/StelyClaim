@@ -47,6 +47,7 @@ define:
   member: []
   member-group:
     - "modo"
+  flags:
 
 redefine:
   set-tp: "northwest"
@@ -58,6 +59,7 @@ redefine:
   owner-group: []
   member: []
   member-group: []
+  flags:
 
 listadd:
   # Le temps pendant lequel doit être gardé en mémoire le résulat
