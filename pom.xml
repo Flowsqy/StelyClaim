@@ -32,6 +32,10 @@
             <id>paper-repo</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -54,16 +58,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>fr.flowsqy.componentreplacer</groupId>
-            <artifactId>componentreplacer</artifactId>
-            <version>1.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>net.ess3</groupId>
             <artifactId>EssentialsX</artifactId>
             <version>2.18.2</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Flowsqy</groupId>
+            <artifactId>ComponentReplacer</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
