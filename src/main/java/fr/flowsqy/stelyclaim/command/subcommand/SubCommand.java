@@ -48,6 +48,10 @@ public abstract class SubCommand {
         return permission;
     }
 
+    public String getOtherPermission() {
+        return permission + "-other";
+    }
+
     public boolean isConsole() {
         return console;
     }
