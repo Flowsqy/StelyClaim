@@ -18,7 +18,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.plugin.PluginManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -56,8 +55,6 @@ public class BedrockCommand implements TabExecutor {
 
     private final class BedrockListener implements Listener {
 
-        private final PluginManager pluginManager = Bukkit.getPluginManager();
-
         @EventHandler(priority = EventPriority.MONITOR)
         public void onInteract(PlayerInteractEvent event) {
             if (event.getAction() != Action.LEFT_CLICK_BLOCK)
@@ -79,7 +76,7 @@ public class BedrockCommand implements TabExecutor {
                 return;
 
             final BlockBreakEvent blockEvent = new BlockBreakEvent(block, player);
-            pluginManager.callEvent(blockEvent);
+            Bukkit.getPluginManager().callEvent(blockEvent);
             if (blockEvent.isCancelled())
                 return;
 
