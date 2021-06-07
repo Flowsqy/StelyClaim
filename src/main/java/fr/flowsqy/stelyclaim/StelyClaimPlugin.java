@@ -5,6 +5,7 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.session.SessionManager;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
+import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.command.CommandManager;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
 import fr.flowsqy.stelyclaim.io.Messages;
@@ -37,6 +38,7 @@ public class StelyClaimPlugin extends JavaPlugin {
     private TeleportSync teleportSync;
     private EssentialsManager essentialsManager;
     private MailManager mailManager;
+    private ProtocolManager protocolManager;
     private CommandManager commandManager;
 
     public static StelyClaimPlugin getInstance() {
@@ -69,6 +71,8 @@ public class StelyClaimPlugin extends JavaPlugin {
         this.mailManager = new MailManager(messages, configuration, essentialsManager);
 
         new DisconnectListener(this);
+
+        this.protocolManager = new ProtocolManager();
 
         this.commandManager = new CommandManager(this);
 
@@ -131,6 +135,10 @@ public class StelyClaimPlugin extends JavaPlugin {
 
     public Map<String, PillarData> getPillarData() {
         return pillarData;
+    }
+
+    public ProtocolManager getProtocolManager() {
+        return protocolManager;
     }
 
     public CommandManager getCommandManager() {
