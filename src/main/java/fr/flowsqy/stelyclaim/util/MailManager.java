@@ -1,7 +1,9 @@
 package fr.flowsqy.stelyclaim.util;
 
-import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.I18n;
 import com.earth2me.essentials.User;
+import com.earth2me.essentials.utils.FormatUtil;
+import com.earth2me.essentials.utils.StringUtil;
 import fr.flowsqy.stelyclaim.io.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
@@ -10,30 +12,22 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public class MailManager {
 
     private final Messages messages;
     private final Map<String, Boolean> commands;
-    private final boolean enabled;
-    private final Supplier<Essentials> getEssentials;
-    private final SendMailFunction sendMailFunction;
+    private final EssentialsManager essentialsManager;
 
     public MailManager(Messages messages, Configuration config, EssentialsManager essentialsManager) {
         this.messages = messages;
-        this.enabled = essentialsManager.isEnable();
-        if (enabled) {
+        this.essentialsManager = essentialsManager;
+        if (essentialsManager.isEnable()) {
             commands = new HashMap<>();
             initCustomFormat(config);
-            final EssentialsManagerImpl essentialsManagerImpl = (EssentialsManagerImpl) essentialsManager;
-            getEssentials = essentialsManagerImpl::getEssentials;
-            sendMailFunction = essentialsManagerImpl::sendMail;
             return;
         }
         commands = null;
-        getEssentials = null;
-        sendMailFunction = null;
     }
 
     private void initCustomFormat(Configuration config) {
@@ -45,7 +39,7 @@ public class MailManager {
     }
 
     public boolean isEnabled() {
-        return enabled;
+        return essentialsManager.isEnable();
     }
 
     public void sendMail(Player from, String to, String command) {
@@ -57,41 +51,41 @@ public class MailManager {
     }
 
     public void sendMail(Player from, String to, String command, String target) {
-        if (!enabled)
+        if (!essentialsManager.isEnable())
             return;
         final Boolean customFormat = commands.get(command);
         if (customFormat == null) // Command does not enable mail
             return;
-        final User userTo = getEssentials.get().getUser(to);
+        final User userTo = essentialsManager.getUser(to);
         if (userTo == null)
             return;
         if (customFormat) {
-            sendMailFunction.sendMail(null, from, userTo, command, false, target);
+            sendMail(null, from, userTo, command, false, target);
             return;
         }
-        final User userFrom = getEssentials.get().getUser(from);
+        final User userFrom = essentialsManager.getUser(from);
         if (userFrom == null)
             return;
-        sendMailFunction.sendMail(userFrom, from, userTo, command, true, target);
+        sendMail(userFrom, from, userTo, command, true, target);
     }
 
     public void sendMail(Player from, Player to, String command, String target) {
-        if (!enabled)
+        if (!essentialsManager.isEnable())
             return;
         final Boolean customFormat = commands.get(command);
         if (customFormat == null) // Command does not enable mail
             return;
-        final User userTo = getEssentials.get().getUser(to);
+        final User userTo = essentialsManager.getUser(to);
         if (userTo == null)
             return;
         if (customFormat) {
-            sendMailFunction.sendMail(null, from, userTo, command, false, target);
+            sendMail(null, from, userTo, command, false, target);
             return;
         }
-        final User userFrom = getEssentials.get().getUser(from);
+        final User userFrom = essentialsManager.getUser(from);
         if (userFrom == null)
             return;
-        sendMailFunction.sendMail(userFrom, from, userTo, command, true, target);
+        sendMail(userFrom, from, userTo, command, true, target);
     }
 
     public void sendInfoToTarget(Player sender, String target, String command) {
@@ -125,11 +119,37 @@ public class MailManager {
         }
     }
 
-    @FunctionalInterface
-    private interface SendMailFunction {
+    public void sendMail(User fromUser, Player fromPlayer, User to, String command, boolean useEssentialsSyntax, String target) {
+        final String mailMessage;
+        if (target != null) {
+            mailMessage = messages.getMessage(
+                    "mail." + command,
+                    "%from%", "%to%", "%target%",
+                    fromPlayer.getName(), to.getName(), target
+            );
+        } else {
+            mailMessage = messages.getMessage(
+                    "mail." + command,
+                    "%from%", "%to%",
+                    fromPlayer.getName(), to.getName()
+            );
+        }
 
-        void sendMail(User fromUser, Player fromPlayer, User to, String command, boolean useEssentialsSyntax, String target);
-
+        if (useEssentialsSyntax) {
+            to.addMail(
+                    I18n.tl(
+                            "mailFormat",
+                            fromUser.getName(),
+                            FormatUtil.formatMessage(
+                                    fromUser,
+                                    "essentials.mail",
+                                    StringUtil.sanitizeString(FormatUtil.stripFormat(mailMessage))
+                            )
+                    )
+            );
+        } else {
+            to.addMail(mailMessage);
+        }
     }
 
 }

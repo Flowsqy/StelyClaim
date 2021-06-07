@@ -65,7 +65,7 @@ public class StelyClaimPlugin extends JavaPlugin {
         this.sessionManager = WorldEdit.getInstance().getSessionManager();
         this.teleportSync = new TeleportSync(this);
         final Plugin plugin = Bukkit.getPluginManager().getPlugin("Essentials");
-        this.essentialsManager = plugin instanceof Essentials ? new EssentialsManagerImpl(plugin, messages) : new EssentialsManager();
+        this.essentialsManager = plugin instanceof Essentials ? new EssentialsManager.EssentialsManagerImpl(plugin) : EssentialsManager.NULL;
         this.mailManager = new MailManager(messages, configuration, essentialsManager);
 
         new DisconnectListener(this);
@@ -119,6 +119,10 @@ public class StelyClaimPlugin extends JavaPlugin {
 
     public TeleportSync getTeleportSync() {
         return teleportSync;
+    }
+
+    public EssentialsManager getEssentialsManager() {
+        return essentialsManager;
     }
 
     public MailManager getMailManager() {
