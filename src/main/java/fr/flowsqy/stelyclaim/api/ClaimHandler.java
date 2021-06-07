@@ -1,11 +1,13 @@
 package fr.flowsqy.stelyclaim.api;
 
-public interface ClaimHandler {
+public interface ClaimHandler<T extends ClaimOwner> {
 
-    String getOwner(String claim);
+    T getOwner(String claimIdentifier);
 
-    RegionModifier getDefineModifier();
+    String getIdentifier(T owner);
 
-    RegionModifier getRedefineModifier();
+    RegionModifier<T> getDefineModifier();
+
+    RegionModifier<T> getRedefineModifier();
 
 }
