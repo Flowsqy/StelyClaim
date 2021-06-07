@@ -3,8 +3,8 @@ package fr.flowsqy.stelyclaim.util;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public interface EssentialsManager {
@@ -40,14 +40,19 @@ public interface EssentialsManager {
             throw new UnsupportedOperationException();
         }
 
+        @Override
+        public String toString() {
+            return super.toString();
+        }
     }
 
     class EssentialsManagerImpl implements EssentialsManager {
 
         private final Essentials essentials;
 
-        public EssentialsManagerImpl(Plugin plugin) {
-            this.essentials = (Essentials) plugin;
+        public EssentialsManagerImpl(Essentials plugin) {
+            Objects.requireNonNull(plugin);
+            this.essentials = plugin;
         }
 
         @Override
@@ -68,6 +73,26 @@ public interface EssentialsManager {
         @Override
         public User getUser(String player) {
             return essentials.getUser(player);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            EssentialsManagerImpl that = (EssentialsManagerImpl) o;
+            return essentials.equals(that.essentials);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(essentials);
+        }
+
+        @Override
+        public String toString() {
+            return "EssentialsManagerImpl{" +
+                    "essentials=" + essentials +
+                    '}';
         }
 
     }
