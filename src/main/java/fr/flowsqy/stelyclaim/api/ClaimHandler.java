@@ -12,4 +12,6 @@ public interface ClaimHandler<T extends ClaimOwner> {
 
     RegionModifier<T> getRedefineModifier();
 
+    ClaimMessage getMessages();
+
 }

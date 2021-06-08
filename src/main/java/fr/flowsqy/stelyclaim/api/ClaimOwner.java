@@ -1,5 +1,7 @@
 package fr.flowsqy.stelyclaim.api;
 
+import org.bukkit.entity.Player;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -10,5 +12,9 @@ public interface ClaimOwner {
     List<UUID> getOwners();
 
     List<UUID> getMembers();
+
+    boolean own(Player player);
+
+    boolean canModify(Player player, boolean own, Protocol protocol);
 
 }
