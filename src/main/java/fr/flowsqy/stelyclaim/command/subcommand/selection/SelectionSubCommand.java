@@ -2,13 +2,13 @@ package fr.flowsqy.stelyclaim.command.subcommand.selection;
 
 import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.LocalSession;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionOperationException;
-import com.sk89q.worldedit.session.SessionManager;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.domains.DefaultDomain;
@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 
 public abstract class SelectionSubCommand extends RegionSubCommand {
 
-    private final SessionManager sessionManager;
     private final boolean expandRegion;
     private final int maxY;
     private final int minY;
@@ -50,7 +49,6 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
 
     public SelectionSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         super(plugin, name, alias, permission, console, allowedWorlds, statistic);
-        this.sessionManager = plugin.getSessionManager();
 
         final Configuration configuration = plugin.getConfiguration();
         expandRegion = configuration.getBoolean("expand-selection-y.expand", false);
@@ -66,13 +64,13 @@ public abstract class SelectionSubCommand extends RegionSubCommand {
             messages.sendMessage(sender,
                     "help."
                             + getName()
-                            + (sender.hasPermission(getPermission() + "-other") ? "-other" : "")
+                            + (sender.hasPermission(getOtherPermission()) ? "-other" : "")
             );
             return false;
         }
         final Player player = (Player) sender;
 
-        final LocalSession session = sessionManager.get(BukkitAdapter.adapt(player));
+        final LocalSession session = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player));
         final World world = new BukkitWorld(player.getWorld());
 
         final Region selection;
