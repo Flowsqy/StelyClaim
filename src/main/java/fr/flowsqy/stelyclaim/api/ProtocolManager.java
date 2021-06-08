@@ -9,8 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class ProtocolManager {
+
+    private static final Pattern ID_PATTERN = Pattern.compile("^[a-z0-9]+$");
 
     private final Map<String, ClaimHandler<?>> handlers;
     private final SelectionProtocol selectionProtocol;
@@ -25,6 +28,9 @@ public class ProtocolManager {
         Objects.requireNonNull(handler);
         final String id = handler.getId();
         Objects.requireNonNull(id);
+        if (!ID_PATTERN.matcher(id).matches()) {
+            throw new IllegalArgumentException("Invalid id, must match pattern " + ID_PATTERN.pattern());
+        }
         if (handlers.containsKey(id)) {
             throw new IllegalArgumentException("A ClaimHandler is already register for the id '" + id + "'");
         }
