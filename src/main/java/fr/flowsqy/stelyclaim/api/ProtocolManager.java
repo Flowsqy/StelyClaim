@@ -1,5 +1,8 @@
 package fr.flowsqy.stelyclaim.api;
 
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -27,31 +30,31 @@ public class ProtocolManager {
         return handlers.remove(id) != null;
     }
 
-    public boolean define(ClaimOwner owner) {
+    public boolean define(Player sender, ClaimOwner owner) {
         return false;
     }
 
-    public boolean redefine(ClaimOwner owner) {
+    public boolean redefine(Player sender, ClaimOwner owner) {
         return false;
     }
 
-    public boolean addMember(ClaimOwner owner, UUID player) {
+    public boolean addMember(World world, ClaimOwner owner, UUID player) {
         return false;
     }
 
-    public boolean removeMember(ClaimOwner owner, UUID player) {
+    public boolean removeMember(World world, ClaimOwner owner, UUID player) {
         return false;
     }
 
-    public boolean addOwner(ClaimOwner owner, UUID player) {
+    public boolean addOwner(World world, ClaimOwner owner, UUID player) {
         return false;
     }
 
-    public boolean removeOwner(ClaimOwner owner, UUID player) {
+    public boolean removeOwner(World world, ClaimOwner owner, UUID player) {
         return false;
     }
 
-    public boolean remove(ClaimOwner owner) {
+    public boolean remove(World world, ClaimOwner owner) {
         return false;
     }
 
