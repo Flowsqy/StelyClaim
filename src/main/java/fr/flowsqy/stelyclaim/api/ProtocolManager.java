@@ -16,18 +16,19 @@ public class ProtocolManager {
         this.handlers = new HashMap<>();
     }
 
-    public void registerHandler(String id, ClaimHandler<?> handler) {
-        Objects.requireNonNull(id);
+    public void registerHandler(ClaimHandler<?> handler) {
         Objects.requireNonNull(handler);
+        final String id = handler.getId();
+        Objects.requireNonNull(id);
         if (handlers.containsKey(id)) {
             throw new IllegalArgumentException("A ClaimHandler is already register for the id '" + id + "'");
         }
         handlers.put(id, handler);
     }
 
-    public boolean unregisterHandler(String id) {
-        Objects.requireNonNull(id);
-        return handlers.remove(id) != null;
+    public boolean unregisterHandler(ClaimHandler<?> handler) {
+        Objects.requireNonNull(handler);
+        return handlers.remove(handler.getId()) != null;
     }
 
     public boolean define(Player sender, ClaimOwner owner) {
