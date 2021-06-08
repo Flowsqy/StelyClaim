@@ -1,8 +1,6 @@
 package fr.flowsqy.stelyclaim;
 
 import com.earth2me.essentials.Essentials;
-import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.command.CommandManager;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
@@ -31,7 +29,6 @@ public class StelyClaimPlugin extends JavaPlugin {
     private Messages messages;
     private BedrockManager breakManager;
     private StatisticManager statisticManager;
-    private RegionContainer regionContainer;
     private TeleportSync teleportSync;
     private EssentialsManager essentialsManager;
     private MailManager mailManager;
@@ -60,7 +57,6 @@ public class StelyClaimPlugin extends JavaPlugin {
         this.messages = new Messages(initFile(dataFolder, "messages.yml"), "&7[&5StelyClaim&7]&f");
         this.breakManager = new BedrockManager(dataFolder);
         this.statisticManager = new StatisticManager(this, dataFolder);
-        this.regionContainer = WorldGuard.getInstance().getPlatform().getRegionContainer();
         this.teleportSync = new TeleportSync(this);
         final Plugin plugin = Bukkit.getPluginManager().getPlugin("Essentials");
         this.essentialsManager = plugin instanceof Essentials ? new EssentialsManager.EssentialsManagerImpl((Essentials) plugin) : EssentialsManager.NULL;
@@ -68,7 +64,7 @@ public class StelyClaimPlugin extends JavaPlugin {
 
         new DisconnectListener(this);
 
-        this.protocolManager = new ProtocolManager();
+        this.protocolManager = new ProtocolManager(this);
 
         this.commandManager = new CommandManager(this);
 
@@ -107,10 +103,6 @@ public class StelyClaimPlugin extends JavaPlugin {
 
     public StatisticManager getStatisticManager() {
         return statisticManager;
-    }
-
-    public RegionContainer getRegionContainer() {
-        return regionContainer;
     }
 
     public TeleportSync getTeleportSync() {
