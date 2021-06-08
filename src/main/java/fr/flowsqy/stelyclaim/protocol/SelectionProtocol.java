@@ -18,6 +18,7 @@ import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.Protocol;
+import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.util.PillarTextSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -74,9 +75,14 @@ public class SelectionProtocol {
 
         final boolean ownRegion = owner.own(sender);
 
-        if (!owner.canModify(sender, ownRegion, Protocol.DEFINE)) {
-            messages.sendMessage(sender, "help.define");
-            return false;
+        if (!ownRegion) {
+            if (protocol == Protocol.DEFINE && !sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.DEFINE))) {
+                messages.sendMessage(sender, "help.define");
+                return false;
+            } else if (!sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.REDEFINE))) {
+                messages.sendMessage(sender, "help.redefine");
+                return false;
+            }
         }
 
         final RegionManager regionManager = RegionFinder.getRegionManager(world, sender, messages);

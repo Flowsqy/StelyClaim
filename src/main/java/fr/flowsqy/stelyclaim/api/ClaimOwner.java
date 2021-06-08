@@ -15,6 +15,4 @@ public interface ClaimOwner {
 
     boolean own(Player player);
 
-    boolean canModify(Player player, boolean own, Protocol protocol);
-
 }
