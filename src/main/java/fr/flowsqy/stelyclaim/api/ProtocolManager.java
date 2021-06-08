@@ -1,5 +1,7 @@
 package fr.flowsqy.stelyclaim.api;
 
+import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.protocol.SelectionProtocol;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -11,9 +13,12 @@ import java.util.UUID;
 public class ProtocolManager {
 
     private final Map<String, ClaimHandler<?>> handlers;
+    private final SelectionProtocol selectionProtocol;
 
-    public ProtocolManager() {
+    public ProtocolManager(StelyClaimPlugin plugin) {
         this.handlers = new HashMap<>();
+
+        this.selectionProtocol = new SelectionProtocol(plugin);
     }
 
     public void registerHandler(ClaimHandler<?> handler) {
@@ -31,12 +36,12 @@ public class ProtocolManager {
         return handlers.remove(handler.getId()) != null;
     }
 
-    public boolean define(Player sender, ClaimOwner owner) {
-        return false;
+    public <T extends ClaimOwner> boolean define(Player sender, ClaimHandler<T> handler, T owner) {
+        return selectionProtocol.process(sender, handler, owner, Protocol.DEFINE);
     }
 
-    public boolean redefine(Player sender, ClaimOwner owner) {
-        return false;
+    public <T extends ClaimOwner> boolean redefine(Player sender, ClaimHandler<T> handler, T owner) {
+        return selectionProtocol.process(sender, handler, owner, Protocol.REDEFINE);
     }
 
     public boolean addMember(World world, ClaimOwner owner, UUID player) {
