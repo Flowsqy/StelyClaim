@@ -11,6 +11,14 @@ public class PlayerHandler implements ClaimHandler<PlayerOwner> {
 
     public final static String ID = "player";
 
+    private final ConfigPlayerModifier defineModifier;
+    private final ConfigPlayerModifier redefineModifier;
+
+    public PlayerHandler() {
+        this.defineModifier = new ConfigPlayerModifier("define");
+        this.redefineModifier = new ConfigPlayerModifier("redefine");
+    }
+
     @Override
     public String getId() {
         return ID;
@@ -29,12 +37,12 @@ public class PlayerHandler implements ClaimHandler<PlayerOwner> {
 
     @Override
     public RegionModifier<PlayerOwner> getDefineModifier() {
-        return null;
+        return defineModifier;
     }
 
     @Override
     public RegionModifier<PlayerOwner> getRedefineModifier() {
-        return null;
+        return redefineModifier;
     }
 
     @Override

@@ -141,7 +141,7 @@ public class SelectionProtocol {
         }
 
         if (protocol == Protocol.DEFINE) {
-            handler.getDefineModifier().modify(newRegion, owner);//configModifyRegion(newRegion, "define", player, regionName);
+            handler.getDefineModifier().modify(sender, newRegion, owner);//configModifyRegion(newRegion, "define", player, regionName);
 
             regionManager.addRegion(newRegion);
 
@@ -152,7 +152,7 @@ public class SelectionProtocol {
             }
 
             newRegion.copyFrom(region);
-            handler.getRedefineModifier().modify(newRegion, owner);//configModifyRegion(newRegion, "redefine", player, regionName);
+            handler.getRedefineModifier().modify(sender, newRegion, owner);//configModifyRegion(newRegion, "redefine", player, regionName);
             regionManager.addRegion(newRegion);
 
             messages.sendMessage(sender, "claim.command.redefine" + (ownRegion ? "" : "-other"), "%region%", regionName);
