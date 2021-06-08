@@ -62,17 +62,6 @@ public class SelectionProtocol {
             return false;
         }
 
-        //final String regionName;
-        //final boolean ownRegion;
-        /*
-        if (size == 1) {
-            regionName = sender.getName();
-            ownRegion = true;
-        } else {
-            regionName = args.get(1);
-            ownRegion = regionName.equalsIgnoreCase(sender.getName());
-        }*/
-
         final boolean ownRegion = owner.own(sender);
 
         if (!ownRegion) {

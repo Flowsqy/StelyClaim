@@ -42,6 +42,11 @@ public class ProtocolManager {
         return handlers.remove(handler.getId()) != null;
     }
 
+    @SuppressWarnings("unchecked")
+    public <T extends ClaimOwner, S extends ClaimHandler<T>> S getHandler(String id) {
+        return id == null ? null : (S) handlers.get(id);
+    }
+
     public <T extends ClaimOwner> boolean define(Player sender, ClaimHandler<T> handler, T owner) {
         return selectionProtocol.process(sender, handler, owner, Protocol.DEFINE);
     }

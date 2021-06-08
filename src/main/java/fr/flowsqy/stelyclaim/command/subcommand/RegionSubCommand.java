@@ -35,7 +35,7 @@ public abstract class RegionSubCommand extends SubCommand {
 
     public RegionSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         super(plugin, name, alias, permission, console, allowedWorlds, statistic);
-        regionContainer = plugin.getRegionContainer();
+        regionContainer = null;
     }
 
     public RegionSubCommand(StelyClaimPlugin plugin, Messages messages, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic, RegionContainer regionContainer) {
