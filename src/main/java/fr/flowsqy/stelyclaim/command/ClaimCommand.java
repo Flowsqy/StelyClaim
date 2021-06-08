@@ -155,7 +155,7 @@ public class ClaimCommand implements TabExecutor {
                 plugin,
                 "help",
                 "h",
-                "stelyclaim.claim.help",
+                Permissions.HELP,
                 true,
                 config.getStringList("worlds.help"),
                 config.getBoolean("statistic.help"),
@@ -167,7 +167,7 @@ public class ClaimCommand implements TabExecutor {
                 plugin,
                 "define",
                 "d",
-                "stelyclaim.claim.define",
+                Permissions.DEFINE,
                 false,
                 config.getStringList("worlds.define"),
                 config.getBoolean("statistic.define")
@@ -176,7 +176,7 @@ public class ClaimCommand implements TabExecutor {
                 plugin,
                 "redefine",
                 "rd",
-                "stelyclaim.claim.redefine",
+                Permissions.REDEFINE,
                 false,
                 config.getStringList("worlds.redefine"),
                 config.getBoolean("statistic.redefine")
@@ -185,7 +185,7 @@ public class ClaimCommand implements TabExecutor {
                 plugin,
                 "addmember",
                 "am",
-                "stelyclaim.claim.addmember",
+                Permissions.ADDMEMBER,
                 false,
                 config.getStringList("worlds.addmember"),
                 config.getBoolean("statistic.addmember")
@@ -194,7 +194,7 @@ public class ClaimCommand implements TabExecutor {
                 plugin,
                 "removemember",
                 "rm",
-                "stelyclaim.claim.removemember",
+                Permissions.REMOVEMEMBER,
                 false,
                 config.getStringList("worlds.removemember"),
                 config.getBoolean("statistic.removemember")
@@ -203,7 +203,7 @@ public class ClaimCommand implements TabExecutor {
                 plugin,
                 "addowner",
                 "ao",
-                "stelyclaim.claim.addowner",
+                Permissions.ADDOWNER,
                 false,
                 config.getStringList("worlds.addowner"),
                 config.getBoolean("statistic.addowner")
@@ -212,7 +212,7 @@ public class ClaimCommand implements TabExecutor {
                 plugin,
                 "removeowner",
                 "ro",
-                "stelyclaim.claim.removeowner",
+                Permissions.REMOVEOWNER,
                 false,
                 config.getStringList("worlds.removeowner"),
                 config.getBoolean("statistic.removeowner")
@@ -221,7 +221,7 @@ public class ClaimCommand implements TabExecutor {
                 plugin,
                 "remove",
                 "r",
-                "stelyclaim.claim.remove",
+                Permissions.REMOVE,
                 false,
                 config.getStringList("worlds.remove"),
                 config.getBoolean("statistic.remove")
@@ -230,7 +230,7 @@ public class ClaimCommand implements TabExecutor {
                 plugin,
                 "info",
                 "i",
-                "stelyclaim.claim.info",
+                Permissions.INFO,
                 false,
                 config.getStringList("worlds.info"),
                 config.getBoolean("statistic.info")
@@ -239,7 +239,7 @@ public class ClaimCommand implements TabExecutor {
                 plugin,
                 "teleport",
                 "tp",
-                "stelyclaim.claim.teleport",
+                Permissions.TELEPORT,
                 false,
                 config.getStringList("worlds.teleport"),
                 config.getBoolean("statistic.teleport")
@@ -248,7 +248,7 @@ public class ClaimCommand implements TabExecutor {
                 plugin,
                 "here",
                 "hr",
-                "stelyclaim.claim.here",
+                Permissions.HERE,
                 false,
                 config.getStringList("worlds.here"),
                 config.getBoolean("statistic.here")
@@ -257,7 +257,7 @@ public class ClaimCommand implements TabExecutor {
                 plugin,
                 "listadd",
                 "la",
-                "stelyclaim.claim.listadd",
+                Permissions.LISTADD,
                 false,
                 config.getStringList("worlds.listadd"),
                 config.getBoolean("statistic.listadd")
@@ -266,7 +266,7 @@ public class ClaimCommand implements TabExecutor {
                 plugin,
                 "stats",
                 "s",
-                "stelyclaim.claim.stats",
+                Permissions.STATS,
                 true,
                 config.getBoolean("statistic.stats"),
                 statisticManager
@@ -278,7 +278,7 @@ public class ClaimCommand implements TabExecutor {
                 plugin,
                 "pillar",
                 "p",
-                "stelyclaim.claim.pillar",
+                Permissions.PILLAR,
                 false,
                 config.getStringList("worlds.pillar"),
                 config.getBoolean("statistic.pillar"),
@@ -288,20 +288,7 @@ public class ClaimCommand implements TabExecutor {
     }
 
     public void registerCommand(SubCommand subCommand, boolean canTabComplete) {
-        final Permission globalPerm = Bukkit.getPluginManager().getPermission("stelyclaim.claim.*");
-        final Permission basePerm = Bukkit.getPluginManager().getPermission("stelyclaim.claim");
-        if (globalPerm == null || basePerm == null)
-            throw new RuntimeException(
-                    "Can not register '"
-                            + subCommand.getName()
-                            + "' subcommand because global perm or base perm are not registered"
-            );
-        final Permission commandPerm = new Permission(subCommand.getPermission());
-        final Permission commandOtherPerm = new Permission(subCommand.getPermission() + "-other");
-
-        basePerm.addParent(commandPerm, true);
-        commandPerm.addParent(commandOtherPerm, true);
-        commandOtherPerm.addParent(globalPerm, true);
+        Permissions.registerPerm(subCommand);
 
         if (canTabComplete) {
             subCommands.add(tabLimit, subCommand);
@@ -309,6 +296,46 @@ public class ClaimCommand implements TabExecutor {
         } else {
             subCommands.add(subCommand);
         }
+    }
+
+    public static class Permissions {
+
+        public static final String HELP = "stelyclaim.claim.help";
+        public static final String DEFINE = "stelyclaim.claim.define";
+        public static final String REDEFINE = "stelyclaim.claim.redefine";
+        public static final String ADDMEMBER = "stelyclaim.claim.addmember";
+        public static final String REMOVEMEMBER = "stelyclaim.claim.removemember";
+        public static final String ADDOWNER = "stelyclaim.claim.addowner";
+        public static final String REMOVEOWNER = "stelyclaim.claim.removeowner";
+        public static final String REMOVE = "stelyclaim.claim.remove";
+        public static final String INFO = "stelyclaim.claim.info";
+        public static final String TELEPORT = "stelyclaim.claim.teleport";
+        public static final String HERE = "stelyclaim.claim.here";
+        public static final String LISTADD = "stelyclaim.claim.listadd";
+        public static final String STATS = "stelyclaim.claim.stats";
+        public static final String PILLAR = "stelyclaim.claim.pillar";
+
+        public static void registerPerm(SubCommand subCommand) {
+            final Permission globalPerm = Bukkit.getPluginManager().getPermission("stelyclaim.claim.*");
+            final Permission basePerm = Bukkit.getPluginManager().getPermission("stelyclaim.claim");
+            if (globalPerm == null || basePerm == null)
+                throw new RuntimeException(
+                        "Can not register '"
+                                + subCommand.getName()
+                                + "' subcommand because global perm or base perm are not registered"
+                );
+            final Permission commandPerm = new Permission(subCommand.getPermission());
+            final Permission commandOtherPerm = new Permission(subCommand.getOtherPermission());
+
+            basePerm.addParent(commandPerm, true);
+            commandPerm.addParent(commandOtherPerm, true);
+            commandOtherPerm.addParent(globalPerm, true);
+        }
+
+        public static String getOtherPerm(String permission) {
+            return permission + "-other";
+        }
+
     }
 
 }

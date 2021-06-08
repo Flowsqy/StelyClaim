@@ -1,6 +1,7 @@
 package fr.flowsqy.stelyclaim.command.subcommand;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.io.Messages;
 import org.bukkit.command.CommandSender;
 
@@ -49,7 +50,7 @@ public abstract class SubCommand {
     }
 
     public String getOtherPermission() {
-        return permission + "-other";
+        return ClaimCommand.Permissions.getOtherPerm(permission);
     }
 
     public boolean isConsole() {
