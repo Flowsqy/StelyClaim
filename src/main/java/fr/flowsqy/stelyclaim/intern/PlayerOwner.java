@@ -1,6 +1,7 @@
 package fr.flowsqy.stelyclaim.intern;
 
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
@@ -10,11 +11,15 @@ import java.util.UUID;
 
 public class PlayerOwner implements ClaimOwner {
 
-    private final Player player;
+    private final OfflinePlayer player;
 
-    public PlayerOwner(Player player) {
+    public PlayerOwner(OfflinePlayer player) {
         Objects.requireNonNull(player);
         this.player = player;
+    }
+
+    public OfflinePlayer getPlayer() {
+        return player;
     }
 
     @Override
