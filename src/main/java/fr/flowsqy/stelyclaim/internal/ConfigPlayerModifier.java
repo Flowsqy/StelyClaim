@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.intern;
+package fr.flowsqy.stelyclaim.internal;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;

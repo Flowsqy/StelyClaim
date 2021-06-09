@@ -2,8 +2,8 @@ package fr.flowsqy.stelyclaim.command.subcommand.selection;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.subcommand.SubCommand;
-import fr.flowsqy.stelyclaim.intern.PlayerHandler;
-import fr.flowsqy.stelyclaim.intern.PlayerOwner;
+import fr.flowsqy.stelyclaim.internal.PlayerHandler;
+import fr.flowsqy.stelyclaim.internal.PlayerOwner;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;

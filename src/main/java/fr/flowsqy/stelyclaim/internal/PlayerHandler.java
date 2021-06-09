@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.intern;
+package fr.flowsqy.stelyclaim.internal;
 
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimMessage;

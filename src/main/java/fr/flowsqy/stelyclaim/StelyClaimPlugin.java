@@ -3,7 +3,7 @@ package fr.flowsqy.stelyclaim;
 import com.earth2me.essentials.Essentials;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.command.CommandManager;
-import fr.flowsqy.stelyclaim.intern.PlayerHandler;
+import fr.flowsqy.stelyclaim.internal.PlayerHandler;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
 import fr.flowsqy.stelyclaim.io.Messages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;

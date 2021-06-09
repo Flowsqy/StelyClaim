@@ -1,8 +1,8 @@
 package fr.flowsqy.stelyclaim.command.subcommand.selection;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.intern.PlayerHandler;
-import fr.flowsqy.stelyclaim.intern.PlayerOwner;
+import fr.flowsqy.stelyclaim.internal.PlayerHandler;
+import fr.flowsqy.stelyclaim.internal.PlayerOwner;
 import org.bukkit.entity.Player;
 
 import java.util.List;
