@@ -1,7 +1,7 @@
 package fr.flowsqy.stelyclaim.api;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.protocol.SelectionProtocol;
+import fr.flowsqy.stelyclaim.protocol.selection.SelectionProtocol;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
