@@ -5,8 +5,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class PlayerOwner implements ClaimOwner {
 
@@ -27,8 +27,8 @@ public class PlayerOwner implements ClaimOwner {
     }
 
     @Override
-    public List<OfflinePlayer> getMailable() {
-        return Collections.singletonList(player);
+    public Set<OfflinePlayer> getMailable() {
+        return Collections.singleton(player);
     }
 
     @Override
