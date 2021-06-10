@@ -9,10 +9,19 @@ import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import org.bukkit.entity.Player;
 
+import java.util.regex.Pattern;
+
 public class RegionFinder {
 
+    private final static String PREFIX = "stelyclaim";
+    private final static Pattern GLOBAL_PATTERN = Pattern.compile("^" + PREFIX + "_[a-z0-9]+_[A-Za-z0-9_,'\\-+/]+$");
+
     public static <T extends ClaimOwner> String getRegionName(ClaimHandler<T> handler, T owner) {
-        return "stelyclaim_" + handler.getId() + "_" + handler.getIdentifier(owner);
+        return PREFIX + "_" + handler.getId() + "_" + handler.getIdentifier(owner);
+    }
+
+    public static boolean isCorrectId(String id) {
+        return id != null && GLOBAL_PATTERN.matcher(id).matches();
     }
 
     public static RegionManager getRegionManager(World world, Player sender, ClaimMessage messages) {
@@ -40,6 +49,5 @@ public class RegionFinder {
         }
         return exist;
     }
-
 
 }

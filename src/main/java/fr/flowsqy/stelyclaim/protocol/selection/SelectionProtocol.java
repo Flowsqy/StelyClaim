@@ -122,7 +122,20 @@ public class SelectionProtocol {
             if (builder.length() > 0)
                 builder.append(", ");
 
-            builder.append(overlapRegion.getId());
+            final String id = overlapRegion.getId();
+            final String overlappingRegionName;
+            if (RegionFinder.isCorrectId(id)) {
+                final String[] partId = id.split("_", 3);
+                final ClaimHandler<?> overlappingHandler = StelyClaimPlugin.getInstance().getProtocolManager().getHandler(partId[1]);
+                if (overlappingHandler != null) {
+                    overlappingRegionName = overlappingHandler.getOwner(partId[2]).getName();
+                } else {
+                    overlappingRegionName = id;
+                }
+            } else {
+                overlappingRegionName = id;
+            }
+            builder.append(overlappingRegionName);
         }
 
         if (builder.length() != 0) {
