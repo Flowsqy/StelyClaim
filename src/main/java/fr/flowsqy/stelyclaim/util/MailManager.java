@@ -4,14 +4,14 @@ import com.earth2me.essentials.I18n;
 import com.earth2me.essentials.User;
 import com.earth2me.essentials.utils.FormatUtil;
 import com.earth2me.essentials.utils.StringUtil;
+import fr.flowsqy.stelyclaim.api.ClaimMessage;
+import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.io.Messages;
-import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MailManager {
 
@@ -42,113 +42,99 @@ public class MailManager {
         return essentialsManager.isEnable();
     }
 
-    public void sendMail(Player from, String to, String command) {
-        sendMail(from, to, command, null);
-    }
-
-    public void sendMail(Player from, Player to, String command) {
-        sendMail(from, to, command, null);
-    }
-
-    public void sendMail(Player from, String to, String command, String target) {
-        if (!essentialsManager.isEnable())
+    private void sendMail(Player from, List<OfflinePlayer> to, String command, OfflinePlayer target) {
+        if (!isEnabled())
             return;
         final Boolean customFormat = commands.get(command);
         if (customFormat == null) // Command does not enable mail
             return;
-        final User userTo = essentialsManager.getUser(to);
-        if (userTo == null)
-            return;
-        if (customFormat) {
-            sendMail(null, from, userTo, command, false, target);
-            return;
-        }
-        final User userFrom = essentialsManager.getUser(from);
-        if (userFrom == null)
-            return;
-        sendMail(userFrom, from, userTo, command, true, target);
-    }
-
-    public void sendMail(Player from, Player to, String command, String target) {
-        if (!essentialsManager.isEnable())
-            return;
-        final Boolean customFormat = commands.get(command);
-        if (customFormat == null) // Command does not enable mail
-            return;
-        final User userTo = essentialsManager.getUser(to);
-        if (userTo == null)
-            return;
-        if (customFormat) {
-            sendMail(null, from, userTo, command, false, target);
-            return;
-        }
-        final User userFrom = essentialsManager.getUser(from);
-        if (userFrom == null)
-            return;
-        sendMail(userFrom, from, userTo, command, true, target);
-    }
-
-    public void sendInfoToTarget(Player sender, String target, String command) {
-        final Player targetPlayer = Bukkit.getPlayerExact(target);
-        if (targetPlayer != null && sender.canSee(targetPlayer)) {
-            messages.sendMessage(targetPlayer, "claim.target." + command, "%sender%", sender.getName());
-        } else {
-            sendMail(
-                    sender,
-                    targetPlayer == null ? target : targetPlayer.getName(),
-                    command
-            );
-        }
-    }
-
-    public void sendInfoToTarget(Player sender, String target, String command, String argTarget) {
-        final Player targetPlayer = Bukkit.getPlayerExact(target);
-        if (targetPlayer != null && sender.canSee(targetPlayer)) {
-            messages.sendMessage(
-                    targetPlayer,
-                    "claim.target." + command,
-                    "%sender%", "%target%",
-                    sender.getName(), argTarget);
-        } else {
-            sendMail(
-                    sender,
-                    targetPlayer == null ? target : targetPlayer.getName(),
-                    command,
-                    argTarget
-            );
-        }
-    }
-
-    public void sendMail(User fromUser, Player fromPlayer, User to, String command, boolean useEssentialsSyntax, String target) {
         final String mailMessage;
         if (target != null) {
             mailMessage = messages.getMessage(
                     "mail." + command,
-                    "%from%", "%to%", "%target%",
-                    fromPlayer.getName(), to.getName(), target
+                    "%from%", "%target%",
+                    from.getName(), target.getName()
             );
         } else {
             mailMessage = messages.getMessage(
                     "mail." + command,
-                    "%from%", "%to%",
-                    fromPlayer.getName(), to.getName()
+                    "%from%",
+                    from.getName()
             );
         }
 
-        if (useEssentialsSyntax) {
-            to.addMail(
-                    I18n.tl(
-                            "mailFormat",
-                            fromUser.getName(),
-                            FormatUtil.formatMessage(
-                                    fromUser,
-                                    "essentials.mail",
-                                    StringUtil.sanitizeString(FormatUtil.stripFormat(mailMessage))
-                            )
-                    )
-            );
+        if (customFormat) {
+            for (OfflinePlayer player : to) {
+                final User user = essentialsManager.getUser(player.getUniqueId());
+                if (user == null) {
+                    continue;
+                }
+                user.addMail(mailMessage.replace("%to%", String.valueOf(player.getName())));
+            }
         } else {
-            to.addMail(mailMessage);
+            final User fromUser = essentialsManager.getUser(from);
+            if (fromUser == null)
+                return;
+            final String fromName = from.getName();
+            for (OfflinePlayer player : to) {
+                final User user = essentialsManager.getUser(player.getUniqueId());
+                if (user == null) {
+                    continue;
+                }
+                user.addMail(
+                        I18n.tl(
+                                "mailFormat",
+                                fromName,
+                                FormatUtil.formatMessage(
+                                        fromUser,
+                                        "essentials.mail",
+                                        StringUtil.sanitizeString(FormatUtil.stripFormat(
+                                                mailMessage.replace("%to%", String.valueOf(player.getName()))
+                                        ))
+                                )
+                        )
+                );
+            }
+        }
+    }
+
+    public void sendInfoToOwner(Player sender, ClaimOwner owner, ClaimMessage messages, String command) {
+        sendInfoToOwner(sender, owner, messages, command, null);
+    }
+
+    public void sendInfoToOwner(Player sender, ClaimOwner owner, ClaimMessage messages, String command, OfflinePlayer target) {
+        final Set<OfflinePlayer> mailablePlayers = owner.getMailable();
+        final List<Player> connectedPlayers = new ArrayList<>();
+        final List<OfflinePlayer> disconnectedPlayers = new ArrayList<>();
+        for (OfflinePlayer player : mailablePlayers) {
+            if (player == null)
+                continue;
+            final Player onlinePlayer = player.getPlayer();
+            if (onlinePlayer != null) {
+                connectedPlayers.add(onlinePlayer);
+            } else {
+                disconnectedPlayers.add(player);
+            }
+        }
+        if (!connectedPlayers.isEmpty()) {
+            final String[] replaces;
+            if (target == null) {
+                replaces = new String[]{"%sender%", sender.getName()};
+            } else {
+                replaces = new String[]{"%sender%", "%target%", sender.getName(), target.getName()};
+            }
+            final String message = messages.getMessage("claim.target." + command, replaces);
+            for (Player player : connectedPlayers) {
+                player.sendMessage(message);
+            }
+        }
+        if (!disconnectedPlayers.isEmpty()) {
+            sendMail(
+                    sender,
+                    disconnectedPlayers,
+                    command,
+                    target
+            );
         }
     }
 
