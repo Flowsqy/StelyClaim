@@ -4,6 +4,6 @@ import org.bukkit.command.CommandSender;
 
 public interface ClaimMessage {
 
-    boolean sendMessage(CommandSender sender, String path, String... replace);
+    void sendMessage(CommandSender sender, String path, String... replace);
 
 }

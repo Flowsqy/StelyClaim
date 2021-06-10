@@ -13,7 +13,9 @@ public class DefaultClaimMessages implements ClaimMessage {
     }
 
     @Override
-    public boolean sendMessage(CommandSender sender, String path, String... replace) {
-        return messages.sendMessage(sender, path, replace);
+    public void sendMessage(CommandSender sender, String path, String... replace) {
+        if (sender == null)
+            return;
+        messages.sendMessage(sender, path, replace);
     }
 }
