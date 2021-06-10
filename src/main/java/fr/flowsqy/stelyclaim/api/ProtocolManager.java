@@ -2,13 +2,13 @@ package fr.flowsqy.stelyclaim.api;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.protocol.selection.SelectionProtocol;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class ProtocolManager {
@@ -55,23 +55,23 @@ public class ProtocolManager {
         return selectionProtocol.process(sender, handler, owner, Protocol.REDEFINE);
     }
 
-    public boolean addMember(World world, ClaimOwner owner, UUID player) {
+    public boolean addMember(World world, Player sender, ClaimOwner owner, OfflinePlayer player) {
         return false;
     }
 
-    public boolean removeMember(World world, ClaimOwner owner, UUID player) {
+    public boolean removeMember(World world, Player sender, ClaimOwner owner, OfflinePlayer player) {
         return false;
     }
 
-    public boolean addOwner(World world, ClaimOwner owner, UUID player) {
+    public boolean addOwner(World world, Player sender, ClaimOwner owner, OfflinePlayer player) {
         return false;
     }
 
-    public boolean removeOwner(World world, ClaimOwner owner, UUID player) {
+    public boolean removeOwner(World world, Player sender, ClaimOwner owner, OfflinePlayer player) {
         return false;
     }
 
-    public boolean remove(World world, ClaimOwner owner) {
+    public boolean remove(World world, Player sender, ClaimOwner owner) {
         return false;
     }
 
