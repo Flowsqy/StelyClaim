@@ -1,12 +1,12 @@
 package fr.flowsqy.stelyclaim.command.subcommand.interact;
 
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.sk89q.worldguard.protection.regions.RegionType;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.command.subcommand.RegionSubCommand;
+import fr.flowsqy.stelyclaim.api.ClaimHandler;
+import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import fr.flowsqy.stelyclaim.command.subcommand.SubCommand;
+import fr.flowsqy.stelyclaim.internal.PlayerOwner;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public abstract class InteractSubCommand extends RegionSubCommand {
+public abstract class InteractSubCommand extends SubCommand {
 
     public InteractSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         super(plugin, name, alias, permission, console, allowedWorlds, statistic);
@@ -33,46 +33,12 @@ public abstract class InteractSubCommand extends RegionSubCommand {
             return false;
         }
         final Player player = (Player) sender;
+        final OfflinePlayer targetPlayer = size == 1 ? player : Bukkit.getOfflinePlayer(args.get(1));
 
-        final String regionName;
-        final boolean ownRegion;
-        if (size == 1) {
-            regionName = player.getName();
-            ownRegion = true;
-        } else {
-            regionName = args.get(1);
-            ownRegion = regionName.equalsIgnoreCase(player.getName());
-        }
-
-        if (!ownRegion && !player.hasPermission(getPermission() + "-other")) {
-            messages.sendMessage(player, "help." + getName());
-            return false;
-        }
-
-        final World world = player.getWorld();
-
-        final RegionManager regionManager = getRegionManager(world);
-        if (regionManager == null) {
-            messages.sendMessage(player,
-                    "claim.world.nothandle",
-                    "%world%", world.getName());
-            return false;
-        }
-
-        final ProtectedRegion region = regionManager.getRegion(regionName);
-        if (region == null) {
-            messages.sendMessage(player, "claim.exist.not" + (ownRegion ? "" : "-other"), "%region%", regionName);
-            return false;
-        }
-        if (region.getType() == RegionType.GLOBAL) {
-            messages.sendMessage(player, "claim.interactglobal");
-            return false;
-        }
-
-        return interactRegion(player, regionManager, region, ownRegion, regionName);
+        return interactRegion(player, plugin.getProtocolManager().getHandler("player"), new PlayerOwner(targetPlayer));
     }
 
-    protected abstract boolean interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion, String regionName);
+    protected abstract <T extends ClaimOwner> boolean interactRegion(Player sender, ClaimHandler<T> handler, T owner);
 
     @Override
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {

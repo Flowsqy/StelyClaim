@@ -31,7 +31,7 @@ public class InteractProtocol {
 
         final String regionName = RegionFinder.getRegionName(handler, owner);
 
-        final ProtectedRegion region = RegionFinder.mustExist(regionManager, regionName, ownRegion, sender, messages);
+        final ProtectedRegion region = RegionFinder.mustExist(regionManager, regionName, owner.getName(), ownRegion, sender, messages);
         if (region == null)
             return false;
 

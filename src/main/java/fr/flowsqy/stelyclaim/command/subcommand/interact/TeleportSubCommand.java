@@ -5,6 +5,8 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.ClaimHandler;
+import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.entity.Player;
 
@@ -20,6 +22,10 @@ public class TeleportSubCommand extends InteractSubCommand {
     }
 
     @Override
+    protected <T extends ClaimOwner> boolean interactRegion(Player sender, ClaimHandler<T> handler, T owner) {
+        return false;
+    }
+
     protected boolean interactRegion(Player player, RegionManager regionManager, ProtectedRegion region, boolean ownRegion, String regionName) {
         final com.sk89q.worldedit.util.Location weLoc = region.getFlag(Flags.TELE_LOC);
 

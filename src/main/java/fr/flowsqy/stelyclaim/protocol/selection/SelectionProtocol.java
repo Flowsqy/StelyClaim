@@ -79,12 +79,12 @@ public class SelectionProtocol {
 
         final ProtectedRegion region;
         if (protocol == Protocol.DEFINE) {
-            if (RegionFinder.mustNotExist(regionManager, regionName, ownRegion, sender, messages)) {
+            if (RegionFinder.mustNotExist(regionManager, regionName, owner.getName(), ownRegion, sender, messages)) {
                 return false;
             }
             region = null;
         } else {
-            region = RegionFinder.mustExist(regionManager, regionName, ownRegion, sender, messages);
+            region = RegionFinder.mustExist(regionManager, regionName, owner.getName(), ownRegion, sender, messages);
             if (region == null) {
                 return false;
             }
@@ -142,21 +142,21 @@ public class SelectionProtocol {
         }
 
         if (protocol == Protocol.DEFINE) {
-            handler.getDefineModifier().modify(sender, newRegion, owner);//configModifyRegion(newRegion, "define", player, regionName);
+            handler.getDefineModifier().modify(sender, newRegion, owner);
 
             regionManager.addRegion(newRegion);
 
-            messages.sendMessage(sender, "claim.command.define" + (ownRegion ? "" : "-other"), "%region%", regionName);
+            messages.sendMessage(sender, "claim.command.define" + (ownRegion ? "" : "-other"), "%region%", owner.getName());
         } else {
             if (!overlapSame) {
                 messages.sendMessage(sender, "claim.selection.redefinenotoverlap");
             }
 
             newRegion.copyFrom(region);
-            handler.getRedefineModifier().modify(sender, newRegion, owner);//configModifyRegion(newRegion, "redefine", player, regionName);
+            handler.getRedefineModifier().modify(sender, newRegion, owner);
             regionManager.addRegion(newRegion);
 
-            messages.sendMessage(sender, "claim.command.redefine" + (ownRegion ? "" : "-other"), "%region%", regionName);
+            messages.sendMessage(sender, "claim.command.redefine" + (ownRegion ? "" : "-other"), "%region%", owner.getName());
 
             // Previous pillar manage
 

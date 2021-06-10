@@ -34,18 +34,32 @@ public class RegionFinder {
         return regionManager;
     }
 
-    public static ProtectedRegion mustExist(RegionManager manager, String regionName, boolean ownRegion, Player sender, ClaimMessage messages) {
+    public static ProtectedRegion mustExist(
+            RegionManager manager,
+            String regionName,
+            String ownerName,
+            boolean ownRegion,
+            Player sender,
+            ClaimMessage messages
+    ) {
         final ProtectedRegion region = manager.getRegion(regionName);
         if (region == null) {
-            messages.sendMessage(sender, "claim.exist.not" + (ownRegion ? "" : "-other"), "%region%", regionName);
+            messages.sendMessage(sender, "claim.exist.not" + (ownRegion ? "" : "-other"), "%region%", ownerName);
         }
         return region;
     }
 
-    public static boolean mustNotExist(RegionManager manager, String regionName, boolean ownRegion, Player sender, ClaimMessage messages) {
+    public static boolean mustNotExist(
+            RegionManager manager,
+            String regionName,
+            String ownerName,
+            boolean ownRegion,
+            Player sender,
+            ClaimMessage messages
+    ) {
         final boolean exist = manager.getRegion(regionName) != null;
         if (exist) {
-            messages.sendMessage(sender, "claim.exist.already" + (ownRegion ? "" : "-other"), "%region%", regionName);
+            messages.sendMessage(sender, "claim.exist.already" + (ownRegion ? "" : "-other"), "%region%", ownerName);
         }
         return exist;
     }
