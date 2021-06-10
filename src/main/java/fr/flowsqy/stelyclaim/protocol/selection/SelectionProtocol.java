@@ -159,7 +159,12 @@ public class SelectionProtocol {
         // Mail manage
 
         if (!ownRegion) {
-            StelyClaimPlugin.getInstance().getMailManager().sendInfoToTarget(sender, regionName, protocol == Protocol.DEFINE ? "define" : "redefine");
+            StelyClaimPlugin.getInstance().getMailManager().sendInfoToOwner(
+                    sender,
+                    owner,
+                    messages,
+                    protocol == Protocol.DEFINE ? "define" : "redefine"
+            );
         }
 
         return true;

@@ -25,8 +25,9 @@ public class RemoveSubCommand extends InteractSubCommand {
 
         pillarTextSender.sendMessage(player, region);
 
-        if (!ownRegion)
-            plugin.getMailManager().sendInfoToTarget(player, regionName, getName());
+        // TODO Update in protocol
+        // if (!ownRegion)
+        // plugin.getMailManager().sendInfoToTarget(player, regionName, getName());
 
         return true;
     }

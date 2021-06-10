@@ -61,7 +61,8 @@ public abstract class DomainSubCommand extends RegionSubCommand {
                 return 0;
 
             if (!ownRegion) {
-                plugin.getMailManager().sendInfoToTarget(player, regionName, getName(), targetName);
+                // TODO Upate in protocol
+                // plugin.getMailManager().sendInfoToTarget(player, regionName, getName(), targetName);
             }
 
             return 1;
