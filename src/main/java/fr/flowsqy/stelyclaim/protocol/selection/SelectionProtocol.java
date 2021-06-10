@@ -17,7 +17,6 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import fr.flowsqy.stelyclaim.api.Protocol;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.protocol.RegionFinder;
 import fr.flowsqy.stelyclaim.util.PillarTextSender;
@@ -42,10 +41,6 @@ public class SelectionProtocol {
     }
 
     public <T extends ClaimOwner> boolean process(Player sender, ClaimHandler<T> handler, T owner, Protocol protocol) {
-        if (protocol != Protocol.DEFINE && protocol != Protocol.REDEFINE) {
-            throw new IllegalArgumentException("The protocol must be DEFINE or REDEFINE. (Here it's '" + protocol + "'");
-        }
-
         final ClaimMessage messages = handler.getMessages();
         final LocalSession session = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(sender));
         final com.sk89q.worldedit.world.World world = new BukkitWorld(sender.getWorld());
@@ -184,6 +179,13 @@ public class SelectionProtocol {
         }
 
         return true;
+    }
+
+    public enum Protocol {
+
+        DEFINE,
+        REDEFINE
+
     }
 
 }

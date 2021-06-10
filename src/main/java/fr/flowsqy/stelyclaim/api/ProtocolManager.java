@@ -48,11 +48,11 @@ public class ProtocolManager {
     }
 
     public <T extends ClaimOwner> boolean define(Player sender, ClaimHandler<T> handler, T owner) {
-        return selectionProtocol.process(sender, handler, owner, Protocol.DEFINE);
+        return selectionProtocol.process(sender, handler, owner, SelectionProtocol.Protocol.DEFINE);
     }
 
     public <T extends ClaimOwner> boolean redefine(Player sender, ClaimHandler<T> handler, T owner) {
-        return selectionProtocol.process(sender, handler, owner, Protocol.REDEFINE);
+        return selectionProtocol.process(sender, handler, owner, SelectionProtocol.Protocol.REDEFINE);
     }
 
     public boolean addMember(World world, Player sender, ClaimOwner owner, OfflinePlayer player) {
