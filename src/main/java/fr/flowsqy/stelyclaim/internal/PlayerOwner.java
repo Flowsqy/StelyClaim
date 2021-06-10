@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 public class PlayerOwner implements ClaimOwner {
 
@@ -28,13 +27,8 @@ public class PlayerOwner implements ClaimOwner {
     }
 
     @Override
-    public List<UUID> getOwners() {
-        return Collections.singletonList(player.getUniqueId());
-    }
-
-    @Override
-    public List<UUID> getMembers() {
-        return Collections.emptyList();
+    public List<OfflinePlayer> getMailable() {
+        return Collections.singletonList(player);
     }
 
     @Override

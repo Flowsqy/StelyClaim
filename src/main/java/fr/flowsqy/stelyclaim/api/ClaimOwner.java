@@ -1,17 +1,15 @@
 package fr.flowsqy.stelyclaim.api;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface ClaimOwner {
 
     String getName();
 
-    List<UUID> getOwners();
-
-    List<UUID> getMembers();
+    List<OfflinePlayer> getMailable();
 
     boolean own(Player player);
 
