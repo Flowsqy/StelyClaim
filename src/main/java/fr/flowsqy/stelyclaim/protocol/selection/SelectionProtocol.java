@@ -77,6 +77,9 @@ public class SelectionProtocol {
 
         final RegionManager regionManager = RegionFinder.getRegionManager(world, sender, messages);
 
+        if (regionManager == null)
+            return false;
+
         final String regionName = RegionFinder.getRegionName(handler, owner);
 
         final ProtectedRegion region;
