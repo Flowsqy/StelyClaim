@@ -1,6 +1,7 @@
 package fr.flowsqy.stelyclaim.api;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.protocol.domain.DomainProtocol;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import fr.flowsqy.stelyclaim.protocol.selection.SelectionProtocol;
 import org.bukkit.OfflinePlayer;
@@ -58,20 +59,20 @@ public class ProtocolManager {
         return selectionProtocol.process(sender, handler, owner, SelectionProtocol.Protocol.REDEFINE);
     }
 
-    public boolean addMember(World world, Player sender, ClaimOwner owner, OfflinePlayer player) {
-        return false;
+    public <T extends ClaimOwner> boolean addMember(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
+        return DomainProtocol.process(world, sender, handler, owner, player, DomainProtocol.Protocol.ADDMEMBER);
     }
 
-    public boolean removeMember(World world, Player sender, ClaimOwner owner, OfflinePlayer player) {
-        return false;
+    public <T extends ClaimOwner> boolean removeMember(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
+        return DomainProtocol.process(world, sender, handler, owner, player, DomainProtocol.Protocol.REMOVEMEMBER);
     }
 
-    public boolean addOwner(World world, Player sender, ClaimOwner owner, OfflinePlayer player) {
-        return false;
+    public <T extends ClaimOwner> boolean addOwner(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
+        return DomainProtocol.process(world, sender, handler, owner, player, DomainProtocol.Protocol.ADDOWNER);
     }
 
-    public boolean removeOwner(World world, Player sender, ClaimOwner owner, OfflinePlayer player) {
-        return false;
+    public <T extends ClaimOwner> boolean removeOwner(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
+        return DomainProtocol.process(world, sender, handler, owner, player, DomainProtocol.Protocol.REMOVEOWNER);
     }
 
     public <T extends ClaimOwner> boolean remove(World world, Player sender, ClaimHandler<T> handler, T owner) {

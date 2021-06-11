@@ -1,8 +1,10 @@
 package fr.flowsqy.stelyclaim.command.subcommand.domain;
 
-import com.sk89q.worldguard.domains.DefaultDomain;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.ClaimHandler;
+import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -13,25 +15,8 @@ public class RemoveOwnerSubCommand extends DomainSubCommand {
     }
 
     @Override
-    protected boolean modifyRegion(Player sender, ProtectedRegion region, String targetPlayer, boolean ownRegion, String regionName) {
-        final DefaultDomain domain = region.getOwners();
-        if (!domain.contains(targetPlayer)) {
-            messages.sendMessage(
-                    sender,
-                    "claim.domain.owner.not" + (ownRegion ? "" : "-other"),
-                    "%region%", "%target%",
-                    regionName, targetPlayer
-            );
-            return false;
-        }
-        domain.removePlayer(targetPlayer);
-        messages.sendMessage(
-                sender,
-                "claim.command.removeowner" + (ownRegion ? "" : "-other"),
-                "%region%", "%target%",
-                regionName, targetPlayer
-        );
-        return true;
+    protected <T extends ClaimOwner> boolean interact(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer target) {
+        return plugin.getProtocolManager().addMember(world, sender, handler, owner, target);
     }
 
 }
