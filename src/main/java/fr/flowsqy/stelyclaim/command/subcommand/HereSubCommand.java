@@ -6,6 +6,11 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.ClaimHandler;
+import fr.flowsqy.stelyclaim.command.ClaimCommand;
+import fr.flowsqy.stelyclaim.internal.PlayerHandler;
+import fr.flowsqy.stelyclaim.protocol.RegionFinder;
+import fr.flowsqy.stelyclaim.util.WorldName;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -15,9 +20,12 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-public class HereSubCommand extends RegionSubCommand {
+public class HereSubCommand extends SubCommand {
 
     public HereSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         super(plugin, name, alias, permission, console, allowedWorlds, statistic);
@@ -33,9 +41,11 @@ public class HereSubCommand extends RegionSubCommand {
             );
             return false;
         }
+        final PlayerHandler handler = plugin.getProtocolManager().getHandler("player");
+
         final Player player = (Player) sender;
         final Location playerLoc = player.getLocation();
-        final RegionManager regionManager = getRegionManager(player.getWorld());
+        final RegionManager regionManager = RegionFinder.getRegionManager(new WorldName(player.getWorld().getName()), player, handler.getMessages());
 
         final ApplicableRegionSet intersecting = regionManager.getApplicableRegions(
                 BlockVector3.at(
@@ -45,11 +55,18 @@ public class HereSubCommand extends RegionSubCommand {
                 )
         );
 
-        final String playerNameLower = player.getName().toLowerCase(Locale.ROOT);
-
-        if (!player.hasPermission(getPermission() + "-other")) {
+        if (!player.hasPermission(getOtherPermission())) {
             for (ProtectedRegion overlapRegion : intersecting) {
-                if (overlapRegion.getId().equals(playerNameLower)) {
+                if (!RegionFinder.isCorrectId(overlapRegion.getId())) {
+                    continue;
+                }
+                final String[] part = overlapRegion.getId().split("_", 3);
+                final ClaimHandler<?> intersectingHandler = plugin.getProtocolManager().getHandler(part[1]);
+                if (intersectingHandler == null) {
+                    continue;
+                }
+
+                if (intersectingHandler.getOwner(part[2]).own(player)) {
                     messages.sendMessage(player, "claim.here.inside");
                     return true;
                 }
@@ -62,7 +79,7 @@ public class HereSubCommand extends RegionSubCommand {
         final String text = messages.getMessage("claim.here.text");
         final String separatorMessage = messages.getMessage("claim.here.separator");
 
-        if (player.hasPermission("stelyclaim.claim.info-other")) {
+        if (player.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.INFO))) {
             final String hover = messages.getMessage("claim.here.hover");
             final List<BaseComponent> separator = new ArrayList<>(
                     Arrays.asList(
@@ -80,9 +97,25 @@ public class HereSubCommand extends RegionSubCommand {
                     regions.addAll(separator);
                 }
                 final String regionId = overlapRegion.getId();
+                final String regionName;
+                boolean playerClaim;
+                if (RegionFinder.isCorrectId(regionId)) {
+                    final String[] parts = regionId.split("_", 3);
+                    final ClaimHandler<?> regionHandler = plugin.getProtocolManager().getHandler(parts[1]);
+                    if (regionHandler == null) {
+                        regionName = regionId;
+                        playerClaim = false;
+                    } else {
+                        regionName = regionHandler.getOwner(parts[2]).getName();
+                        playerClaim = regionHandler instanceof PlayerHandler;
+                    }
+                } else {
+                    regionName = regionId;
+                    playerClaim = false;
+                }
                 final TextComponent component = new TextComponent(
                         TextComponent.fromLegacyText(
-                                text.replace("%region%", regionId)
+                                text.replace("%region%", regionName)
                         )
                 );
                 if (hover != null) {
@@ -90,17 +123,20 @@ public class HereSubCommand extends RegionSubCommand {
                             new HoverEvent(
                                     HoverEvent.Action.SHOW_TEXT,
                                     new Text(
-                                            hover.replace("%region%", regionId)
+                                            hover.replace("%region%", regionName)
                                     )
                             )
                     );
                 }
-                component.setClickEvent(
-                        new ClickEvent(
-                                ClickEvent.Action.RUN_COMMAND,
-                                "/claim info " + regionId
-                        )
-                );
+
+                if (playerClaim) {
+                    component.setClickEvent(
+                            new ClickEvent(
+                                    ClickEvent.Action.RUN_COMMAND,
+                                    "/claim info " + regionName
+                            )
+                    );
+                }
                 regions.add(component);
             }
             if (regions.isEmpty()) {
@@ -118,7 +154,20 @@ public class HereSubCommand extends RegionSubCommand {
             if (builder.length() > 0) {
                 builder.append(separatorMessage);
             }
-            builder.append(text.replace("%region%", overlapRegion.getId()));
+            final String regionId = overlapRegion.getId();
+            final String regionName;
+            if (RegionFinder.isCorrectId(regionId)) {
+                final String[] parts = regionId.split("_", 3);
+                final ClaimHandler<?> regionHandler = plugin.getProtocolManager().getHandler(parts[1]);
+                if (regionHandler == null) {
+                    regionName = regionId;
+                } else {
+                    regionName = regionHandler.getOwner(parts[2]).getName();
+                }
+            } else {
+                regionName = regionId;
+            }
+            builder.append(text.replace("%region%", regionName));
         }
 
         if (builder.length() == 0) {
