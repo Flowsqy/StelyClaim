@@ -83,7 +83,7 @@ public class DomainProtocol {
                 true, false
         ),
         REMOVEMEMBER(
-                ProtectedRegion::getMembers, DefaultDomain::contains, DefaultDomain::addPlayer,
+                ProtectedRegion::getMembers, DefaultDomain::contains, DefaultDomain::removePlayer,
                 ClaimCommand.Permissions.REMOVEMEMBER, "removemember",
                 false, false
         ),
@@ -93,7 +93,7 @@ public class DomainProtocol {
                 true, true
         ),
         REMOVEOWNER(
-                ProtectedRegion::getOwners, DefaultDomain::contains, DefaultDomain::addPlayer,
+                ProtectedRegion::getOwners, DefaultDomain::contains, DefaultDomain::removePlayer,
                 ClaimCommand.Permissions.REMOVEOWNER, "removeowner",
                 false, true
         );

@@ -16,7 +16,7 @@ public class RemoveOwnerSubCommand extends DomainSubCommand {
 
     @Override
     protected <T extends ClaimOwner> boolean interact(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer target) {
-        return plugin.getProtocolManager().addMember(world, sender, handler, owner, target);
+        return plugin.getProtocolManager().removeOwner(world, sender, handler, owner, target);
     }
 
 }
