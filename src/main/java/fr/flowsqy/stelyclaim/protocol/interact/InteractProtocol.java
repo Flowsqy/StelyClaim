@@ -3,6 +3,7 @@ package fr.flowsqy.stelyclaim.protocol.interact;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionType;
+import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
@@ -15,7 +16,17 @@ import org.bukkit.entity.Player;
 
 public class InteractProtocol {
 
-    public static <T extends ClaimOwner> boolean process(World world, Player sender, ClaimHandler<T> handler, T owner, InteractProtocolHandler interactProtocolHandler) {
+    private final InteractProtocolHandler removeProtocolHandler;
+
+    public InteractProtocol(StelyClaimPlugin plugin) {
+        removeProtocolHandler = new RemoveHandler(plugin);
+    }
+
+    public InteractProtocolHandler getRemoveProtocolHandler() {
+        return removeProtocolHandler;
+    }
+
+    public <T extends ClaimOwner> boolean process(World world, Player sender, ClaimHandler<T> handler, T owner, InteractProtocolHandler interactProtocolHandler) {
         final ClaimMessage messages = handler.getMessages();
 
         final boolean ownRegion = owner.own(sender);

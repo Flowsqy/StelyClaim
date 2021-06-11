@@ -2,7 +2,6 @@ package fr.flowsqy.stelyclaim.api;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
-import fr.flowsqy.stelyclaim.protocol.interact.RemoveHandler;
 import fr.flowsqy.stelyclaim.protocol.selection.SelectionProtocol;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -19,13 +18,13 @@ public class ProtocolManager {
 
     private final Map<String, ClaimHandler<?>> handlers;
     private final SelectionProtocol selectionProtocol;
-    private final InteractProtocolHandler removeHandler;
+    private final InteractProtocol interactProtocol;
 
     public ProtocolManager(StelyClaimPlugin plugin) {
         this.handlers = new HashMap<>();
 
         this.selectionProtocol = new SelectionProtocol(plugin);
-        removeHandler = new RemoveHandler(plugin);
+        interactProtocol = new InteractProtocol(plugin);
     }
 
     public void registerHandler(ClaimHandler<?> handler) {
@@ -76,11 +75,11 @@ public class ProtocolManager {
     }
 
     public <T extends ClaimOwner> boolean remove(World world, Player sender, ClaimHandler<T> handler, T owner) {
-        return interact(world, sender, handler, owner, removeHandler);
+        return interact(world, sender, handler, owner, interactProtocol.getRemoveProtocolHandler());
     }
 
     public <T extends ClaimOwner> boolean interact(World world, Player sender, ClaimHandler<T> handler, T owner, InteractProtocolHandler interactHandler) {
-        return InteractProtocol.process(world, sender, handler, owner, interactHandler);
+        return interactProtocol.process(world, sender, handler, owner, interactHandler);
     }
 
 }
