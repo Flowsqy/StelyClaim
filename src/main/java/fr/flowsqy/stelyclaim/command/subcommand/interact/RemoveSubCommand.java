@@ -15,7 +15,7 @@ public class RemoveSubCommand extends InteractSubCommand {
 
     @Override
     protected <T extends ClaimOwner> boolean interactRegion(Player sender, ClaimHandler<T> handler, T owner) {
-        return StelyClaimPlugin.getInstance().getProtocolManager().remove(sender.getWorld(), sender, handler, owner);
+        return plugin.getProtocolManager().remove(sender.getWorld(), sender, handler, owner);
     }
 
 }
