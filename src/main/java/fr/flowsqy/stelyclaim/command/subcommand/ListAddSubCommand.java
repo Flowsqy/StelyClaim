@@ -4,6 +4,11 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.ClaimHandler;
+import fr.flowsqy.stelyclaim.internal.DefaultClaimMessages;
+import fr.flowsqy.stelyclaim.internal.PlayerOwner;
+import fr.flowsqy.stelyclaim.protocol.RegionFinder;
+import fr.flowsqy.stelyclaim.util.WorldName;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -19,7 +24,7 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ListAddSubCommand extends RegionSubCommand {
+public class ListAddSubCommand extends SubCommand {
 
     private final long CACHE_PERIOD;
     private final int CACHE_SIZE_CLEAR_CHECK;
@@ -33,8 +38,8 @@ public class ListAddSubCommand extends RegionSubCommand {
         super(plugin, name, alias, permission, console, allowedWorlds, statistic);
         final Configuration configuration = plugin.getConfiguration();
         CACHE_PERIOD = configuration.getLong(getName() + ".cache-period", 4000);
-        CACHE_SIZE_CLEAR_CHECK = configuration.getInt(getName() + "cache-size-clear-check", 4);
-        REGION_BY_PAGE = Math.max(configuration.getInt(getName() + "region-by-page", 5), 1);
+        CACHE_SIZE_CLEAR_CHECK = configuration.getInt(getName() + ".cache-size-clear-check", 4);
+        REGION_BY_PAGE = Math.max(configuration.getInt(getName() + ".region-by-page", 5), 1);
         cache = new HashMap<>();
         regionMessage = messages.getMessage("claim." + getName() + ".region-message");
     }
@@ -46,30 +51,26 @@ public class ListAddSubCommand extends RegionSubCommand {
         if (regionMessage == null)
             return true;
 
-        final boolean hasOtherPerm = player.hasPermission(getPermission() + "-other");
-        final String targetName;
-        final boolean own;
+        final boolean hasOtherPerm = player.hasPermission(getOtherPermission());
+        final PlayerOwner target;
         String pageArg = null;
         int page = 1;
         if (size == 1) {
-            targetName = player.getName();
-            own = true;
+            target = new PlayerOwner(player);
         } else if (size == 2) {
             if (hasOtherPerm) {
-                targetName = args.get(1);
-                own = player.getName().equals(targetName);
+                target = new PlayerOwner(Bukkit.getOfflinePlayer(args.get(1)));
             } else {
-                targetName = player.getName();
-                own = true;
+                target = new PlayerOwner(player);
                 pageArg = args.get(1);
             }
         } else if (size == 3 && hasOtherPerm) {
-            targetName = args.get(1);
-            own = player.getName().equals(targetName);
+            target = new PlayerOwner(Bukkit.getOfflinePlayer(args.get(1)));
             pageArg = args.get(2);
         } else {
             return messages.sendMessage(player, "help." + getName() + (hasOtherPerm ? "-other" : ""));
         }
+        final boolean own = target.own(player);
         if (pageArg != null) {
             try {
                 page = Integer.parseInt(pageArg);
@@ -82,17 +83,20 @@ public class ListAddSubCommand extends RegionSubCommand {
         }
 
         final World world = player.getWorld();
-        final CacheKey cacheKey = new CacheKey(targetName, world.getName());
+        final UUID targetUUID = target.getPlayer().getUniqueId();
+        final CacheKey cacheKey = new CacheKey(targetUUID, world.getName());
 
         CacheData cacheData = cache.get(cacheKey);
 
         // Get from cache or register
         if (cacheData == null || System.currentTimeMillis() - cacheData.initialInput > CACHE_PERIOD) {
-            final RegionManager manager = getRegionManager(world);
+            final RegionManager manager = RegionFinder.getRegionManager(new WorldName(world.getName()), player, new DefaultClaimMessages(messages));
+            if (manager == null)
+                return false;
             final List<String> result = manager.getRegions().entrySet().stream()
                     .filter(entry -> {
                         final ProtectedRegion region = entry.getValue();
-                        return region.getMembers().contains(targetName) || region.getOwners().contains(targetName);
+                        return region.getMembers().contains(targetUUID) || region.getOwners().contains(targetUUID);
                     })
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toList());
@@ -112,6 +116,7 @@ public class ListAddSubCommand extends RegionSubCommand {
         }
 
 
+        final String targetName = target.getName();
         final List<String> result = cacheData.result;
 
         // No regions
@@ -138,7 +143,20 @@ public class ListAddSubCommand extends RegionSubCommand {
 
         // Send region list
         for (int index = (page - 1) * REGION_BY_PAGE, i = 0; index < result.size() && i < REGION_BY_PAGE; index++, i++) {
-            player.sendMessage(regionMessage.replace("%region%", result.get(index)));
+            final String regionId = result.get(index);
+            final String regionName;
+            if (RegionFinder.isCorrectId(regionId)) {
+                final String[] parts = regionId.split("_", 3);
+                final ClaimHandler<?> regionHandler = plugin.getProtocolManager().getHandler(parts[1]);
+                if (regionHandler == null) {
+                    regionName = regionId;
+                } else {
+                    regionName = regionHandler.getOwner(parts[2]).getName();
+                }
+            } else {
+                regionName = regionId;
+            }
+            player.sendMessage(regionMessage.replace("%region%", regionName));
         }
 
         // Send page navigation message
@@ -245,7 +263,7 @@ public class ListAddSubCommand extends RegionSubCommand {
 
     @Override
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
-        if (args.size() == 2 && sender.hasPermission(getPermission() + "-other")) {
+        if (args.size() == 2 && sender.hasPermission(getOtherPermission())) {
             final String arg = args.get(1).toLowerCase(Locale.ROOT);
             final Player player = (Player) sender;
             if (arg.isEmpty())
@@ -264,10 +282,10 @@ public class ListAddSubCommand extends RegionSubCommand {
 
     private final static class CacheKey {
 
-        private final String playerName;
+        private final UUID playerName;
         private final String world;
 
-        public CacheKey(String playerName, String world) {
+        public CacheKey(UUID playerName, String world) {
             this.playerName = playerName;
             this.world = world;
         }
