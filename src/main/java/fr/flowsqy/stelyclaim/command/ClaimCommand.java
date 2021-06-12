@@ -288,6 +288,15 @@ public class ClaimCommand implements TabExecutor {
     }
 
     public void registerCommand(SubCommand subCommand, boolean canTabComplete) {
+        if (subCommands.stream().anyMatch(subCmd -> (
+                subCmd.getName().equalsIgnoreCase(subCommand.getName()) ||
+                        subCmd.getName().equalsIgnoreCase(subCommand.getAlias()) ||
+                        subCmd.getAlias().equalsIgnoreCase(subCommand.getName()) ||
+                        subCmd.getAlias().equalsIgnoreCase(subCommand.getAlias())
+        ))) {
+            throw new IllegalArgumentException("Can not register this subCommand, the name or the aliase is already taken");
+        }
+
         Permissions.registerPerm(subCommand);
 
         if (canTabComplete) {
@@ -295,6 +304,22 @@ public class ClaimCommand implements TabExecutor {
             tabLimit++;
         } else {
             subCommands.add(subCommand);
+        }
+    }
+
+    public void unregisterCommand(SubCommand subCommand) {
+        int foundIndex = -1;
+        for (int index = 0; index < subCommands.size(); index++) {
+            if (subCommands.get(index) == subCommand) {
+                foundIndex = index;
+                break;
+            }
+        }
+        if (foundIndex > -1) {
+            if (foundIndex < tabLimit) {
+                tabLimit--;
+            }
+            subCommands.remove(foundIndex);
         }
     }
 
