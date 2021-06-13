@@ -3,16 +3,13 @@ package fr.flowsqy.stelyclaim.protocol.domain;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.sk89q.worldguard.protection.regions.RegionType;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
-import fr.flowsqy.stelyclaim.protocol.RegionFinder;
-import fr.flowsqy.stelyclaim.util.WorldName;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -20,33 +17,28 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class DomainProtocol {
+public class DomainProtocol implements InteractProtocolHandler {
 
-    public static <T extends ClaimOwner> boolean process(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer target, Protocol protocol) {
-        final ClaimMessage messages = handler.getMessages();
+    private final Protocol protocol;
+    private final OfflinePlayer target;
 
-        final boolean ownRegion = owner.own(sender);
+    public DomainProtocol(Protocol protocol, OfflinePlayer target) {
+        this.protocol = protocol;
+        this.target = target;
+    }
 
-        if (!ownRegion && !sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(protocol.getPermission()))) {
-            messages.sendMessage(sender, "help." + protocol.getName());
-            return false;
-        }
+    @Override
+    public String getPermission() {
+        return protocol.getPermission();
+    }
 
-        final RegionManager regionManager = RegionFinder.getRegionManager(new WorldName(world.getName()), sender, messages);
-        if (regionManager == null)
-            return false;
+    @Override
+    public String getName() {
+        return protocol.getName();
+    }
 
-        final String regionName = RegionFinder.getRegionName(handler, owner);
-
-        final ProtectedRegion region = RegionFinder.mustExist(regionManager, regionName, owner.getName(), ownRegion, sender, messages);
-        if (region == null)
-            return false;
-
-        if (region.getType() == RegionType.GLOBAL) {
-            messages.sendMessage(sender, "claim.interactglobal");
-            return false;
-        }
-
+    @Override
+    public <T extends ClaimOwner> boolean interactRegion(RegionManager regionManager, ProtectedRegion region, boolean ownRegion, ClaimHandler<T> handler, T owner, Player sender, ClaimMessage messages) {
         final DefaultDomain domain = protocol.getDomain().apply(region);
         final UUID uuid = target.getUniqueId();
         final boolean state = protocol.isState();

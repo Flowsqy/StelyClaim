@@ -60,19 +60,19 @@ public class ProtocolManager {
     }
 
     public <T extends ClaimOwner> boolean addMember(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
-        return DomainProtocol.process(world, sender, handler, owner, player, DomainProtocol.Protocol.ADDMEMBER);
+        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.ADDMEMBER, player));
     }
 
     public <T extends ClaimOwner> boolean removeMember(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
-        return DomainProtocol.process(world, sender, handler, owner, player, DomainProtocol.Protocol.REMOVEMEMBER);
+        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.REMOVEMEMBER, player));
     }
 
     public <T extends ClaimOwner> boolean addOwner(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
-        return DomainProtocol.process(world, sender, handler, owner, player, DomainProtocol.Protocol.ADDOWNER);
+        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.ADDOWNER, player));
     }
 
     public <T extends ClaimOwner> boolean removeOwner(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
-        return DomainProtocol.process(world, sender, handler, owner, player, DomainProtocol.Protocol.REMOVEOWNER);
+        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.REMOVEOWNER, player));
     }
 
     public <T extends ClaimOwner> boolean remove(World world, Player sender, ClaimHandler<T> handler, T owner) {
