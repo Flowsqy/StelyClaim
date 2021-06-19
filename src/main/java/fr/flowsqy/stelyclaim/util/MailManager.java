@@ -1,9 +1,5 @@
 package fr.flowsqy.stelyclaim.util;
 
-import com.earth2me.essentials.I18n;
-import com.earth2me.essentials.User;
-import com.earth2me.essentials.utils.FormatUtil;
-import com.earth2me.essentials.utils.StringUtil;
 import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.io.Messages;
@@ -65,36 +61,10 @@ public class MailManager {
 
         if (customFormat) {
             for (OfflinePlayer player : to) {
-                final User user = essentialsManager.getUser(player.getUniqueId());
-                if (user == null) {
-                    continue;
-                }
-                user.addMail(mailMessage.replace("%to%", String.valueOf(player.getName())));
+                essentialsManager.sendMail(player.getUniqueId(), () -> mailMessage.replace("%to%", String.valueOf(player.getName())));
             }
         } else {
-            final User fromUser = essentialsManager.getUser(from);
-            if (fromUser == null)
-                return;
-            final String fromName = from.getName();
-            for (OfflinePlayer player : to) {
-                final User user = essentialsManager.getUser(player.getUniqueId());
-                if (user == null) {
-                    continue;
-                }
-                user.addMail(
-                        I18n.tl(
-                                "mailFormat",
-                                fromName,
-                                FormatUtil.formatMessage(
-                                        fromUser,
-                                        "essentials.mail",
-                                        StringUtil.sanitizeString(FormatUtil.stripFormat(
-                                                mailMessage.replace("%to%", String.valueOf(player.getName()))
-                                        ))
-                                )
-                        )
-                );
-            }
+            essentialsManager.sendEssentialMail(from, to, player -> mailMessage.replace("%to%", String.valueOf(player.getName())));
         }
     }
 

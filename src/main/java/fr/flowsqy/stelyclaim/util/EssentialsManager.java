@@ -1,11 +1,17 @@
 package fr.flowsqy.stelyclaim.util;
 
 import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.I18n;
 import com.earth2me.essentials.User;
-import org.bukkit.entity.Player;
+import com.earth2me.essentials.utils.FormatUtil;
+import com.earth2me.essentials.utils.StringUtil;
+import org.bukkit.OfflinePlayer;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public interface EssentialsManager {
 
@@ -13,11 +19,9 @@ public interface EssentialsManager {
 
     boolean isEnable();
 
-    User getUser(Player player);
+    void sendMail(UUID uuid, Supplier<String> message);
 
-    User getUser(UUID uuid);
-
-    User getUser(String player);
+    void sendEssentialMail(OfflinePlayer from, List<OfflinePlayer> to, Function<OfflinePlayer, String> message);
 
     class NullEssentialsManager implements EssentialsManager {
         @Override
@@ -26,17 +30,12 @@ public interface EssentialsManager {
         }
 
         @Override
-        public User getUser(Player player) {
+        public void sendMail(UUID uuid, Supplier<String> message) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public User getUser(UUID uuid) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public User getUser(String player) {
+        public void sendEssentialMail(OfflinePlayer from, List<OfflinePlayer> to, Function<OfflinePlayer, String> message) {
             throw new UnsupportedOperationException();
         }
 
@@ -61,18 +60,38 @@ public interface EssentialsManager {
         }
 
         @Override
-        public User getUser(Player player) {
-            return essentials.getUser(player);
+        public void sendMail(UUID uuid, Supplier<String> message) {
+            final User user = essentials.getUser(uuid);
+            if (user == null)
+                return;
+            user.addMail(message.get());
         }
 
         @Override
-        public User getUser(UUID uuid) {
-            return essentials.getUser(uuid);
-        }
-
-        @Override
-        public User getUser(String player) {
-            return essentials.getUser(player);
+        public void sendEssentialMail(OfflinePlayer from, List<OfflinePlayer> to, Function<OfflinePlayer, String> message) {
+            final User fromUser = essentials.getUser(from.getUniqueId());
+            if (fromUser == null)
+                return;
+            final String fromName = from.getName();
+            for (OfflinePlayer player : to) {
+                final User user = essentials.getUser(player.getUniqueId());
+                if (user == null) {
+                    continue;
+                }
+                user.addMail(
+                        I18n.tl(
+                                "mailFormat",
+                                fromName,
+                                FormatUtil.formatMessage(
+                                        fromUser,
+                                        "essentials.mail",
+                                        StringUtil.sanitizeString(FormatUtil.stripFormat(
+                                                message.apply(player)
+                                        ))
+                                )
+                        )
+                );
+            }
         }
 
         @Override
