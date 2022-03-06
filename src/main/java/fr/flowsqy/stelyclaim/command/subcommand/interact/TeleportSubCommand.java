@@ -17,7 +17,7 @@ public class TeleportSubCommand extends InteractSubCommand {
 
     @Override
     protected <T extends ClaimOwner> boolean interactRegion(Player sender, ClaimHandler<T> handler, T owner) {
-        return plugin.getProtocolManager().interact(sender.getWorld(), sender, handler, owner, new TeleportHandler());
+        return plugin.getProtocolManager().interact(sender.getWorld(), sender, handler, owner, new TeleportHandler(plugin.getTeleportSync()));
     }
 
 }

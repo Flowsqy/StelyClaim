@@ -3,12 +3,12 @@ package fr.flowsqy.stelyclaim.protocol.domain;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
+import fr.flowsqy.stelyclaim.util.MailManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -20,10 +20,12 @@ import java.util.function.Function;
 public class DomainProtocol implements InteractProtocolHandler {
 
     private final Protocol protocol;
+    private final MailManager mailManager;
     private final OfflinePlayer target;
 
-    public DomainProtocol(Protocol protocol, OfflinePlayer target) {
+    public DomainProtocol(Protocol protocol, MailManager mailManager, OfflinePlayer target) {
         this.protocol = protocol;
+        this.mailManager = mailManager;
         this.target = target;
     }
 
@@ -61,7 +63,7 @@ public class DomainProtocol implements InteractProtocolHandler {
         );
 
         if (!ownRegion) {
-            StelyClaimPlugin.getInstance().getMailManager().sendInfoToOwner(sender, owner, messages, protocol.getName(), target);
+            mailManager.sendInfoToOwner(sender, owner, messages, protocol.getName(), target);
         }
 
         return true;

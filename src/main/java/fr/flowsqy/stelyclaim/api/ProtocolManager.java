@@ -4,6 +4,7 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.protocol.domain.DomainProtocol;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import fr.flowsqy.stelyclaim.protocol.selection.SelectionProtocol;
+import fr.flowsqy.stelyclaim.util.MailManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -19,12 +20,14 @@ public class ProtocolManager {
 
     private final Map<String, ClaimHandler<?>> handlers;
     private final SelectionProtocol selectionProtocol;
+    private final MailManager mailManager;
     private final InteractProtocol interactProtocol;
 
     public ProtocolManager(StelyClaimPlugin plugin) {
         this.handlers = new HashMap<>();
 
         this.selectionProtocol = new SelectionProtocol(plugin);
+        mailManager = plugin.getMailManager();
         interactProtocol = new InteractProtocol(plugin);
     }
 
@@ -60,19 +63,19 @@ public class ProtocolManager {
     }
 
     public <T extends ClaimOwner> boolean addMember(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
-        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.ADDMEMBER, player));
+        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.ADDMEMBER, mailManager, player));
     }
 
     public <T extends ClaimOwner> boolean removeMember(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
-        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.REMOVEMEMBER, player));
+        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.REMOVEMEMBER, mailManager, player));
     }
 
     public <T extends ClaimOwner> boolean addOwner(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
-        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.ADDOWNER, player));
+        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.ADDOWNER, mailManager, player));
     }
 
     public <T extends ClaimOwner> boolean removeOwner(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
-        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.REMOVEOWNER, player));
+        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.REMOVEOWNER, mailManager, player));
     }
 
     public <T extends ClaimOwner> boolean remove(World world, Player sender, ClaimHandler<T> handler, T owner) {

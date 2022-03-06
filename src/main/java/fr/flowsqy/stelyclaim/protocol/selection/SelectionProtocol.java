@@ -25,6 +25,8 @@ import org.bukkit.entity.Player;
 
 public class SelectionProtocol {
 
+    private final StelyClaimPlugin plugin;
+
     private final boolean expandRegion;
     private final int maxY;
     private final int minY;
@@ -32,6 +34,7 @@ public class SelectionProtocol {
     private final PillarTextSender previousPillarTextSender;
 
     public SelectionProtocol(StelyClaimPlugin plugin) {
+        this.plugin = plugin;
         final YamlConfiguration configuration = plugin.getConfiguration();
         expandRegion = configuration.getBoolean("expand-selection-y.expand", false);
         maxY = configuration.getInt("expand-selection-y.max", 255);
@@ -124,7 +127,7 @@ public class SelectionProtocol {
             final String overlappingRegionName;
             if (RegionFinder.isCorrectId(id)) {
                 final String[] partId = id.split("_", 3);
-                final ClaimHandler<?> overlappingHandler = StelyClaimPlugin.getInstance().getProtocolManager().getHandler(partId[1]);
+                final ClaimHandler<?> overlappingHandler = plugin.getProtocolManager().getHandler(partId[1]);
                 if (overlappingHandler != null) {
                     overlappingRegionName = overlappingHandler.getOwner(partId[2]).getName();
                 } else {
@@ -170,7 +173,7 @@ public class SelectionProtocol {
         // Mail manage
 
         if (!ownRegion) {
-            StelyClaimPlugin.getInstance().getMailManager().sendInfoToOwner(
+            plugin.getMailManager().sendInfoToOwner(
                     sender,
                     owner,
                     messages,

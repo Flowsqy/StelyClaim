@@ -24,16 +24,18 @@ import java.util.UUID;
 
 public class ConfigPlayerModifier implements RegionModifier<PlayerOwner> {
 
+    private final StelyClaimPlugin plugin;
     private final String category;
 
-    public ConfigPlayerModifier(String category) {
+    public ConfigPlayerModifier(StelyClaimPlugin plugin, String category) {
+        this.plugin = plugin;
         this.category = category;
     }
 
     @Override
     public void modify(Player sender, ProtectedRegion region, PlayerOwner claimOwner) {
-        final Configuration config = StelyClaimPlugin.getInstance().getConfiguration();
-        final Messages messages = StelyClaimPlugin.getInstance().getMessages();
+        final Configuration config = plugin.getConfiguration();
+        final Messages messages = plugin.getMessages();
 
         // Teleportation flag
         final String setTp = config.getString(category + ".set-tp");

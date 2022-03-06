@@ -10,9 +10,16 @@ import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
+import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.entity.Player;
 
 public class TeleportHandler implements InteractProtocolHandler {
+
+    private final TeleportSync teleportSync;
+
+    public TeleportHandler(TeleportSync teleportSync) {
+        this.teleportSync = teleportSync;
+    }
 
     @Override
     public String getPermission() {
@@ -33,7 +40,7 @@ public class TeleportHandler implements InteractProtocolHandler {
             return false;
         }
 
-        StelyClaimPlugin.getInstance().getTeleportSync().addTeleport(sender, BukkitAdapter.adapt(weLoc));
+        teleportSync.addTeleport(sender, BukkitAdapter.adapt(weLoc));
 
         messages.sendMessage(sender, "claim.command.tp" + (ownRegion ? "" : "-other"), "%region%", owner.getName());
 

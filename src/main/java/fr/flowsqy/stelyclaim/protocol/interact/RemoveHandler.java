@@ -8,14 +8,17 @@ import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
+import fr.flowsqy.stelyclaim.util.MailManager;
 import fr.flowsqy.stelyclaim.util.PillarTextSender;
 import org.bukkit.entity.Player;
 
 public class RemoveHandler implements InteractProtocolHandler {
 
+    private final MailManager mailManager;
     private final PillarTextSender pillarTextSender;
 
     public RemoveHandler(StelyClaimPlugin plugin) {
+        this.mailManager = plugin.getMailManager();
         this.pillarTextSender = new PillarTextSender(plugin.getMessages(), "current", plugin.getPillarData());
     }
 
@@ -38,7 +41,7 @@ public class RemoveHandler implements InteractProtocolHandler {
         pillarTextSender.sendMessage(sender, region);
 
         if (!ownRegion)
-            StelyClaimPlugin.getInstance().getMailManager().sendInfoToOwner(sender, owner, messages, "remove");
+            mailManager.sendInfoToOwner(sender, owner, messages, "remove");
 
         return true;
     }

@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 
 public class StelyClaimPlugin extends JavaPlugin {
 
-    private static StelyClaimPlugin instance;
     private final Map<String, PillarData> pillarData = new HashMap<>();
     private YamlConfiguration configuration;
     private Messages messages;
@@ -36,13 +35,8 @@ public class StelyClaimPlugin extends JavaPlugin {
     private ProtocolManager protocolManager;
     private CommandManager commandManager;
 
-    public static StelyClaimPlugin getInstance() {
-        return instance;
-    }
-
     @Override
     public void onEnable() {
-        instance = this;
 
         final Logger logger = getLogger();
         final File dataFolder = getDataFolder();
@@ -68,7 +62,7 @@ public class StelyClaimPlugin extends JavaPlugin {
         this.protocolManager = new ProtocolManager(this);
 
         // Register internal ClaimHandler
-        protocolManager.registerHandler(new PlayerHandler(messages));
+        protocolManager.registerHandler(new PlayerHandler(this));
 
         this.commandManager = new CommandManager(this);
 
