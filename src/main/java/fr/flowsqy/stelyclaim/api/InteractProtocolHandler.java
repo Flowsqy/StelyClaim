@@ -17,7 +17,7 @@ public interface InteractProtocolHandler {
             ClaimHandler<T> handler,
             T owner,
             Player sender,
-            ClaimMessage messages
+            FormattedMessages messages
     );
 
 }

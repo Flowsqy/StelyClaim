@@ -2,7 +2,7 @@ package fr.flowsqy.stelyclaim.command.subcommand;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
-import fr.flowsqy.stelyclaim.io.Messages;
+import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import org.bukkit.command.CommandSender;
 
 import java.util.HashSet;
@@ -13,7 +13,7 @@ import java.util.Set;
 public abstract class SubCommand {
 
     protected final StelyClaimPlugin plugin;
-    protected final Messages messages;
+    protected final ConfigurationFormattedMessages messages;
     protected final String name;
     protected final String alias;
     protected final String permission;
@@ -25,7 +25,7 @@ public abstract class SubCommand {
         this(plugin, plugin.getMessages(), name, alias, permission, console, allowedWorlds, statistic);
     }
 
-    public SubCommand(StelyClaimPlugin plugin, Messages messages, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
+    public SubCommand(StelyClaimPlugin plugin, ConfigurationFormattedMessages messages, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         Objects.requireNonNull(messages);
         this.plugin = plugin;
         this.messages = messages;

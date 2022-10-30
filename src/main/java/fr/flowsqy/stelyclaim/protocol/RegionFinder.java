@@ -5,8 +5,8 @@ import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
-import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import org.bukkit.entity.Player;
 
 import java.util.regex.Pattern;
@@ -24,7 +24,7 @@ public class RegionFinder {
         return id != null && GLOBAL_PATTERN.matcher(id).matches();
     }
 
-    public static RegionManager getRegionManager(World world, Player sender, ClaimMessage messages) {
+    public static RegionManager getRegionManager(World world, Player sender, FormattedMessages messages) {
         final RegionManager regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
         if (regionManager == null) {
             messages.sendMessage(sender,
@@ -40,7 +40,7 @@ public class RegionFinder {
             String ownerName,
             boolean ownRegion,
             Player sender,
-            ClaimMessage messages
+            FormattedMessages messages
     ) {
         final ProtectedRegion region = manager.getRegion(regionName);
         if (region == null) {
@@ -55,7 +55,7 @@ public class RegionFinder {
             String ownerName,
             boolean ownRegion,
             Player sender,
-            ClaimMessage messages
+            FormattedMessages messages
     ) {
         final boolean exist = manager.getRegion(regionName) != null;
         if (exist) {

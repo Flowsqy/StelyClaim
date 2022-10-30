@@ -4,8 +4,8 @@ import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
-import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.util.MailManager;
@@ -40,7 +40,7 @@ public class DomainProtocol implements InteractProtocolHandler {
     }
 
     @Override
-    public <T extends ClaimOwner> boolean interactRegion(RegionManager regionManager, ProtectedRegion region, boolean ownRegion, ClaimHandler<T> handler, T owner, Player sender, ClaimMessage messages) {
+    public <T extends ClaimOwner> boolean interactRegion(RegionManager regionManager, ProtectedRegion region, boolean ownRegion, ClaimHandler<T> handler, T owner, Player sender, FormattedMessages messages) {
         final DefaultDomain domain = protocol.getDomain().apply(region);
         final UUID uuid = target.getUniqueId();
         final boolean state = protocol.isState();

@@ -1,8 +1,8 @@
 package fr.flowsqy.stelyclaim.command;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
-import fr.flowsqy.stelyclaim.io.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
@@ -24,7 +24,7 @@ import java.util.List;
 
 public class BedrockCommand implements TabExecutor {
 
-    private final Messages messages;
+    private final ConfigurationFormattedMessages messages;
     private final BedrockManager manager;
 
     public BedrockCommand(StelyClaimPlugin plugin) {

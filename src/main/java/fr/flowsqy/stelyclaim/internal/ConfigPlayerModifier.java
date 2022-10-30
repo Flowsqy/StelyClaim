@@ -10,7 +10,7 @@ import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.RegionModifier;
-import fr.flowsqy.stelyclaim.io.Messages;
+import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.util.PillarCoordinate;
 import org.bukkit.Location;
 import org.bukkit.configuration.Configuration;
@@ -35,7 +35,7 @@ public class ConfigPlayerModifier implements RegionModifier<PlayerOwner> {
     @Override
     public void modify(Player sender, ProtectedRegion region, PlayerOwner claimOwner) {
         final Configuration config = plugin.getConfiguration();
-        final Messages messages = plugin.getMessages();
+        final ConfigurationFormattedMessages messages = plugin.getMessages();
 
         // Teleportation flag
         final String setTp = config.getString(category + ".set-tp");
@@ -120,14 +120,14 @@ public class ConfigPlayerModifier implements RegionModifier<PlayerOwner> {
         }
 
         // Greeting flag
-        final String greeting = messages.getMessage(
+        final String greeting = messages.getFormattedMessage(
                 "claim.selection-flags." + category + ".greeting",
                 "%region%", claimOwner.getName()
         );
         region.setFlag(Flags.GREET_MESSAGE, greeting);
 
         // Farewell flag
-        final String farewell = messages.getMessage(
+        final String farewell = messages.getFormattedMessage(
                 "claim.selection-flags." + category + ".farewell",
                 "%region%", claimOwner.getName()
         );

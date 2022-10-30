@@ -2,7 +2,7 @@ package fr.flowsqy.stelyclaim.util;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.componentreplacer.ComponentReplacer;
-import fr.flowsqy.stelyclaim.io.Messages;
+import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -31,7 +31,7 @@ public class PillarTextSender {
 
     private final Map<String, PillarData> pillarData;
 
-    public PillarTextSender(Messages messages, String category, Map<String, PillarData> pillarData) {
+    public PillarTextSender(ConfigurationFormattedMessages messages, String category, Map<String, PillarData> pillarData) {
         baseMessage = messages.getMessage("pillar." + category + ".message");
         if (baseMessage != null) {
             northwestTxtCpnt = createTextComponent(messages, category, NORTHWEST);
@@ -50,7 +50,7 @@ public class PillarTextSender {
         this.pillarData = pillarData;
     }
 
-    private TextComponent createTextComponent(Messages messages, String category, String direction) {
+    private TextComponent createTextComponent(ConfigurationFormattedMessages messages, String category, String direction) {
         final String message = messages.getMessage("pillar." + category + "." + direction + ".message");
         final TextComponent textComponent = new TextComponent();
         if (message == null)

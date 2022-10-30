@@ -1,8 +1,8 @@
 package fr.flowsqy.stelyclaim.util;
 
-import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import fr.flowsqy.stelyclaim.io.Messages;
+import fr.flowsqy.stelyclaim.api.FormattedMessages;
+import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
@@ -11,11 +11,11 @@ import java.util.*;
 
 public class MailManager {
 
-    private final Messages messages;
+    private final ConfigurationFormattedMessages messages;
     private final Map<String, Boolean> commands;
     private final EssentialsManager essentialsManager;
 
-    public MailManager(Messages messages, Configuration config, EssentialsManager essentialsManager) {
+    public MailManager(ConfigurationFormattedMessages messages, Configuration config, EssentialsManager essentialsManager) {
         this.messages = messages;
         this.essentialsManager = essentialsManager;
         if (essentialsManager.isEnable()) {
@@ -46,13 +46,13 @@ public class MailManager {
             return;
         final String mailMessage;
         if (target != null) {
-            mailMessage = messages.getMessage(
+            mailMessage = messages.getFormattedMessage(
                     "mail." + command,
                     "%from%", "%target%",
                     from.getName(), target.getName()
             );
         } else {
-            mailMessage = messages.getMessage(
+            mailMessage = messages.getFormattedMessage(
                     "mail." + command,
                     "%from%",
                     from.getName()
@@ -68,11 +68,11 @@ public class MailManager {
         }
     }
 
-    public void sendInfoToOwner(Player sender, ClaimOwner owner, ClaimMessage messages, String command) {
+    public void sendInfoToOwner(Player sender, ClaimOwner owner, FormattedMessages messages, String command) {
         sendInfoToOwner(sender, owner, messages, command, null);
     }
 
-    public void sendInfoToOwner(Player sender, ClaimOwner owner, ClaimMessage messages, String command, OfflinePlayer target) {
+    public void sendInfoToOwner(Player sender, ClaimOwner owner, FormattedMessages messages, String command, OfflinePlayer target) {
         final Set<OfflinePlayer> mailablePlayers = owner.getMailable();
         final List<Player> connectedPlayers = new ArrayList<>();
         final List<OfflinePlayer> disconnectedPlayers = new ArrayList<>();
@@ -93,7 +93,7 @@ public class MailManager {
             } else {
                 replaces = new String[]{"%sender%", "%target%", sender.getName(), target.getName()};
             }
-            final String message = messages.getMessage("claim.target." + command, replaces);
+            final String message = messages.getFormattedMessage("claim.target." + command, replaces);
             for (Player player : connectedPlayers) {
                 player.sendMessage(message);
             }

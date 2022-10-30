@@ -2,8 +2,9 @@ package fr.flowsqy.stelyclaim.internal;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
-import fr.flowsqy.stelyclaim.api.ClaimMessage;
+import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.api.RegionModifier;
+import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import org.bukkit.Bukkit;
 
 import java.util.UUID;
@@ -14,12 +15,12 @@ public class PlayerHandler implements ClaimHandler<PlayerOwner> {
 
     private final ConfigPlayerModifier defineModifier;
     private final ConfigPlayerModifier redefineModifier;
-    private final DefaultClaimMessages messages;
+    private final ConfigurationFormattedMessages messages;
 
     public PlayerHandler(StelyClaimPlugin plugin) {
         this.defineModifier = new ConfigPlayerModifier(plugin, "define");
         this.redefineModifier = new ConfigPlayerModifier(plugin, "redefine");
-        this.messages = new DefaultClaimMessages(plugin.getMessages());
+        this.messages = plugin.getMessages();
     }
 
     @Override
@@ -49,7 +50,7 @@ public class PlayerHandler implements ClaimHandler<PlayerOwner> {
     }
 
     @Override
-    public ClaimMessage getMessages() {
+    public FormattedMessages getMessages() {
         return messages;
     }
 }

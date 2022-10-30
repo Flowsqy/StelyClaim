@@ -15,8 +15,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
-import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.protocol.RegionFinder;
 import fr.flowsqy.stelyclaim.util.PillarTextSender;
@@ -44,7 +44,7 @@ public class SelectionProtocol {
     }
 
     public <T extends ClaimOwner> boolean process(Player sender, ClaimHandler<T> handler, T owner, Protocol protocol) {
-        final ClaimMessage messages = handler.getMessages();
+        final FormattedMessages messages = handler.getMessages();
         final LocalSession session = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(sender));
         final com.sk89q.worldedit.world.World world = new BukkitWorld(sender.getWorld());
 

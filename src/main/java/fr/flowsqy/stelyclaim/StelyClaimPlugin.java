@@ -3,12 +3,14 @@ package fr.flowsqy.stelyclaim;
 import com.earth2me.essentials.Essentials;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.command.CommandManager;
+import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.internal.PlayerHandler;
+import fr.flowsqy.stelyclaim.common.PrefixedConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
-import fr.flowsqy.stelyclaim.io.Messages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
 import fr.flowsqy.stelyclaim.util.*;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,7 +28,7 @@ public class StelyClaimPlugin extends JavaPlugin {
 
     private final Map<String, PillarData> pillarData = new HashMap<>();
     private YamlConfiguration configuration;
-    private Messages messages;
+    private ConfigurationFormattedMessages messages;
     private BedrockManager breakManager;
     private StatisticManager statisticManager;
     private TeleportSync teleportSync;
@@ -49,7 +51,10 @@ public class StelyClaimPlugin extends JavaPlugin {
         }
 
         this.configuration = initFile(dataFolder, "config.yml");
-        this.messages = new Messages(initFile(dataFolder, "messages.yml"), "&7[&5StelyClaim&7]&f");
+        this.messages = PrefixedConfigurationFormattedMessages.create(
+                initFile(dataFolder, "messages.yml"),
+                ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "StelyClaim" + ChatColor.GRAY + "]" + ChatColor.WHITE
+        );
         this.breakManager = new BedrockManager(dataFolder);
         this.statisticManager = new StatisticManager(this, dataFolder);
         this.teleportSync = new TeleportSync(this);
@@ -91,7 +96,7 @@ public class StelyClaimPlugin extends JavaPlugin {
         return configuration;
     }
 
-    public Messages getMessages() {
+    public ConfigurationFormattedMessages getMessages() {
         return messages;
     }
 

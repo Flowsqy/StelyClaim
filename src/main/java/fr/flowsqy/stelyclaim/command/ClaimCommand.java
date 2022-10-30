@@ -12,7 +12,7 @@ import fr.flowsqy.stelyclaim.command.subcommand.interact.TeleportSubCommand;
 import fr.flowsqy.stelyclaim.command.subcommand.selection.DefineSubCommand;
 import fr.flowsqy.stelyclaim.command.subcommand.selection.RedefineSubCommand;
 import fr.flowsqy.stelyclaim.command.subcommand.statistics.StatsSubCommand;
-import fr.flowsqy.stelyclaim.io.Messages;
+import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 
 public class ClaimCommand implements TabExecutor {
 
-    private final Messages messages;
+    private final ConfigurationFormattedMessages messages;
     private final StatisticManager statisticManager;
     private final List<SubCommand> subCommands;
     private final SubCommand helpSubCommand;

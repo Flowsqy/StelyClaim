@@ -4,8 +4,8 @@ import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
-import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.util.PillarCoordinate;
@@ -28,17 +28,17 @@ public class InfoHandler implements InteractProtocolHandler {
     }
 
     @Override
-    public <T extends ClaimOwner> boolean interactRegion(RegionManager regionManager, ProtectedRegion region, boolean ownRegion, ClaimHandler<T> handler, T owner, Player sender, ClaimMessage messages) {
-        final String memberPlayerSeparator = messages.getMessage("claim.info.member-player.separator");
-        final String memberGroupSeparator = messages.getMessage("claim.info.member-group.separator");
-        final String ownerPlayerSeparator = messages.getMessage("claim.info.owner-player.separator");
-        final String ownerGroupSeparator = messages.getMessage("claim.info.owner-group.separator");
-        final String memberPlayerEmpty = messages.getMessage("claim.info.member-player.empty");
-        final String memberGroupEmpty = messages.getMessage("claim.info.member-group.empty");
-        final String ownerPlayerEmpty = messages.getMessage("claim.info.owner-player.empty");
-        final String ownerGroupEmpty = messages.getMessage("claim.info.owner-group.empty");
+    public <T extends ClaimOwner> boolean interactRegion(RegionManager regionManager, ProtectedRegion region, boolean ownRegion, ClaimHandler<T> handler, T owner, Player sender, FormattedMessages messages) {
+        final String memberPlayerSeparator = messages.getFormattedMessage("claim.info.member-player.separator");
+        final String memberGroupSeparator = messages.getFormattedMessage("claim.info.member-group.separator");
+        final String ownerPlayerSeparator = messages.getFormattedMessage("claim.info.owner-player.separator");
+        final String ownerGroupSeparator = messages.getFormattedMessage("claim.info.owner-group.separator");
+        final String memberPlayerEmpty = messages.getFormattedMessage("claim.info.member-player.empty");
+        final String memberGroupEmpty = messages.getFormattedMessage("claim.info.member-group.empty");
+        final String ownerPlayerEmpty = messages.getFormattedMessage("claim.info.owner-player.empty");
+        final String ownerGroupEmpty = messages.getFormattedMessage("claim.info.owner-group.empty");
 
-        String message = messages.getMessage("claim.info.message", "%region%", owner.getName());
+        String message = messages.getFormattedMessage("claim.info.message", "%region%", owner.getName());
         message = replaceDomainInfo(
                 message,
                 region.getOwners(),

@@ -5,8 +5,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionType;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
-import fr.flowsqy.stelyclaim.api.ClaimMessage;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.protocol.RegionFinder;
@@ -27,7 +27,7 @@ public class InteractProtocol {
     }
 
     public <T extends ClaimOwner> boolean process(World world, Player sender, ClaimHandler<T> handler, T owner, InteractProtocolHandler interactProtocolHandler) {
-        final ClaimMessage messages = handler.getMessages();
+        final FormattedMessages messages = handler.getMessages();
 
         final boolean ownRegion = owner.own(sender);
 

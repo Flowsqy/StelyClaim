@@ -5,7 +5,6 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
-import fr.flowsqy.stelyclaim.internal.DefaultClaimMessages;
 import fr.flowsqy.stelyclaim.internal.PlayerOwner;
 import fr.flowsqy.stelyclaim.protocol.RegionFinder;
 import fr.flowsqy.stelyclaim.util.WorldName;
@@ -90,7 +89,7 @@ public class ListAddSubCommand extends SubCommand {
 
         // Get from cache or register
         if (cacheData == null || System.currentTimeMillis() - cacheData.initialInput > CACHE_PERIOD) {
-            final RegionManager manager = RegionFinder.getRegionManager(new WorldName(world.getName()), player, new DefaultClaimMessages(messages));
+            final RegionManager manager = RegionFinder.getRegionManager(new WorldName(world.getName()), player, messages);
             if (manager == null)
                 return false;
             final List<String> result = manager.getRegions().entrySet().stream()
