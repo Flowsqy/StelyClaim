@@ -53,20 +53,61 @@ public abstract class SubCommand {
         return ClaimCommand.Permissions.getOtherPerm(permission);
     }
 
+    /**
+     * Whether this sub-command can be executed by a sender that is not a player
+     *
+     * @return {@code true} if the command can be sent by a non-player sender, {@code false} otherwise
+     */
     public boolean isConsole() {
         return console;
     }
 
-    public Set<String> getAllowedWorlds() {
-        return allowedWorlds;
+    /**
+     * Whether this sub-command is allowed in a world
+     *
+     * @param worldName The name of the world to check
+     * @return {@code true} if the sub-command is allowed, {@code false} otherwise
+     */
+    public boolean isAllowedInWorld(String worldName) {
+        // If the list is empty, all world are allowed
+        if (allowedWorlds.isEmpty()) {
+            return true;
+        }
+        // No world so blocked by default
+        if (worldName == null) {
+            return false;
+        }
+        return allowedWorlds.contains(worldName);
     }
 
+    /**
+     * Whether the sub-command is tracked by the {@link fr.flowsqy.stelyclaim.io.StatisticManager}
+     *
+     * @return {@code true} if the command is tracked by the {@link fr.flowsqy.stelyclaim.io.StatisticManager}, {@code false} otherwise
+     */
     public boolean isStatistic() {
         return statistic;
     }
 
+    /**
+     * Execute this sub-command
+     *
+     * @param sender   The {@link CommandSender}
+     * @param args     The argument {@link List}
+     * @param size     The size of the argument list
+     * @param isPlayer Whether the sender is a {@link org.bukkit.entity.Player}
+     * @return {@code true} if the command succeed, {@code false} otherwise
+     */
     public abstract boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer);
 
+    /**
+     * Tab this sub-command
+     *
+     * @param sender   The {@link CommandSender}
+     * @param args     The argument {@link List}
+     * @param isPlayer Whether the sender is a {@link org.bukkit.entity.Player}
+     * @return A {@link List} of possible completions for the final argument
+     */
     public abstract List<String> tab(CommandSender sender, List<String> args, boolean isPlayer);
 
 }

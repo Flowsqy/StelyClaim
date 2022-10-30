@@ -89,9 +89,8 @@ public class ClaimCommand implements TabExecutor {
      * @param isPlayer Whether the sender is a {@link Player}
      */
     private void executeSubCommand(SubCommand command, CommandSender sender, List<String> argsList, boolean isPlayer) {
-        final Set<String> allowedWorlds = command.getAllowedWorlds();
-        // Check if it's a player in a disallowed world (if the allowedWorlds list is empty, every world is allowed)
-        if (isPlayer && !allowedWorlds.isEmpty() && !allowedWorlds.contains(((Player) sender).getWorld().getName())){ // || sender.hasPermission("claim." + command.getName() + ".world-bypass")
+        // Check if it's a player in a disallowed world
+        if (isPlayer && !command.isAllowedInWorld(((Player) sender).getWorld().getName())){ // || sender.hasPermission("claim." + command.getName() + ".world-bypass")
             messages.sendMessage(sender, "claim.world.notallowed");
             return;
         }
