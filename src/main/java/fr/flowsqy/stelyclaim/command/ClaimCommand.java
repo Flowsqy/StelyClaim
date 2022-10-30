@@ -61,9 +61,9 @@ public class ClaimCommand implements TabExecutor {
         // Get matching sub-command
         final Optional<SubCommand> matchingSubCommand = getSubCommand(arg);
         // Check wrong command call and correct command call without permission
-        if(matchingSubCommand.isEmpty() || !sender.hasPermission(matchingSubCommand.get().getPermission())) {
+        if (!matchingSubCommand.isPresent() || !sender.hasPermission(matchingSubCommand.get().getPermission())) {
             // Send general help if the sender have the permission
-            if(sender.hasPermission(helpSubCommand.getPermission())) {
+            if (sender.hasPermission(helpSubCommand.getPermission())) {
                 executeSubCommand(helpSubCommand, sender, Collections.singletonList(helpSubCommand.getName()), isPlayer);
             }
             return true;
@@ -107,50 +107,56 @@ public class ClaimCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
+        // Get arg list
         final List<String> argsList =
                 args == null ?
                         new ArrayList<>() :
                         new ArrayList<>(Arrays.asList(args));
+        // Get first arg
         final String arg =
-                argsList.size() < 1 ?
+                argsList.isEmpty() ?
                         "" :
                         argsList.get(0).toLowerCase(Locale.ROOT);
-        final Optional<SubCommand> subCommand = getSubCommand(arg);
-        if (subCommand.isPresent()) {
-            // Tab a SubCommand
-            final SubCommand subCmd = subCommand.get();
-            final boolean isPlayer = sender instanceof Player;
-            if (isPlayer ? sender.hasPermission(subCmd.getPermission()) : subCmd.isConsole()) {
-                return subCmd.tab(sender, argsList, isPlayer);
-            } else {
-                return Collections.emptyList();
-            }
+        final Optional<SubCommand> matchingSubCommand = getSubCommand(arg);
+        final boolean isPlayer = sender instanceof Player;
+        if (
+                matchingSubCommand.isPresent() // The first argument is a valid command
+                        && argsList.size() > 1 // Typed more than one argument
+                        && sender.hasPermission(matchingSubCommand.get().getPermission()) // The sender can execute (and tab) the sub-command
+                        && (isPlayer || matchingSubCommand.get().isConsole()) // The sub-command can be executed by this type of sender
+        ) {
+            // Redirect to the sub-command
+            return matchingSubCommand.get().tab(sender, argsList, isPlayer);
         } else if (argsList.size() < 2) {
             // Tab all SubCommands
-            final Stream<SubCommand> subCommandStream;
-            if (sender instanceof Player)
-                subCommandStream = subCommands.stream()
-                        .limit(tabLimit)  // Exclude non tab commands
-                        .filter(cmd -> sender.hasPermission(cmd.getPermission()));
-            else {
-                subCommandStream = subCommands.stream()
-                        .limit(tabLimit)  // Exclude non tab commands
-                        .filter(SubCommand::isConsole);
+            // Exclude non tab commands
+            Stream<SubCommand> subCommandStream = subCommands.stream().limit(tabLimit);
+            // Keep only non-player ready sub-command if the sender is not a player
+            if (!isPlayer) {
+                subCommandStream = subCommandStream.filter(SubCommand::isConsole);
             }
-            if (arg.isEmpty())
-                return subCommandStream
-                        .map(SubCommand::getName)
-                        .collect(Collectors.toList());
-            else
-                return subCommandStream
-                        .map(SubCommand::getName)
-                        .filter(cmd -> cmd.startsWith(arg))
-                        .collect(Collectors.toList());
-        } else
-            // Wrong subCommandName, do nothing
+
+            Stream<String> subCommandNameStream = subCommandStream
+                    .filter(subCmd -> sender.hasPermission(subCmd.getPermission())) // Check permissions
+                    .map(SubCommand::getName); // Just keep the name
+
+            // If the argument is not blank, remove the one that does not start by the argument
+            if (!arg.isEmpty()) {
+                subCommandNameStream = subCommandNameStream.filter(cmd -> cmd.startsWith(arg));
+            }
+            return subCommandNameStream.collect(Collectors.toList());
+        } else {
+            // Wrong sub-command name and more than one argument -> do nothing
             return Collections.emptyList();
+        }
     }
 
+    /**
+     * Get a sub-command from its name or its alias
+     *
+     * @param arg The {@link String} name or alias
+     * @return An {@link Optional} sub-command that matches
+     */
     private Optional<SubCommand> getSubCommand(String arg) {
         if (arg.isEmpty()) {
             return Optional.empty();
@@ -160,8 +166,14 @@ public class ClaimCommand implements TabExecutor {
                 .findAny();
     }
 
+    /**
+     * Initialize all internal sub-commands and fill subCommands array
+     * The {@link HelpSubCommand} is the first in the list
+     * Initialize the tab limit property
+     *
+     * @param plugin The {@link StelyClaimPlugin} instance to create all sub-commands
+     */
     private void initCommands(StelyClaimPlugin plugin) {
-        // SubCommands : help, define, redefine, addmember, removemember, addowner, removeowner, remove, info, teleport, stats, pillar
         final Configuration config = plugin.getConfiguration();
         final HelpSubCommand helpSubCommand = new HelpSubCommand(
                 plugin,
@@ -305,6 +317,7 @@ public class ClaimCommand implements TabExecutor {
                 config.getBoolean("statistic.pillar"),
                 helpSubCommand
         ));
+        // Load statistics tabs (should be at the end to count every sub-commands)
         statsSubCommand.initSubCommands(subCommands);
     }
 
