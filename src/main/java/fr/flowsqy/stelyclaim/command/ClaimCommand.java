@@ -21,6 +21,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,59 +44,69 @@ public class ClaimCommand implements TabExecutor {
         helpSubCommand = subCommands.get(0);
     }
 
-    public int getTabLimit() {
-        return tabLimit;
-    }
-
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+        // Get arg list
         final List<String> argsList =
                 args == null ?
                         new ArrayList<>() :
                         new ArrayList<>(Arrays.asList(args));
+        // Get first arg
         final String arg =
-                argsList.size() < 1 ?
+                argsList.isEmpty() ?
                         "" :
                         argsList.get(0).toLowerCase(Locale.ROOT);
-        final Optional<SubCommand> subCommand = getSubCommand(arg);
+        // Check if it's a player
         final boolean isPlayer = sender instanceof Player;
-        if (subCommand.isPresent()) {
-            // Redirect to SubCommand's executable
-            final SubCommand subCmd = subCommand.get();
-            if (isPlayer ? sender.hasPermission(subCmd.getPermission()) : subCmd.isConsole()) {
-                executeSubCommand(subCmd, sender, argsList, isPlayer);
-                return true;
+        // Get matching sub-command
+        final Optional<SubCommand> matchingSubCommand = getSubCommand(arg);
+        // Check wrong command call and correct command call without permission
+        if(matchingSubCommand.isEmpty() || !sender.hasPermission(matchingSubCommand.get().getPermission())) {
+            // Send general help if the sender have the permission
+            if(sender.hasPermission(helpSubCommand.getPermission())) {
+                executeSubCommand(helpSubCommand, sender, Collections.singletonList(helpSubCommand.getName()), isPlayer);
             }
-            if (!isPlayer)
-                return messages.sendMessage(sender, "util.onlyplayer");
+            return true;
         }
-        if (sender.hasPermission(helpSubCommand.getPermission())) {
-            // Send help if has perm
-            executeSubCommand(helpSubCommand, sender, argsList, isPlayer);
+        // The called sub-command exist and the sender have the permission to use it
+        final SubCommand calledSubCommand = matchingSubCommand.get();
+        // Check if the command is executable by a non-player
+        if(!isPlayer && !calledSubCommand.isConsole()) {
+            return messages.sendMessage(sender, "util.onlyplayer");
         }
+
+        executeSubCommand(calledSubCommand, sender, argsList, isPlayer);
         return true;
     }
 
+
+    /**
+     * Execute a sub-command
+     *
+     * @param command The {@link SubCommand} to execute
+     * @param sender The {@link CommandSender}
+     * @param argsList The {@link List} of arguments
+     * @param isPlayer Whether the sender is a {@link Player}
+     */
     private void executeSubCommand(SubCommand command, CommandSender sender, List<String> argsList, boolean isPlayer) {
         final Set<String> allowedWorlds = command.getAllowedWorlds();
-        if (
-                !(sender instanceof Player) ||
-                        allowedWorlds.isEmpty() ||
-                        allowedWorlds.contains(((Player) sender).getWorld().getName())
-            // || sender.hasPermission("claim." + command.getName() + ".world-bypass")
-        ) {
-            final boolean success = command.execute(sender, argsList, argsList.size(), isPlayer);
-            if (success && command.isStatistic()) {
-                statisticManager.add(sender, command.getName());
-                statisticManager.saveTask();
-            }
+        // Check if it's a player in a disallowed world (if the allowedWorlds list is empty, every world is allowed)
+        if (isPlayer && !allowedWorlds.isEmpty() && !allowedWorlds.contains(((Player) sender).getWorld().getName())){ // || sender.hasPermission("claim." + command.getName() + ".world-bypass")
+            messages.sendMessage(sender, "claim.world.notallowed");
             return;
         }
-        messages.sendMessage(sender, "claim.world.notallowed");
+
+        // Execute
+        final boolean success = command.execute(sender, argsList, argsList.size(), isPlayer);
+        // Increment and save statistics
+        if (success && command.isStatistic()) {
+            statisticManager.add(sender, command.getName());
+            statisticManager.saveTask();
+        }
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         final List<String> argsList =
                 args == null ?
                         new ArrayList<>() :
@@ -141,10 +152,11 @@ public class ClaimCommand implements TabExecutor {
     }
 
     private Optional<SubCommand> getSubCommand(String arg) {
-        if (arg.isEmpty())
+        if (arg.isEmpty()) {
             return Optional.empty();
+        }
         return subCommands.stream()
-                .filter(cmd -> cmd.getName().equalsIgnoreCase(arg) || cmd.getAlias().equalsIgnoreCase(arg))
+                .filter(cmd -> cmd.getName().equals(arg) || cmd.getAlias().equals(arg))
                 .findAny();
     }
 
@@ -160,7 +172,7 @@ public class ClaimCommand implements TabExecutor {
                 config.getStringList("worlds.help"),
                 config.getBoolean("statistic.help"),
                 subCommands,
-                this::getTabLimit
+                () -> tabLimit
         );
         subCommands.add(helpSubCommand);
         subCommands.add(new DefineSubCommand(
