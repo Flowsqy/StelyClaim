@@ -75,12 +75,12 @@ public class HereSubCommand extends SubCommand {
             return true;
         }
 
-        final String baseMessage = messages.getMessage("claim.here.message");
-        final String text = messages.getMessage("claim.here.text");
-        final String separatorMessage = messages.getMessage("claim.here.separator");
+        final String baseMessage = messages.getFormattedMessage("claim.here.message");
+        final String text = messages.getFormattedMessage("claim.here.text");
+        final String separatorMessage = messages.getFormattedMessage("claim.here.separator");
 
         if (player.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.INFO))) {
-            final String hover = messages.getMessage("claim.here.hover");
+            final String hover = messages.getFormattedMessage("claim.here.hover");
             final List<BaseComponent> separator = new ArrayList<>(
                     Arrays.asList(
                             TextComponent.fromLegacyText(

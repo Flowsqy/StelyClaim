@@ -40,7 +40,7 @@ public class ListAddSubCommand extends SubCommand {
         CACHE_SIZE_CLEAR_CHECK = configuration.getInt(getName() + ".cache-size-clear-check", 4);
         REGION_BY_PAGE = Math.max(configuration.getInt(getName() + ".region-by-page", 5), 1);
         cache = new HashMap<>();
-        regionMessage = messages.getMessage("claim." + getName() + ".region-message");
+        regionMessage = messages.getFormattedMessage("claim." + getName() + ".region-message");
     }
 
     @Override
@@ -159,19 +159,19 @@ public class ListAddSubCommand extends SubCommand {
         }
 
         // Send page navigation message
-        final String pageMessage = messages.getMessage("claim." + getName() + ".page-message");
+        final String pageMessage = messages.getFormattedMessage("claim." + getName() + ".page-message");
         if (pageMessage != null) {
             String finalMessage = pageMessage.replace("%page%", String.valueOf(page));
             if (page == 1) {
                 finalMessage = finalMessage.replace(
                         "%previous%",
-                        messages.getMessage("claim." + getName() + ".no-previous")
+                        messages.getFormattedMessage("claim." + getName() + ".no-previous")
                 );
                 if (page == pageCount) {
                     // No previous and no next
                     finalMessage = finalMessage.replace(
                             "%next%",
-                            messages.getMessage("claim." + getName() + ".no-next")
+                            messages.getFormattedMessage("claim." + getName() + ".no-next")
                     );
                     player.sendMessage(finalMessage);
                     return true;
@@ -193,7 +193,7 @@ public class ListAddSubCommand extends SubCommand {
                 // Previous but no next
                 finalMessage = finalMessage.replace(
                         "%next%",
-                        messages.getMessage("claim." + getName() + ".no-next")
+                        messages.getFormattedMessage("claim." + getName() + ".no-next")
                 );
                 final TextComponent previousComponent = getTextComponent(
                         "previous",
@@ -239,7 +239,7 @@ public class ListAddSubCommand extends SubCommand {
         component.setExtra(
                 Arrays.asList(
                         TextComponent.fromLegacyText(
-                                messages.getMessage("claim." + getName() + "." + category + "-text")
+                                messages.getFormattedMessage("claim." + getName() + "." + category + "-text")
                         )
                 )
         );
@@ -247,7 +247,7 @@ public class ListAddSubCommand extends SubCommand {
                 new HoverEvent(
                         HoverEvent.Action.SHOW_TEXT,
                         new Text(
-                                messages.getMessage("claim." + getName() + "." + category + "-hover")
+                                messages.getFormattedMessage("claim." + getName() + "." + category + "-hover")
                         )
                 )
         );

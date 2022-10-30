@@ -32,7 +32,7 @@ public class PillarTextSender {
     private final Map<String, PillarData> pillarData;
 
     public PillarTextSender(ConfigurationFormattedMessages messages, String category, Map<String, PillarData> pillarData) {
-        baseMessage = messages.getMessage("pillar." + category + ".message");
+        baseMessage = messages.getFormattedMessage("pillar." + category + ".message");
         if (baseMessage != null) {
             northwestTxtCpnt = createTextComponent(messages, category, NORTHWEST);
             northeastTxtCpnt = createTextComponent(messages, category, NORTHEAST);
@@ -51,7 +51,7 @@ public class PillarTextSender {
     }
 
     private TextComponent createTextComponent(ConfigurationFormattedMessages messages, String category, String direction) {
-        final String message = messages.getMessage("pillar." + category + "." + direction + ".message");
+        final String message = messages.getFormattedMessage("pillar." + category + "." + direction + ".message");
         final TextComponent textComponent = new TextComponent();
         if (message == null)
             return textComponent;
@@ -60,7 +60,7 @@ public class PillarTextSender {
                         TextComponent.fromLegacyText(message)
                 ))
         );
-        final String text = messages.getMessage("pillar." + category + "." + direction + ".hover");
+        final String text = messages.getFormattedMessage("pillar." + category + "." + direction + ".hover");
         if (text != null) {
             textComponent.setHoverEvent(
                     new HoverEvent(

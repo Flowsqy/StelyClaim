@@ -16,7 +16,7 @@ public class CommandManager {
         assert claimCmd != null;
         assert bedrockCmd != null;
 
-        final String configNoPerm = plugin.getMessages().getMessage("util.noperm");
+        final String configNoPerm = plugin.getMessages().getFormattedMessage("util.noperm");
 
         claimCmd.setPermissionMessage(configNoPerm);
         bedrockCmd.setPermissionMessage(configNoPerm);
