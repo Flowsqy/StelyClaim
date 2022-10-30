@@ -83,6 +83,7 @@ statistic:
   info: false
   teleport: false
   here: false
+  near: false
   listadd: false
   stats: false
   pillar: false
@@ -118,6 +119,7 @@ worlds:
   info: []
   teleport: []
   here: []
+  near: []
   listadd: []
   stats:
     reset: []

@@ -253,6 +253,15 @@ public class ClaimCommand implements TabExecutor {
                 config.getStringList("worlds.here"),
                 config.getBoolean("statistic.here")
         ));
+        subCommands.add(new NearSubCommand(
+                plugin,
+                "near",
+                "n",
+                Permissions.NEAR,
+                false,
+                config.getStringList("worlds.near"),
+                config.getBoolean("statistic.near")
+        ));
         subCommands.add(new ListAddSubCommand(
                 plugin,
                 "listadd",
@@ -336,6 +345,7 @@ public class ClaimCommand implements TabExecutor {
         public static final String INFO = "stelyclaim.claim.info";
         public static final String TELEPORT = "stelyclaim.claim.teleport";
         public static final String HERE = "stelyclaim.claim.here";
+        public static final String NEAR = "stelyclaim.claim.near";
         public static final String LISTADD = "stelyclaim.claim.listadd";
         public static final String STATS = "stelyclaim.claim.stats";
         public static final String PILLAR = "stelyclaim.claim.pillar";
