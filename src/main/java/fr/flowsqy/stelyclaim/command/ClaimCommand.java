@@ -407,9 +407,12 @@ public class ClaimCommand implements TabExecutor {
             }
             // Create permission
             final Permission commandPerm = new Permission(subCommand.getPermission());
-            final Permission topPermission = createPermissionFunction.apply(commandPerm);
-
+            // Link the command permission to the base permission
             basePerm.addParent(commandPerm, true);
+
+            // Create custom permissions
+            final Permission topPermission = createPermissionFunction.apply(commandPerm);
+            // Link the top permission to the global permission
             topPermission.addParent(globalPerm, true);
         }
 
