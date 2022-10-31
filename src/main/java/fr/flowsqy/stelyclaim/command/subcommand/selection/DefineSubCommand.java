@@ -15,7 +15,7 @@ public class DefineSubCommand extends SelectionSubCommand {
 
     @Override
     protected boolean process(Player player, PlayerHandler handler, PlayerOwner owner) {
-        return plugin.getProtocolManager().define(player, handler, owner);
+        return protocolManager.define(player, handler, owner);
     }
 
 

@@ -15,6 +15,6 @@ public class RedefineSubCommand extends SelectionSubCommand {
 
     @Override
     protected boolean process(Player player, PlayerHandler handler, PlayerOwner owner) {
-        return plugin.getProtocolManager().redefine(player, handler, owner);
+        return protocolManager.redefine(player, handler, owner);
     }
 }

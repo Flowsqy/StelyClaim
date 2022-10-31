@@ -1,6 +1,5 @@
 package fr.flowsqy.stelyclaim.command.subcommand;
 
-import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import org.bukkit.command.CommandSender;
@@ -12,7 +11,6 @@ import java.util.Set;
 
 public abstract class SubCommand {
 
-    protected final StelyClaimPlugin plugin;
     protected final ConfigurationFormattedMessages messages;
     protected final String name;
     protected final String alias;
@@ -21,13 +19,8 @@ public abstract class SubCommand {
     protected final Set<String> allowedWorlds;
     protected final boolean statistic;
 
-    public SubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
-        this(plugin, plugin.getMessages(), name, alias, permission, console, allowedWorlds, statistic);
-    }
-
-    public SubCommand(StelyClaimPlugin plugin, ConfigurationFormattedMessages messages, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
+    public SubCommand(ConfigurationFormattedMessages messages, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         Objects.requireNonNull(messages);
-        this.plugin = plugin;
         this.messages = messages;
         this.name = name;
         this.alias = alias;
@@ -88,6 +81,14 @@ public abstract class SubCommand {
     public boolean isStatistic() {
         return statistic;
     }
+
+    /**
+     * Get the help message for a specific {@link CommandSender}
+     *
+     * @param sender The {@link CommandSender}
+     * @return The help message that should be displayed
+     */
+    public abstract String getHelpMessage(CommandSender sender);
 
     /**
      * Execute this sub-command

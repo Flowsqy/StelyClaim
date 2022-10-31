@@ -1,20 +1,21 @@
 package fr.flowsqy.stelyclaim.command.subcommand.statistics;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.command.subcommand.OtherSubCommand;
 import fr.flowsqy.stelyclaim.command.subcommand.SubCommand;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
 import org.bukkit.command.CommandSender;
 
 import java.util.*;
 
-public class StatsSubCommand extends SubCommand {
+public class StatsSubCommand extends OtherSubCommand {
 
     private final ResetStatsSubCommand resetStatsSubCommand;
     private final ShowStatsSubCommand showStatsSubCommand;
 
     public StatsSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, boolean statistic, StatisticManager statisticManager) {
         super(
-                plugin,
+                plugin.getMessages(),
                 name,
                 alias,
                 permission,

@@ -18,10 +18,16 @@ public class PillarSubCommand extends SubCommand {
     private final TeleportSync teleportSync;
 
     public PillarSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic, HelpSubCommand helpSubCommand) {
-        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
+        super(plugin.getMessages(), name, alias, permission, console, allowedWorlds, statistic);
         this.helpSubCommand = helpSubCommand;
         this.pillarData = plugin.getPillarData();
         this.teleportSync = plugin.getTeleportSync();
+    }
+
+    @Override
+    public String getHelpMessage(CommandSender sender) {
+        // Nothing to send, invisible command
+        return null;
     }
 
     @Override

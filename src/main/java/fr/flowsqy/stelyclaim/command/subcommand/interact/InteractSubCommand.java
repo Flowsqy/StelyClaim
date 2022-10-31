@@ -3,7 +3,7 @@ package fr.flowsqy.stelyclaim.command.subcommand.interact;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import fr.flowsqy.stelyclaim.command.subcommand.SubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.ProtocolSubCommand;
 import fr.flowsqy.stelyclaim.internal.PlayerOwner;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public abstract class InteractSubCommand extends SubCommand {
+public abstract class InteractSubCommand extends ProtocolSubCommand {
 
     public InteractSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         super(plugin, name, alias, permission, console, allowedWorlds, statistic);
@@ -35,7 +35,7 @@ public abstract class InteractSubCommand extends SubCommand {
         final Player player = (Player) sender;
         final OfflinePlayer targetPlayer = size == 1 ? player : Bukkit.getOfflinePlayer(args.get(1));
 
-        return interactRegion(player, plugin.getProtocolManager().getHandler("player"), new PlayerOwner(targetPlayer));
+        return interactRegion(player, protocolManager.getHandler("player"), new PlayerOwner(targetPlayer));
     }
 
     protected abstract <T extends ClaimOwner> boolean interactRegion(Player sender, ClaimHandler<T> handler, T owner);

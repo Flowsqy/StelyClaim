@@ -17,7 +17,7 @@ public class AddMemberSubCommand extends DomainSubCommand {
 
     @Override
     protected <T extends ClaimOwner> boolean interact(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer target) {
-        return plugin.getProtocolManager().addMember(world, sender, handler, owner, target);
+        return protocolManager.addMember(world, sender, handler, owner, target);
     }
 
 }

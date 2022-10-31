@@ -1,7 +1,7 @@
 package fr.flowsqy.stelyclaim.command.subcommand.selection;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.command.subcommand.SubCommand;
+import fr.flowsqy.stelyclaim.command.subcommand.ProtocolSubCommand;
 import fr.flowsqy.stelyclaim.internal.PlayerHandler;
 import fr.flowsqy.stelyclaim.internal.PlayerOwner;
 import org.bukkit.Bukkit;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public abstract class SelectionSubCommand extends SubCommand {
+public abstract class SelectionSubCommand extends ProtocolSubCommand {
 
     public SelectionSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         super(plugin, name, alias, permission, console, allowedWorlds, statistic);
@@ -35,7 +35,7 @@ public abstract class SelectionSubCommand extends SubCommand {
         final Player player = (Player) sender;
         final OfflinePlayer targetPlayer = size == 1 ? player : Bukkit.getOfflinePlayer(args.get(1));
 
-        return process(player, plugin.getProtocolManager().getHandler("player"), new PlayerOwner(targetPlayer));
+        return process(player, protocolManager.getHandler("player"), new PlayerOwner(targetPlayer));
     }
 
     protected abstract boolean process(Player player, PlayerHandler handler, PlayerOwner owner);

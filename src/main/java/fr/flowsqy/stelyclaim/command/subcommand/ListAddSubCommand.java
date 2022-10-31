@@ -23,7 +23,7 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ListAddSubCommand extends SubCommand {
+public class ListAddSubCommand extends ProtocolSubCommand {
 
     private final long CACHE_PERIOD;
     private final int CACHE_SIZE_CLEAR_CHECK;
@@ -146,7 +146,7 @@ public class ListAddSubCommand extends SubCommand {
             final String regionName;
             if (RegionFinder.isCorrectId(regionId)) {
                 final String[] parts = regionId.split("_", 3);
-                final ClaimHandler<?> regionHandler = plugin.getProtocolManager().getHandler(parts[1]);
+                final ClaimHandler<?> regionHandler = protocolManager.getHandler(parts[1]);
                 if (regionHandler == null) {
                     regionName = regionId;
                 } else {

@@ -25,10 +25,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class HereSubCommand extends SubCommand {
+public class HereSubCommand extends ProtocolSubCommand {
 
     public HereSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         super(plugin, name, alias, permission, console, allowedWorlds, statistic);
+    }
+
+    @Override
+    public String getHelpMessage(CommandSender sender) {
+        // It's an OtherSubCommand but the syntax does not change
+        return messages.getFormattedMessage("help." + getName());
     }
 
     @Override
@@ -41,7 +47,7 @@ public class HereSubCommand extends SubCommand {
             );
             return false;
         }
-        final PlayerHandler handler = plugin.getProtocolManager().getHandler("player");
+        final PlayerHandler handler = protocolManager.getHandler("player");
 
         final Player player = (Player) sender;
         final Location playerLoc = player.getLocation();
@@ -61,7 +67,7 @@ public class HereSubCommand extends SubCommand {
                     continue;
                 }
                 final String[] part = overlapRegion.getId().split("_", 3);
-                final ClaimHandler<?> intersectingHandler = plugin.getProtocolManager().getHandler(part[1]);
+                final ClaimHandler<?> intersectingHandler = protocolManager.getHandler(part[1]);
                 if (intersectingHandler == null) {
                     continue;
                 }
@@ -101,7 +107,7 @@ public class HereSubCommand extends SubCommand {
                 boolean playerClaim;
                 if (RegionFinder.isCorrectId(regionId)) {
                     final String[] parts = regionId.split("_", 3);
-                    final ClaimHandler<?> regionHandler = plugin.getProtocolManager().getHandler(parts[1]);
+                    final ClaimHandler<?> regionHandler = protocolManager.getHandler(parts[1]);
                     if (regionHandler == null) {
                         regionName = regionId;
                         playerClaim = false;
@@ -158,7 +164,7 @@ public class HereSubCommand extends SubCommand {
             final String regionName;
             if (RegionFinder.isCorrectId(regionId)) {
                 final String[] parts = regionId.split("_", 3);
-                final ClaimHandler<?> regionHandler = plugin.getProtocolManager().getHandler(parts[1]);
+                final ClaimHandler<?> regionHandler = protocolManager.getHandler(parts[1]);
                 if (regionHandler == null) {
                     regionName = regionId;
                 } else {

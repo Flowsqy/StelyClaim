@@ -30,7 +30,7 @@ help:
   teleport: '%prefix% &6/claim tp'
   teleport-other: '%prefix% &6/claim tp [Claim]'
   here: '%prefix% &6/claim here'
-  here-other: '%prefix% &6/claim here'
+  near: '%prefix% &6/claim near [distance]'
   listadd: '%prefix% &6/claim listadd [Page]'
   listadd-other: '%prefix% &6/claim listadd [Joueur] [Page]'
   stats: '%prefix% &6/claim stats <sous-commande> [Commande]'

@@ -16,7 +16,7 @@ public class InfoSubCommand extends InteractSubCommand {
 
     @Override
     protected <T extends ClaimOwner> boolean interactRegion(Player sender, ClaimHandler<T> handler, T owner) {
-        return plugin.getProtocolManager().interact(sender.getWorld(), sender, handler, owner, new InfoHandler());
+        return protocolManager.interact(sender.getWorld(), sender, handler, owner, new InfoHandler());
     }
 
 }

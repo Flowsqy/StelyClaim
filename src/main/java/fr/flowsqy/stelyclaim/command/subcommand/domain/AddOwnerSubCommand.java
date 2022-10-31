@@ -16,7 +16,7 @@ public class AddOwnerSubCommand extends DomainSubCommand {
 
     @Override
     protected <T extends ClaimOwner> boolean interact(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer target) {
-        return plugin.getProtocolManager().addOwner(world, sender, handler, owner, target);
+        return protocolManager.addOwner(world, sender, handler, owner, target);
     }
 
 }

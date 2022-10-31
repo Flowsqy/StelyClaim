@@ -128,26 +128,46 @@ public class ClaimCommand implements TabExecutor {
             return matchingSubCommand.get().tab(sender, argsList, isPlayer);
         } else if (argsList.size() < 2) {
             // Tab all SubCommands
-            // Exclude non tab commands
-            Stream<SubCommand> subCommandStream = subCommands.stream().limit(tabLimit);
-            // Keep only non-player ready sub-command if the sender is not a player
-            if (!isPlayer) {
-                subCommandStream = subCommandStream.filter(SubCommand::isConsole);
-            }
-
-            Stream<String> subCommandNameStream = subCommandStream
-                    .filter(subCmd -> sender.hasPermission(subCmd.getPermission())) // Check permissions
-                    .map(SubCommand::getName); // Just keep the name
-
-            // If the argument is not blank, remove the one that does not start by the argument
-            if (!arg.isEmpty()) {
-                subCommandNameStream = subCommandNameStream.filter(cmd -> cmd.startsWith(arg));
-            }
-            return subCommandNameStream.collect(Collectors.toList());
+            return getAvailableSubCommandNameCompletion(sender, arg, isPlayer);
         } else {
             // Wrong sub-command name and more than one argument -> do nothing
             return Collections.emptyList();
         }
+    }
+
+    /**
+     * Get the sub-commands that can be viewed by a {@link CommandSender}
+     *
+     * @param sender   The {@link CommandSender}
+     * @param isPlayer Whether the sender is a {@link Player}
+     * @return A {@link Stream} of the {@link SubCommand} that the sender can view
+     */
+    public Stream<SubCommand> getAvailableSubCommand(CommandSender sender, boolean isPlayer) {
+        // Exclude non tab commands
+        Stream<SubCommand> subCommandStream = subCommands.stream().limit(tabLimit);
+        // Keep only non-player ready sub-command if the sender is not a player
+        if (!isPlayer) {
+            subCommandStream = subCommandStream.filter(SubCommand::isConsole);
+        }
+        return subCommandStream.filter(subCmd -> sender.hasPermission(subCmd.getPermission())); // Check permissions
+    }
+
+    /**
+     * Get the sub-command name completions
+     *
+     * @param sender   The {@link CommandSender}
+     * @param argument The argument to compare to sub-command names and aliases
+     * @param isPlayer Whether the sender is a {@link Player}
+     * @return A {@link List} of possible completions for the final argument
+     */
+    public List<String> getAvailableSubCommandNameCompletion(CommandSender sender, String argument, boolean isPlayer) {
+        Stream<String> subCommandNameStream = getAvailableSubCommand(sender, isPlayer).map(SubCommand::getName); // Just keep the name
+
+        // If the argument is not blank, remove the one that does not start by the argument
+        if (!argument.isEmpty()) {
+            subCommandNameStream = subCommandNameStream.filter(cmd -> cmd.startsWith(argument));
+        }
+        return subCommandNameStream.collect(Collectors.toList());
     }
 
     /**
@@ -182,8 +202,7 @@ public class ClaimCommand implements TabExecutor {
                 true,
                 config.getStringList("worlds.help"),
                 config.getBoolean("statistic.help"),
-                subCommands,
-                () -> tabLimit
+                this
         );
         subCommands.add(helpSubCommand);
         subCommands.add(new DefineSubCommand(

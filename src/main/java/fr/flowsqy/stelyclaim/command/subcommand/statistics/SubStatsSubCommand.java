@@ -1,6 +1,7 @@
 package fr.flowsqy.stelyclaim.command.subcommand.statistics;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.command.subcommand.SubCommand;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
 import org.bukkit.Bukkit;
@@ -16,7 +17,7 @@ public abstract class SubStatsSubCommand extends SubCommand {
     private final Set<String> commandsName;
 
     public SubStatsSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic, StatisticManager statisticManager) {
-        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
+        super(plugin.getMessages(), name, alias, permission, console, allowedWorlds, statistic);
         this.statisticManager = statisticManager;
         this.commandsName = new HashSet<>();
     }
@@ -26,6 +27,12 @@ public abstract class SubStatsSubCommand extends SubCommand {
         subCommands.stream()
                 .map(SubCommand::getName)
                 .forEach(commandsName::add);
+    }
+
+    @Override
+    public String getHelpMessage(CommandSender sender) {
+        final String other = sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(getPermission())) ? "-other" : "";
+        return messages.getFormattedMessage("help.stats_" + getName() + other);
     }
 
     @Override
@@ -41,7 +48,7 @@ public abstract class SubStatsSubCommand extends SubCommand {
                 break;
             case 3:
                 final String secondArg = args.get(2);
-                if (statisticManager.allowStats(secondArg) || !sender.hasPermission(getPermission() + "-other")) {
+                if (statisticManager.allowStats(secondArg) || !sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(getPermission()))) {
                     command = secondArg;
                     target = sender.getName();
                     own = true;
@@ -57,10 +64,13 @@ public abstract class SubStatsSubCommand extends SubCommand {
                 own = target.equals(sender.getName());
                 break;
             default:
-                messages.sendMessage(sender, "help.stats_" + getName() + (sender.hasPermission(getPermission() + "-other") ? "-other" : ""));
+                final String helpMessage = getHelpMessage(sender);
+                if (messages != null) {
+                    sender.sendMessage(helpMessage);
+                }
                 return false;
         }
-        if (!own && !sender.hasPermission(getPermission() + "-other")) {
+        if (!own && !sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(getPermission()))) {
             messages.sendMessage(sender, "help." + getName());
             return false;
         }
@@ -83,8 +93,9 @@ public abstract class SubStatsSubCommand extends SubCommand {
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
         switch (args.size()) {
             case 3:
-                if (!sender.hasPermission(getPermission() + "-other"))
+                if (!sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(getPermission()))) {
                     return Collections.emptyList();
+                }
                 final String target = args.get(2).toLowerCase(Locale.ROOT);
                 final List<String> completions = new ArrayList<>();
                 for (OfflinePlayer offlinePlayer : Bukkit.getOnlinePlayers()) {

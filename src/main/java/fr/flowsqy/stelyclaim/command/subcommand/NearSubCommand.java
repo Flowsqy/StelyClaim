@@ -9,7 +9,12 @@ import java.util.List;
 public class NearSubCommand extends SubCommand {
 
     public NearSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
-        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
+        super(plugin.getMessages(), name, alias, permission, console, allowedWorlds, statistic);
+    }
+
+    @Override
+    public String getHelpMessage(CommandSender sender) {
+        return messages.getFormattedMessage("help." + getName());
     }
 
     @Override
