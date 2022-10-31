@@ -18,4 +18,8 @@ public abstract class OtherSubCommand extends SubCommand {
         return messages.getFormattedMessage("help." + getName() + other);
     }
 
+    public String getOtherPermission() {
+        return ClaimCommand.Permissions.getOtherPerm(permission);
+    }
+
 }

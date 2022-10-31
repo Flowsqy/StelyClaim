@@ -24,6 +24,7 @@ import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -339,17 +340,17 @@ public class ClaimCommand implements TabExecutor {
         statsSubCommand.initSubCommands(subCommands);
     }
 
-    public void registerCommand(SubCommand subCommand, boolean canTabComplete) {
+    public void registerCommand(SubCommand subCommand, boolean canTabComplete, Function<Permission, Permission> createPermissionFunction) {
         if (subCommands.stream().anyMatch(subCmd -> (
                 subCmd.getName().equalsIgnoreCase(subCommand.getName()) ||
                         subCmd.getName().equalsIgnoreCase(subCommand.getAlias()) ||
                         subCmd.getAlias().equalsIgnoreCase(subCommand.getName()) ||
                         subCmd.getAlias().equalsIgnoreCase(subCommand.getAlias())
         ))) {
-            throw new IllegalArgumentException("Can not register this subCommand, the name or the aliase is already taken");
+            throw new IllegalArgumentException("Can not register this subCommand, the name or the alias is already taken");
         }
 
-        Permissions.registerPerm(subCommand);
+        Permissions.registerPerm(subCommand, createPermissionFunction);
 
         if (canTabComplete) {
             subCommands.add(tabLimit, subCommand);
@@ -393,21 +394,23 @@ public class ClaimCommand implements TabExecutor {
         public static final String STATS = "stelyclaim.claim.stats";
         public static final String PILLAR = "stelyclaim.claim.pillar";
 
-        public static void registerPerm(SubCommand subCommand) {
+        public static void registerPerm(SubCommand subCommand, Function<Permission, Permission> createPermissionFunction) {
+            // Get base and global perm
             final Permission globalPerm = Bukkit.getPluginManager().getPermission("stelyclaim.claim.*");
             final Permission basePerm = Bukkit.getPluginManager().getPermission("stelyclaim.claim");
-            if (globalPerm == null || basePerm == null)
+            if (globalPerm == null || basePerm == null) {
                 throw new RuntimeException(
                         "Can not register '"
                                 + subCommand.getName()
                                 + "' subcommand because global perm or base perm are not registered"
                 );
+            }
+            // Create permission
             final Permission commandPerm = new Permission(subCommand.getPermission());
-            final Permission commandOtherPerm = new Permission(subCommand.getOtherPermission());
+            final Permission topPermission = createPermissionFunction.apply(commandPerm);
 
             basePerm.addParent(commandPerm, true);
-            commandPerm.addParent(commandOtherPerm, true);
-            commandOtherPerm.addParent(globalPerm, true);
+            topPermission.addParent(globalPerm, true);
         }
 
         public static String getOtherPerm(String permission) {
