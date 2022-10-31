@@ -61,6 +61,13 @@ redefine:
   member-group: []
   flags:
 
+# Dans cette section, le 'rayon' correspond à la moitié du côté du carré centré sur le joueur qui execute la commande
+near:
+  # Le rayon par défaut si aucun rayon n'est spécifié
+  default-distance: 200
+  # Le rayon maximal que peut entrer un joueur qui n'a pas la permission de mettre n'importe quel rayon
+  base-max-distance: 200
+
 listadd:
   # Le temps pendant lequel doit être gardé en mémoire le résulat
   # de la commande pour un joueur donné dans un monde donné.

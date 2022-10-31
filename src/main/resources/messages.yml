@@ -4,6 +4,7 @@ util:
   noperm: "%prefix% &cTu n'as pas la permission de faire cette commande"
   onlyplayer: "%prefix% &cCette commande est réservée aux joueurs"
   error: "%prefix% &cIl y a eu une erreur lors de l'opération: %error%"
+  not-a-number: "%prefix% &8%arg% &cn'est pas un nombre"
 
 bedrock:
   enable: "%prefix% &6Bedrock &aActivé"
@@ -93,6 +94,9 @@ claim:
     separator: "&6, "
     text: "&a%region%"
     hover: "&7Clique ici pour voir les informations du claim de &8%region%"
+  near:
+    invalid-distance: "%prefix% &8%distance% &cn'est pas une distance valide. Elle doit être supérieure à 1"
+    limit: "%prefix% &cTu ne peux pas rechercher des claims à une distance de &8%distance%&c. Tu es limité à &8%max-distance%"
   target:
     define: "%prefix% &a%sender% &6viens de définir ton claim"
     redefine: "%prefix% &a%sender% &6viens de changer la taille de ton claim"
@@ -139,7 +143,6 @@ claim:
       separator: "&7, &a"
       empty: "&cAucun"
   listadd:
-    not-a-number: "%prefix% &8%arg% &cn'est pas un nombre"
     invalid-page: "%prefix% &8%page% &cn'est pas un numéro de page valide. Il doit être supérieur ou égal à 1"
     no-region: "%prefix% &cTu ne fais parti d'aucun claim"
     no-region-other: "%prefix% &8%player% &cne fait parti d'aucun claim"

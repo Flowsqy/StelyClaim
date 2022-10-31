@@ -67,17 +67,20 @@ public class ListAddSubCommand extends ProtocolSubCommand {
             target = new PlayerOwner(Bukkit.getOfflinePlayer(args.get(1)));
             pageArg = args.get(2);
         } else {
-            return messages.sendMessage(player, "help." + getName() + (hasOtherPerm ? "-other" : ""));
+            messages.sendMessage(player, "help." + getName() + (hasOtherPerm ? "-other" : ""));
+            return false;
         }
         final boolean own = target.own(player);
         if (pageArg != null) {
             try {
                 page = Integer.parseInt(pageArg);
             } catch (NumberFormatException e) {
-                return messages.sendMessage(player, "claim." + getName() + ".not-a-number", "%arg%", pageArg);
+                messages.sendMessage(player, "util.not-a-number", "%arg%", pageArg);
+                return false;
             }
             if (page < 1) {
-                return messages.sendMessage(player, "claim." + getName() + ".invalid-page", "%page%", String.valueOf(page));
+                messages.sendMessage(player, "claim." + getName() + ".invalid-page", "%page%", String.valueOf(page));
+                return false;
             }
         }
 
@@ -120,24 +123,26 @@ public class ListAddSubCommand extends ProtocolSubCommand {
 
         // No regions
         if (result.isEmpty()) {
-            return messages.sendMessage(
+            messages.sendMessage(
                     player,
                     "claim." + getName() + ".no-region" + (own ? "" : "-other"),
                     "%player%",
                     targetName
             );
+            return false;
         }
 
         final int modulo = result.size() % REGION_BY_PAGE;
         final int pageCount = (result.size() - modulo) / REGION_BY_PAGE + (modulo > 0 ? 1 : 0);
         // Wrong page number
         if (page > pageCount) {
-            return messages.sendMessage(
+            messages.sendMessage(
                     player,
                     "claim." + getName() + ".not-enough-page",
                     "%page%", "%arg%",
                     String.valueOf(pageCount), String.valueOf(page)
             );
+            return false;
         }
 
         // Send region list
