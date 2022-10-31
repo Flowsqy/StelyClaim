@@ -40,11 +40,7 @@ public class HereSubCommand extends ProtocolSubCommand {
     @Override
     public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
         if (size != 1) {
-            messages.sendMessage(sender,
-                    "help."
-                            + getName()
-                            + (sender.hasPermission(getPermission() + "-other") ? "-other" : "")
-            );
+            messages.sendMessage(sender, getHelpMessage(sender));
             return false;
         }
         final PlayerHandler handler = protocolManager.getHandler("player");
