@@ -11,22 +11,29 @@ import fr.flowsqy.stelyclaim.util.WorldName;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class NearSubCommand extends SubCommand {
 
-    private final int defaultDistance;
-    private final int defaultMaxDistance;
+    private final int DEFAULT_DISTANCE;
+    private final int DEFAULT_MAX_DISTANCE;
+    private final long COOLDOWN;
+    private final int COOLDOWN_SIZE_CLEAR_CHECK;
+    private final Map<UUID, Long> lastExecTimeByPlayerId;
 
     public NearSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         super(plugin.getMessages(), name, alias, permission, console, allowedWorlds, statistic);
+        final YamlConfiguration configuration = plugin.getConfiguration();
         // The distances should be >= 1 (0 is /claim here and bellow it does not make any sense)
-        defaultDistance = Math.max(plugin.getConfiguration().getInt("near.default-distance", 200), 1);
-        defaultMaxDistance = Math.max(plugin.getConfiguration().getInt("near.base-max-distance", 200), 1);
+        DEFAULT_DISTANCE = Math.max(configuration.getInt("near.default-distance", 200), 1);
+        DEFAULT_MAX_DISTANCE = Math.max(configuration.getInt("near.base-max-distance", 200), 1);
+        COOLDOWN = configuration.getLong("near.cooldown", 1000L);
+        COOLDOWN_SIZE_CLEAR_CHECK = configuration.getInt("cooldown-size-clear-check", 4);
+        lastExecTimeByPlayerId = new HashMap<>();
     }
 
     @Override
@@ -70,17 +77,17 @@ public class NearSubCommand extends SubCommand {
             }
 
             // Check if the player request a distance above his limit
-            if (distance > defaultMaxDistance && !hasFullPerm) {
+            if (distance > DEFAULT_MAX_DISTANCE && !hasFullPerm) {
                 messages.sendMessage(
                         sender,
                         "claim." + getName() + ".limit",
-                        "%distance%", "%max-distance%", String.valueOf(distance), String.valueOf(defaultMaxDistance)
+                        "%distance%", "%max-distance%", String.valueOf(distance), String.valueOf(DEFAULT_MAX_DISTANCE)
                 );
                 return false;
             }
         } else {
             // Set to default distance and limit if sender does not have full permission
-            distance = hasFullPerm ? defaultDistance : Math.min(defaultDistance, defaultMaxDistance);
+            distance = hasFullPerm ? DEFAULT_DISTANCE : Math.min(DEFAULT_DISTANCE, DEFAULT_MAX_DISTANCE);
         }
 
         // Get the region manager of the world
@@ -108,8 +115,25 @@ public class NearSubCommand extends SubCommand {
                         z - distance
                 )
         );
-        // TODO
-        // Cool-down of the command
+
+        // Cooldown of the command
+        // Check if cooldown is still active
+        if (System.currentTimeMillis() - lastExecTimeByPlayerId.getOrDefault(player.getUniqueId(), 0L) < COOLDOWN) {
+            messages.sendMessage(sender, getName() + ".cooldown");
+            return false;
+        }
+
+        // Clear the cache of the cooldown if needed
+        if (lastExecTimeByPlayerId.size() > COOLDOWN_SIZE_CLEAR_CHECK) {
+            final long currentTime = System.currentTimeMillis();
+            // Get expired entries
+            final List<UUID> keys = lastExecTimeByPlayerId.entrySet().stream()
+                    .filter(entry -> currentTime - entry.getValue() > COOLDOWN)
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList());
+            // Remove them
+            keys.forEach(lastExecTimeByPlayerId::remove);
+        }
 
         final ApplicableRegionSet intersecting = regionManager.getApplicableRegions(region);
         System.out.println(intersecting);

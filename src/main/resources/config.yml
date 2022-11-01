@@ -67,6 +67,11 @@ near:
   default-distance: 200
   # Le rayon maximal que peut entrer un joueur qui n'a pas la permission de mettre n'importe quel rayon
   base-max-distance: 200
+  # Le temps pendant lequel le joueur ne peut pas refaire la commande.
+  # Exprimé en milliseconde
+  cooldown: 1000
+  # Le nombre d'entrée pour lequel il faut nettoyer le cache inutile
+  cooldown-size-clear-check: 4
 
 listadd:
   # Le temps pendant lequel doit être gardé en mémoire le résulat
