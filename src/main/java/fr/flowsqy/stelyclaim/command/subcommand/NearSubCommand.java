@@ -144,7 +144,7 @@ public class NearSubCommand extends SubCommand {
 
         // Get the region in the radius
         final ApplicableRegionSet intersecting = regionManager.getApplicableRegions(region);
-        final List<RegionData> detectedRegions = new LinkedList<>();
+        final List<RegionData> detectedRegions = new ArrayList<>();
         // Remove claim where the sender is owner and format other
         for (ProtectedRegion protectedRegion : intersecting) {
             final String regionId = protectedRegion.getId();
@@ -187,8 +187,8 @@ public class NearSubCommand extends SubCommand {
             return true;
         }
 
-        // TODO
         // Sort it by distances
+        detectedRegions.sort(Comparator.comparingDouble(RegionData::getDistance));
 
         // TODO
         // Send information
@@ -252,6 +252,10 @@ public class NearSubCommand extends SubCommand {
             this.nearestX = nearestX;
             this.nearestZ = nearestZ;
             this.distance = distance;
+        }
+
+        public double getDistance() {
+            return distance;
         }
     }
 
