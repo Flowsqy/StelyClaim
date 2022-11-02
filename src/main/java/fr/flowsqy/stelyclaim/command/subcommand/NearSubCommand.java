@@ -100,7 +100,7 @@ public class NearSubCommand extends SubCommand {
         // Cooldown of the command
         // Check if cooldown is still active
         if (System.currentTimeMillis() - lastExecTimeByPlayerId.getOrDefault(player.getUniqueId(), 0L) < COOLDOWN) {
-            messages.sendMessage(sender, getName() + ".cooldown");
+            messages.sendMessage(sender, "claim." + getName() + ".cooldown");
             return false;
         }
 
@@ -183,7 +183,7 @@ public class NearSubCommand extends SubCommand {
 
         // If there is no intersection, it means there is no region
         if (detectedRegions.isEmpty()) {
-            messages.sendMessage(sender, getName() + ".no-region", "%distance%", String.valueOf(distance));
+            messages.sendMessage(sender, "claim." + getName() + ".no-region", "%distance%", String.valueOf(distance));
             return true;
         }
 
@@ -191,7 +191,11 @@ public class NearSubCommand extends SubCommand {
         detectedRegions.sort(Comparator.comparingDouble(RegionData::getDistance));
 
         // Get the general message
-        final String nearMessage = messages.getFormattedMessage(getName() + ".region");
+        final String nearMessage = messages.getFormattedMessage("claim." + getName() + ".region");
+        if (nearMessage == null) {
+            return true;
+        }
+
         // Send information
         for (RegionData regionData : detectedRegions) {
             // TODO
