@@ -181,12 +181,14 @@ public class NearSubCommand extends SubCommand {
             detectedRegions.add(new RegionData(regionName, nearestX, nearestZ, distanceToNearestPoint));
         }
 
-        // TODO
         // If there is no intersection, it means there is no region
         if (detectedRegions.isEmpty()) {
-
+            messages.sendMessage(sender, getName() + ".no-region", "%distance%", String.valueOf(distance));
             return true;
         }
+
+        // TODO
+        // Sort it by distances
 
         // TODO
         // Send information
