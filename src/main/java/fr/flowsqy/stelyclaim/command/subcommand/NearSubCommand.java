@@ -190,8 +190,23 @@ public class NearSubCommand extends SubCommand {
         // Sort it by distances
         detectedRegions.sort(Comparator.comparingDouble(RegionData::getDistance));
 
-        // TODO
+        // Get the general message
+        final String nearMessage = messages.getFormattedMessage(getName() + ".region");
         // Send information
+        for (RegionData regionData : detectedRegions) {
+            // TODO
+            // Get the direction towards the region
+            final String direction = "";
+            // Send message
+            sender.sendMessage(nearMessage
+                    .replace("%region%", regionData.name)
+                    .replace("%distance%", String.valueOf((int) regionData.distance))
+                    .replace("%nearest-x%", String.valueOf(regionData.nearestX))
+                    .replace("%nearest-z%", String.valueOf(regionData.nearestZ))
+                    .replace("%direction%", direction)
+            );
+        }
+
         return true;
     }
 
