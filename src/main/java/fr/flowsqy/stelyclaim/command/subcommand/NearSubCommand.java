@@ -202,14 +202,14 @@ public class NearSubCommand extends SubCommand {
             // Get the direction messages
             // Order matter. From above, North is on top and the angle start at the right (East) from 0 to 360 degrees
             final String[] directions = {
-                    messages.getFormattedMessage("claim." + getName() + ".direction.east"),
-                    messages.getFormattedMessage("claim." + getName() + ".direction.northeast"),
-                    messages.getFormattedMessage("claim." + getName() + ".direction.north"),
-                    messages.getFormattedMessage("claim." + getName() + ".direction.northwest"),
-                    messages.getFormattedMessage("claim." + getName() + ".direction.west"),
-                    messages.getFormattedMessage("claim." + getName() + ".direction.southwest"),
-                    messages.getFormattedMessage("claim." + getName() + ".direction.south"),
-                    messages.getFormattedMessage("claim." + getName() + ".direction.southeast")
+                    getDirectionMessage("east"),
+                    getDirectionMessage("northeast"),
+                    getDirectionMessage("north"),
+                    getDirectionMessage("northwest"),
+                    getDirectionMessage("west"),
+                    getDirectionMessage("southwest"),
+                    getDirectionMessage("south"),
+                    getDirectionMessage("southeast")
             };
 
             // Send information
@@ -217,17 +217,7 @@ public class NearSubCommand extends SubCommand {
             for (int index = 0; index < detectedRegions.size() && index < MAXIMAL_REGION_AMOUNT; index++) {
                 final RegionData regionData = detectedRegions.get(index);
                 // Get the direction towards the region
-                // Calculate the angle
-                // y = -z (towards the North) and x = x (towards East)
-                final double rawAngle = Math.atan2(z - regionData.nearestZ, regionData.nearestX - x);
-                // Transform the angle from -pi to pi in radian to 0 to 359 in degrees as an int
-                final int sanitizedAngle = (int) Math.toDegrees(rawAngle >= 0 ? rawAngle : rawAngle + Math.PI * 2);
-                // Get the id
-                // Multiply by 10 to avoid loss of precision and add an offset of 22.5 (*10) to get the right
-                // zone as we start at the middle of the East zone
-                final int directionId = (sanitizedAngle * 10 + 225) % 3600 / 450;
-                // Get the direction message
-                final String direction = directions[directionId];
+                final String direction = directions[getDirectionId(regionData, x, z)];
 
                 // Send message
                 sender.sendMessage(nearMessage
@@ -235,7 +225,7 @@ public class NearSubCommand extends SubCommand {
                         .replace("%distance%", String.valueOf((int) regionData.distance))
                         .replace("%nearest-x%", String.valueOf(regionData.nearestX))
                         .replace("%nearest-z%", String.valueOf(regionData.nearestZ))
-                        .replace("%direction%", direction == null ? "" : direction)
+                        .replace("%direction%", direction)
                 );
             }
         }
@@ -285,6 +275,37 @@ public class NearSubCommand extends SubCommand {
         }
         // p is
         return p;
+    }
+
+    /**
+     * Get a direction message from the message configuration
+     *
+     * @param path The path of the specific direction
+     * @return The message stored in the configuration
+     */
+    private String getDirectionMessage(String path) {
+        final String directionMessage = messages.getFormattedMessage("claim." + getName() + ".direction." + path);
+        return directionMessage == null ? "" : directionMessage;
+    }
+
+    /**
+     * Get the region id to the nearest point of a region from the player position
+     *
+     * @param regionData The {@link RegionData}
+     * @param x          The x coordinate of the player
+     * @param z          The z coordinate of the player
+     * @return The region id that corresponds to the direction in which is the nearest point from the player position
+     */
+    private int getDirectionId(RegionData regionData, int x, int z) {
+        // Calculate the angle
+        // y = -z (towards the North) and x = x (towards East)
+        final double rawAngle = Math.atan2(z - regionData.nearestZ, regionData.nearestX - x);
+        // Transform the angle from -pi to pi in radian to 0 to 359 in degrees as an int
+        final int sanitizedAngle = (int) Math.toDegrees(rawAngle >= 0 ? rawAngle : rawAngle + Math.PI * 2);
+        // Get the id
+        // Multiply by 10 to avoid loss of precision and add an offset of 22.5 (*10) to get the right
+        // zone as we start at the middle of the East zone
+        return (sanitizedAngle * 10 + 225) % 3600 / 450;
     }
 
     @Override
