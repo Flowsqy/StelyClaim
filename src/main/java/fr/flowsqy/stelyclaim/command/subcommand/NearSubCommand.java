@@ -190,12 +190,15 @@ public class NearSubCommand extends SubCommand {
             return true;
         }
 
-        // Sort it by distances
-        detectedRegions.sort(Comparator.comparingDouble(RegionData::getDistance));
+        // Send header
+        messages.sendMessage(sender, "claim." + getName() + ".header", "%region-count%", String.valueOf(detectedRegions.size()));
 
         // Get the general message
         final String nearMessage = messages.getFormattedMessage("claim." + getName() + ".region");
         if (nearMessage != null) {
+            // Sort it by distances
+            detectedRegions.sort(Comparator.comparingDouble(RegionData::getDistance));
+
             // Get the direction messages
             // Order matter. From above, North is on top and the angle start at the right (East) from 0 to 360 degrees
             final String[] directions = {
@@ -237,6 +240,8 @@ public class NearSubCommand extends SubCommand {
             }
         }
 
+        // Send footer
+        messages.sendMessage(sender, "claim." + getName() + ".footer", "%region-count%", String.valueOf(detectedRegions.size()));
 
         return true;
     }

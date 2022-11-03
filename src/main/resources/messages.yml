@@ -99,7 +99,9 @@ claim:
     limit: "%prefix% &cTu ne peux pas rechercher des claims à une distance de &8%distance%&c. Tu es limité à &8%max-distance%"
     cooldown: "%prefix% &cTu dois attendre un peu avant de pouvoir refaire cette commande"
     no-region: "%prefix% &cIl n'y a aucune région à une distance de &8%distance%"
-    region: "%prefix% &6Claim de &a%region%&6 à &a%distance%&6 blocs en &a(%nearest-x%, %nearest-z%)&6, direction &a%direction%"
+    region: "&6-Claim de &a%region%&6 à &a%distance%&6 blocs en &a(%nearest-x%, %nearest-z%)&6, direction &a%direction%"
+    header: "%prefix% &6Claim proches de toi (%region-count%) :"
+    footer:
     direction:
       north: "Nord"
       northwest: "Nord-Ouest"
