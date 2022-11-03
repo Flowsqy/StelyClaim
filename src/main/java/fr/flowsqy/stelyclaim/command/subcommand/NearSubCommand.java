@@ -27,16 +27,19 @@ public class NearSubCommand extends SubCommand {
     private final int DEFAULT_MAX_DISTANCE;
     private final long COOLDOWN;
     private final int COOLDOWN_SIZE_CLEAR_CHECK;
+    private final int MAXIMAL_REGION_AMOUNT;
     private final Map<UUID, Long> lastExecTimeByPlayerId;
 
     public NearSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         super(plugin.getMessages(), name, alias, permission, console, allowedWorlds, statistic);
         final YamlConfiguration configuration = plugin.getConfiguration();
         // The distances should be >= 1 (0 is /claim here and bellow it does not make any sense)
-        DEFAULT_DISTANCE = Math.max(configuration.getInt("near.default-distance", 200), 1);
-        DEFAULT_MAX_DISTANCE = Math.max(configuration.getInt("near.base-max-distance", 200), 1);
-        COOLDOWN = configuration.getLong("near.cooldown", 1000L);
-        COOLDOWN_SIZE_CLEAR_CHECK = configuration.getInt("cooldown-size-clear-check", 4);
+        DEFAULT_DISTANCE = Math.max(configuration.getInt(getName() + ".default-distance", 200), 1);
+        DEFAULT_MAX_DISTANCE = Math.max(configuration.getInt(getName() + ".base-max-distance", 200), 1);
+        COOLDOWN = configuration.getLong(getName() + ".cooldown", 1000L);
+        COOLDOWN_SIZE_CLEAR_CHECK = configuration.getInt(getName() + ".cooldown-size-clear-check", 4);
+        // The minimal amount should be one (0 Show nothing and bellow, it does not make any sense)
+        MAXIMAL_REGION_AMOUNT = Math.max(configuration.getInt(getName() + ".maximal-region-amount", 10), 1);
         lastExecTimeByPlayerId = new HashMap<>();
         protocolManager = plugin.getProtocolManager();
     }
@@ -207,11 +210,13 @@ public class NearSubCommand extends SubCommand {
             };
 
             // Send information
-            for (RegionData regionData : detectedRegions) {
+            // Limit the loop at the size of the list or the maximal amount defined by the config
+            for (int index = 0; index < detectedRegions.size() && index < MAXIMAL_REGION_AMOUNT; index++) {
+                final RegionData regionData = detectedRegions.get(index);
                 // Get the direction towards the region
                 // Calculate the angle
                 // y = -z (towards the North) and x = x (towards East)
-                final double rawAngle = Math.atan2(-z, x);
+                final double rawAngle = Math.atan2(z - regionData.nearestZ, regionData.nearestX - x);
                 // Transform the angle from -pi to pi in radian to 0 to 359 in degrees as an int
                 final int sanitizedAngle = (int) Math.toDegrees(rawAngle >= 0 ? rawAngle : rawAngle + Math.PI * 2);
                 // Get the id

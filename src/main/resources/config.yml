@@ -72,6 +72,8 @@ near:
   cooldown: 1000
   # Le nombre d'entrée pour lequel il faut nettoyer le cache inutile
   cooldown-size-clear-check: 4
+  # Le nombre maximal de région affichée par la commande
+  maximal-region-amount: 10
 
 listadd:
   # Le temps pendant lequel doit être gardé en mémoire le résulat
