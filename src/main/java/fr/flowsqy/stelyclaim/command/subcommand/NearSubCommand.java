@@ -221,7 +221,7 @@ public class NearSubCommand extends SubCommand {
 
                 // Send message
                 sender.sendMessage(nearMessage
-                        .replace("%region%", regionData.name)
+                        .replace("%region%", String.valueOf(regionData.name)) // Avoid null error with String.valueOf
                         .replace("%distance%", String.valueOf((int) regionData.distance))
                         .replace("%nearest-x%", String.valueOf(regionData.nearestX))
                         .replace("%nearest-z%", String.valueOf(regionData.nearestZ))
