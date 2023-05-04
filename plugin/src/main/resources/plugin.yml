@@ -1,6 +1,6 @@
 name: StelyClaim
 author: Flowsqy
-version: ${project.version}
+version: ${version}
 main: fr.flowsqy.stelyclaim.StelyClaimPlugin
 depend:
   - ComponentReplacer
