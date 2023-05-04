@@ -35,9 +35,8 @@ public class StatisticManager {
 
     public void initData() {
         for (Map.Entry<String, Object> entry : config.getValues(false).entrySet()) {
-            if (!(entry.getValue() instanceof ConfigurationSection))
+            if (!(entry.getValue() instanceof ConfigurationSection section))
                 continue;
-            final ConfigurationSection section = (ConfigurationSection) entry.getValue();
             final Map<String, Integer> stats = new HashMap<>();
             for (Map.Entry<String, Object> commandEntry : section.getValues(false).entrySet()) {
                 final int value;

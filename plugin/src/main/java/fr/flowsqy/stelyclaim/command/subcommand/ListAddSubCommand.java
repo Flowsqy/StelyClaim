@@ -7,6 +7,7 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.internal.PlayerOwner;
 import fr.flowsqy.stelyclaim.protocol.RegionFinder;
+import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
 import fr.flowsqy.stelyclaim.util.WorldName;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -19,6 +20,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -58,13 +60,13 @@ public class ListAddSubCommand extends ProtocolSubCommand {
             target = new PlayerOwner(player);
         } else if (size == 2) {
             if (hasOtherPerm) {
-                target = new PlayerOwner(Bukkit.getOfflinePlayer(args.get(1)));
+                target = new PlayerOwner(OfflinePlayerRetriever.getOfflinePlayer(args.get(1)));
             } else {
                 target = new PlayerOwner(player);
                 pageArg = args.get(1);
             }
         } else if (size == 3 && hasOtherPerm) {
-            target = new PlayerOwner(Bukkit.getOfflinePlayer(args.get(1)));
+            target = new PlayerOwner(OfflinePlayerRetriever.getOfflinePlayer(args.get(1)));
             pageArg = args.get(2);
         } else {
             messages.sendMessage(player, "help." + getName() + (hasOtherPerm ? "-other" : ""));
@@ -85,7 +87,7 @@ public class ListAddSubCommand extends ProtocolSubCommand {
         }
 
         final World world = player.getWorld();
-        final UUID targetUUID = target.getPlayer().getUniqueId();
+        final UUID targetUUID = target.player().getUniqueId();
         final CacheKey cacheKey = new CacheKey(targetUUID, world.getName());
 
         CacheData cacheData = cache.get(cacheKey);
@@ -112,7 +114,7 @@ public class ListAddSubCommand extends ProtocolSubCommand {
             final List<CacheKey> keys = cache.entrySet().stream()
                     .filter(entry -> System.currentTimeMillis() - entry.getValue().initialInput > CACHE_PERIOD)
                     .map(Map.Entry::getKey)
-                    .collect(Collectors.toList());
+                    .toList();
             for (CacheKey key : keys)
                 cache.remove(key);
         }
@@ -284,48 +286,10 @@ public class ListAddSubCommand extends ProtocolSubCommand {
         return Collections.emptyList();
     }
 
-    private final static class CacheKey {
-
-        private final UUID playerName;
-        private final String world;
-
-        public CacheKey(UUID playerName, String world) {
-            this.playerName = playerName;
-            this.world = world;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            CacheKey cacheKey = (CacheKey) o;
-            return playerName.equals(cacheKey.playerName) && world.equals(cacheKey.world);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(playerName, world);
-        }
-
-        @Override
-        public String toString() {
-            return "CacheKey{" +
-                    "playerName='" + playerName + '\'' +
-                    ", world='" + world + '\'' +
-                    '}';
-        }
+    private record CacheKey(@NotNull UUID playerName, @NotNull String world) {
     }
 
-    private final static class CacheData {
-
-        private final long initialInput;
-        private final List<String> result;
-
-        public CacheData(long initialInput, List<String> result) {
-            this.initialInput = initialInput;
-            this.result = result;
-        }
-
+    private record CacheData(long initialInput, @NotNull List<String> result) {
     }
 
 }

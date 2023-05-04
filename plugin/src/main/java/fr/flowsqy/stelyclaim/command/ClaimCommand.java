@@ -62,7 +62,7 @@ public class ClaimCommand implements TabExecutor {
         // Get matching sub-command
         final Optional<SubCommand> matchingSubCommand = getSubCommand(arg);
         // Check wrong command call and correct command call without permission
-        if (!matchingSubCommand.isPresent() || !sender.hasPermission(matchingSubCommand.get().getPermission())) {
+        if (matchingSubCommand.isEmpty() || !sender.hasPermission(matchingSubCommand.get().getPermission())) {
             // Send general help if the sender have the permission
             if (sender.hasPermission(helpSubCommand.getPermission())) {
                 executeSubCommand(helpSubCommand, sender, Collections.singletonList(helpSubCommand.getName()), isPlayer);
@@ -340,6 +340,7 @@ public class ClaimCommand implements TabExecutor {
         statsSubCommand.initSubCommands(subCommands);
     }
 
+    @SuppressWarnings("unused") // API
     public void registerCommand(SubCommand subCommand, boolean canTabComplete, Function<Permission, Permission> createPermissionFunction) {
         if (subCommands.stream().anyMatch(subCmd -> (
                 subCmd.getName().equalsIgnoreCase(subCommand.getName()) ||
@@ -360,6 +361,7 @@ public class ClaimCommand implements TabExecutor {
         }
     }
 
+    @SuppressWarnings("unused") // API
     public void unregisterCommand(SubCommand subCommand) {
         int foundIndex = -1;
         for (int index = 0; index < subCommands.size(); index++) {

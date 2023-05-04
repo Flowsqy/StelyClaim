@@ -72,10 +72,6 @@ public class PillarTextSender {
         return textComponent;
     }
 
-    public ComponentReplacer getReplacer(Player player, ProtectedRegion newRegion) {
-        return getReplacer(player, new PillarCoordinate(newRegion, player.getWorld()));
-    }
-
     public ComponentReplacer getReplacer(Player player, PillarCoordinate pillarCoordinate) {
         if (baseMessage != null) {
             PillarData pillarData = this.pillarData.get(player.getName());

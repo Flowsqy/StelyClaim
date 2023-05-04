@@ -31,10 +31,12 @@ public class CommandManager {
 
     }
 
+    @SuppressWarnings("unused") // API
     public ClaimCommand getClaimCommand() {
         return claimCommand;
     }
 
+    @SuppressWarnings("unused") // API
     public BedrockCommand getBedrockCommand() {
         return bedrockCommand;
     }

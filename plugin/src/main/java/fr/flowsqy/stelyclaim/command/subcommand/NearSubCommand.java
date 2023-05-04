@@ -18,7 +18,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class NearSubCommand extends SubCommand {
 
@@ -114,7 +113,7 @@ public class NearSubCommand extends SubCommand {
             final List<UUID> keys = lastExecTimeByPlayerId.entrySet().stream()
                     .filter(entry -> currentTime - entry.getValue() > COOLDOWN)
                     .map(Map.Entry::getKey)
-                    .collect(Collectors.toList());
+                    .toList();
             // Remove them
             keys.forEach(lastExecTimeByPlayerId::remove);
         }

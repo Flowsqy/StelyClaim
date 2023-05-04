@@ -4,8 +4,8 @@ import com.earth2me.essentials.Essentials;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.command.CommandManager;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
-import fr.flowsqy.stelyclaim.internal.PlayerHandler;
 import fr.flowsqy.stelyclaim.common.PrefixedConfigurationFormattedMessages;
+import fr.flowsqy.stelyclaim.internal.PlayerHandler;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
 import fr.flowsqy.stelyclaim.util.*;
@@ -112,6 +112,7 @@ public class StelyClaimPlugin extends JavaPlugin {
         return teleportSync;
     }
 
+    @SuppressWarnings("unused") // API
     public EssentialsManager getEssentialsManager() {
         return essentialsManager;
     }
@@ -128,6 +129,7 @@ public class StelyClaimPlugin extends JavaPlugin {
         return protocolManager;
     }
 
+    @SuppressWarnings("unused") // API
     public CommandManager getCommandManager() {
         return commandManager;
     }

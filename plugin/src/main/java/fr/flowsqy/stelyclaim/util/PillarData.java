@@ -15,10 +15,6 @@ public class PillarData {
         this.nextPillarId = -1;
     }
 
-    public int getNextPillarId() {
-        return nextPillarId;
-    }
-
     public Map<String, Location> getLocations() {
         return locations;
     }

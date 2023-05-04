@@ -5,6 +5,7 @@ import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.command.subcommand.ProtocolSubCommand;
 import fr.flowsqy.stelyclaim.internal.PlayerOwner;
+import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -33,7 +34,7 @@ public abstract class DomainSubCommand extends ProtocolSubCommand {
                     player,
                     protocolManager.getHandler("player"),
                     new PlayerOwner(player),
-                    Bukkit.getOfflinePlayer(args.get(1))
+                    OfflinePlayerRetriever.getOfflinePlayer(args.get(1))
             );
         }
         if (size == 3) {
@@ -41,8 +42,8 @@ public abstract class DomainSubCommand extends ProtocolSubCommand {
                     player.getWorld(),
                     player,
                     protocolManager.getHandler("player"),
-                    new PlayerOwner(Bukkit.getOfflinePlayer(args.get(1))),
-                    Bukkit.getOfflinePlayer(args.get(2))
+                    new PlayerOwner(OfflinePlayerRetriever.getOfflinePlayer(args.get(1))),
+                    OfflinePlayerRetriever.getOfflinePlayer(args.get(2))
             );
         }
 

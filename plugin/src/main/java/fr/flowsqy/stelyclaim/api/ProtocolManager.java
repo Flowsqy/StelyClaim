@@ -44,6 +44,7 @@ public class ProtocolManager {
         handlers.put(id, handler);
     }
 
+    @SuppressWarnings("unused") //API
     public boolean unregisterHandler(ClaimHandler<?> handler) {
         Objects.requireNonNull(handler);
         return handlers.remove(handler.getId()) != null;

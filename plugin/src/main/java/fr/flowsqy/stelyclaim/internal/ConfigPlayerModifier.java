@@ -32,6 +32,7 @@ public class ConfigPlayerModifier implements RegionModifier<PlayerOwner> {
         this.category = category;
     }
 
+    @SuppressWarnings("deprecation") // WorldGuard warnings, can't be avoided
     @Override
     public void modify(Player sender, ProtectedRegion region, PlayerOwner claimOwner) {
         final Configuration config = plugin.getConfiguration();
@@ -42,27 +43,14 @@ public class ConfigPlayerModifier implements RegionModifier<PlayerOwner> {
         if (setTp != null) {
             final PillarCoordinate pillarCoordinate = new PillarCoordinate(region, sender.getWorld());
 
-            final Location location;
-
-            switch (setTp) {
-                case "here":
-                    location = sender.getLocation();
-                    break;
-                case "northwest":
-                    location = pillarCoordinate.getNorthWestLocation();
-                    break;
-                case "northeast":
-                    location = pillarCoordinate.getNorthEastLocation();
-                    break;
-                case "southwest":
-                    location = pillarCoordinate.getSouthWestLocation();
-                    break;
-                case "southeast":
-                    location = pillarCoordinate.getSouthEastLocation();
-                    break;
-                default:
-                    location = null;
-            }
+            final Location location = switch (setTp) {
+                case "here" -> sender.getLocation();
+                case "northwest" -> pillarCoordinate.getNorthWestLocation();
+                case "northeast" -> pillarCoordinate.getNorthEastLocation();
+                case "southwest" -> pillarCoordinate.getSouthWestLocation();
+                case "southeast" -> pillarCoordinate.getSouthEastLocation();
+                default -> null;
+            };
 
             if (location != null) {
                 final Vector tpModifier = new Vector(
@@ -84,7 +72,7 @@ public class ConfigPlayerModifier implements RegionModifier<PlayerOwner> {
                 if (owner.equals("%sender")) {
                     ownerDomain.addPlayer(sender.getUniqueId());
                 } else if (owner.equals("%target%")) {
-                    ownerDomain.addPlayer(claimOwner.getPlayer().getUniqueId());
+                    ownerDomain.addPlayer(claimOwner.player().getUniqueId());
                 } else {
                     try {
                         ownerDomain.addPlayer(UUID.fromString(owner));
@@ -106,7 +94,7 @@ public class ConfigPlayerModifier implements RegionModifier<PlayerOwner> {
                 if (member.equals("%sender")) {
                     memberDomain.addPlayer(sender.getUniqueId());
                 } else if (member.equals("%target%")) {
-                    memberDomain.addPlayer(claimOwner.getPlayer().getUniqueId());
+                    memberDomain.addPlayer(claimOwner.player().getUniqueId());
                 } else {
                     try {
                         memberDomain.addPlayer(UUID.fromString(member));
@@ -141,9 +129,8 @@ public class ConfigPlayerModifier implements RegionModifier<PlayerOwner> {
                 if (!(entry.getValue() instanceof Boolean))
                     continue;
                 final Flag<?> flag = registry.get(entry.getKey());
-                if (!(flag instanceof StateFlag))
+                if (!(flag instanceof StateFlag stateFlag))
                     continue;
-                final StateFlag stateFlag = (StateFlag) flag;
                 final boolean value = (boolean) entry.getValue();
                 if (value && region.getFlag(stateFlag) == StateFlag.State.ALLOW)
                     continue;

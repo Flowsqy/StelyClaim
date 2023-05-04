@@ -4,6 +4,7 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.subcommand.ProtocolSubCommand;
 import fr.flowsqy.stelyclaim.internal.PlayerHandler;
 import fr.flowsqy.stelyclaim.internal.PlayerOwner;
+import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -33,7 +34,7 @@ public abstract class SelectionSubCommand extends ProtocolSubCommand {
         }
 
         final Player player = (Player) sender;
-        final OfflinePlayer targetPlayer = size == 1 ? player : Bukkit.getOfflinePlayer(args.get(1));
+        final OfflinePlayer targetPlayer = size == 1 ? player : OfflinePlayerRetriever.getOfflinePlayer(args.get(1));
 
         return process(player, protocolManager.getHandler("player"), new PlayerOwner(targetPlayer));
     }

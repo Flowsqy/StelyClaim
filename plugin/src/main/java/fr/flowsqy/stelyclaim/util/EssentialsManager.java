@@ -59,6 +59,7 @@ public interface EssentialsManager {
             return true;
         }
 
+        @SuppressWarnings("deprecation") // TODO Update to new Essentials standards
         @Override
         public void sendMail(UUID uuid, Supplier<String> message) {
             final User user = essentials.getUser(uuid);
@@ -67,6 +68,7 @@ public interface EssentialsManager {
             user.addMail(message.get());
         }
 
+        @SuppressWarnings("deprecation") // TODO Update to new Essentials standards
         @Override
         public void sendEssentialMail(OfflinePlayer from, List<OfflinePlayer> to, Function<OfflinePlayer, String> message) {
             final User fromUser = essentials.getUser(from.getUniqueId());

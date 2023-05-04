@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.jetbrains:annotations:23.0.0'
+    compileOnly 'org.jetbrains:annotations:24.0.1'
     compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.3.0-SNAPSHOT'
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.5-SNAPSHOT'
     compileOnly 'org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT'

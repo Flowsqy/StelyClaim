@@ -36,7 +36,7 @@ public class PlayerHandler implements ClaimHandler<PlayerOwner> {
 
     @Override
     public String getIdentifier(PlayerOwner owner) {
-        return owner.getPlayer().getUniqueId().toString();
+        return owner.player().getUniqueId().toString();
     }
 
     @Override

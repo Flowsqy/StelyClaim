@@ -41,12 +41,12 @@ public abstract class SubStatsSubCommand extends SubCommand {
         final String command;
         final String target;
         switch (size) {
-            case 2:
+            case 2 -> {
                 own = true;
                 command = null;
                 target = sender.getName();
-                break;
-            case 3:
+            }
+            case 3 -> {
                 final String secondArg = args.get(2);
                 if (statisticManager.allowStats(secondArg) || !sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(getPermission()))) {
                     command = secondArg;
@@ -57,18 +57,19 @@ public abstract class SubStatsSubCommand extends SubCommand {
                     target = secondArg;
                     own = target.equals(sender.getName());
                 }
-                break;
-            case 4:
+            }
+            case 4 -> {
                 command = args.get(3);
                 target = args.get(2);
                 own = target.equals(sender.getName());
-                break;
-            default:
+            }
+            default -> {
                 final String helpMessage = getHelpMessage(sender);
                 if (messages != null) {
                     sender.sendMessage(helpMessage);
                 }
                 return false;
+            }
         }
         if (!own && !sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(getPermission()))) {
             messages.sendMessage(sender, "help." + getName());
@@ -92,7 +93,7 @@ public abstract class SubStatsSubCommand extends SubCommand {
     @Override
     public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
         switch (args.size()) {
-            case 3:
+            case 3 -> {
                 if (!sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(getPermission()))) {
                     return Collections.emptyList();
                 }
@@ -106,13 +107,16 @@ public abstract class SubStatsSubCommand extends SubCommand {
                         completions.add(playerName);
                 }
                 return completions;
-            case 4:
+            }
+            case 4 -> {
                 final String command = args.get(3).toLowerCase(Locale.ROOT);
                 return statisticManager.getCommands().stream()
                         .filter(cmd -> cmd.startsWith(command))
                         .collect(Collectors.toList());
-            default:
+            }
+            default -> {
                 return Collections.emptyList();
+            }
         }
     }
 }

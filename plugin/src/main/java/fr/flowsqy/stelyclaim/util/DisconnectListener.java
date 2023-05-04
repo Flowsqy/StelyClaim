@@ -18,8 +18,9 @@ public class DisconnectListener implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
+    @SuppressWarnings("unused")
     @EventHandler(priority = EventPriority.MONITOR)
-    public final void onQuit(PlayerQuitEvent e) {
+    private void onQuit(PlayerQuitEvent e) {
         pillarData.remove(e.getPlayer().getName());
     }
 

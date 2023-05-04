@@ -18,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,12 +36,10 @@ public class BedrockCommand implements TabExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (!(sender instanceof Player player)) {
             return messages.sendMessage(sender, "util.onlyplayer");
         }
-
-        final Player player = (Player) sender;
 
         if (manager.toggle(player.getName(), true))
             return messages.sendMessage(player, "bedrock.enable");
@@ -49,14 +48,15 @@ public class BedrockCommand implements TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         return Collections.emptyList();
     }
 
     private final class BedrockListener implements Listener {
 
+        @SuppressWarnings("unused") // API
         @EventHandler(priority = EventPriority.MONITOR)
-        public void onInteract(PlayerInteractEvent event) {
+        private void onInteract(PlayerInteractEvent event) {
             if (event.getAction() != Action.LEFT_CLICK_BLOCK)
                 return;
 
