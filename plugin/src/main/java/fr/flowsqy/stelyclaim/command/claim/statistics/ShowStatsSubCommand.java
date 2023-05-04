@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.command.subcommand.statistics;
+package fr.flowsqy.stelyclaim.command.claim.statistics;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.io.StatisticManager;

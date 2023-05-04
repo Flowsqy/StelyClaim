@@ -1,8 +1,8 @@
-package fr.flowsqy.stelyclaim.command.subcommand.statistics;
+package fr.flowsqy.stelyclaim.command.claim.statistics;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
-import fr.flowsqy.stelyclaim.command.subcommand.SubCommand;
+import fr.flowsqy.stelyclaim.command.claim.SubCommand;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

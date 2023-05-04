@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.command.subcommand;
+package fr.flowsqy.stelyclaim.command.claim;
 
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import org.bukkit.command.CommandSender;

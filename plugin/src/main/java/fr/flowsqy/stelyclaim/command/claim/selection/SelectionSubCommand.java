@@ -1,7 +1,7 @@
-package fr.flowsqy.stelyclaim.command.subcommand.selection;
+package fr.flowsqy.stelyclaim.command.claim.selection;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.command.subcommand.ProtocolSubCommand;
+import fr.flowsqy.stelyclaim.command.claim.ProtocolSubCommand;
 import fr.flowsqy.stelyclaim.internal.PlayerHandler;
 import fr.flowsqy.stelyclaim.internal.PlayerOwner;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;

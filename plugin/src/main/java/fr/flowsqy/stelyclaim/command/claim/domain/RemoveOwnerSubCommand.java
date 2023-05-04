@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.command.subcommand.domain;
+package fr.flowsqy.stelyclaim.command.claim.domain;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
@@ -9,14 +9,14 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class AddOwnerSubCommand extends DomainSubCommand {
-    public AddOwnerSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
+public class RemoveOwnerSubCommand extends DomainSubCommand {
+    public RemoveOwnerSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
         super(plugin, name, alias, permission, console, allowedWorlds, statistic);
     }
 
     @Override
     protected <T extends ClaimOwner> boolean interact(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer target) {
-        return protocolManager.addOwner(world, sender, handler, owner, target);
+        return protocolManager.removeOwner(world, sender, handler, owner, target);
     }
 
 }

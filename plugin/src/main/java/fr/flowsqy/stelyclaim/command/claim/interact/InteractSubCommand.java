@@ -1,9 +1,9 @@
-package fr.flowsqy.stelyclaim.command.subcommand.interact;
+package fr.flowsqy.stelyclaim.command.claim.interact;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import fr.flowsqy.stelyclaim.command.subcommand.ProtocolSubCommand;
+import fr.flowsqy.stelyclaim.command.claim.ProtocolSubCommand;
 import fr.flowsqy.stelyclaim.internal.PlayerOwner;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
 import org.bukkit.Bukkit;
