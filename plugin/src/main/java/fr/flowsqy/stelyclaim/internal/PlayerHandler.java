@@ -18,8 +18,8 @@ public class PlayerHandler implements ClaimHandler<PlayerOwner> {
     private final ConfigurationFormattedMessages messages;
 
     public PlayerHandler(StelyClaimPlugin plugin) {
-        this.defineModifier = new ConfigPlayerModifier(plugin, "define");
-        this.redefineModifier = new ConfigPlayerModifier(plugin, "redefine");
+        this.defineModifier = new ConfigPlayerModifier(plugin.getConfiguration(), plugin.getMessages(), "define");
+        this.redefineModifier = new ConfigPlayerModifier(plugin.getConfiguration(), plugin.getMessages(), "redefine");
         this.messages = plugin.getMessages();
     }
 
