@@ -54,7 +54,7 @@ public class BedrockCommand implements TabExecutor {
 
     private final class BedrockListener implements Listener {
 
-        @SuppressWarnings("unused") // API
+        @SuppressWarnings("unused")
         @EventHandler(priority = EventPriority.MONITOR)
         private void onInteract(PlayerInteractEvent event) {
             if (event.getAction() != Action.LEFT_CLICK_BLOCK)
