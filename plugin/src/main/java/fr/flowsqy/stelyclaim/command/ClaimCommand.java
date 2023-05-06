@@ -12,6 +12,12 @@ import fr.flowsqy.stelyclaim.command.claim.interact.TeleportSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.selection.DefineSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.selection.RedefineSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.statistics.StatsSubCommand;
+import fr.flowsqy.stelyclaim.command.sender.BlockCommandSender;
+import fr.flowsqy.stelyclaim.command.sender.ConsoleCommandSender;
+import fr.flowsqy.stelyclaim.command.sender.EntityCommandSender;
+import fr.flowsqy.stelyclaim.command.struct.CommandContext;
+import fr.flowsqy.stelyclaim.command.struct.CommandExecutor;
+import fr.flowsqy.stelyclaim.command.struct.CommandTabExecutor;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
 import org.bukkit.Bukkit;
@@ -19,14 +25,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ClaimCommand implements TabExecutor {
 
@@ -35,6 +40,7 @@ public class ClaimCommand implements TabExecutor {
     private final List<SubCommand> subCommands;
     private final SubCommand helpSubCommand;
     private int tabLimit;
+    private final CommandTabExecutor commandTabExecutor;
 
     public ClaimCommand(StelyClaimPlugin plugin) {
         this.messages = plugin.getMessages();
@@ -43,147 +49,48 @@ public class ClaimCommand implements TabExecutor {
         initCommands(plugin);
         this.statisticManager.initSubCommands(subCommands);
         helpSubCommand = subCommands.get(0);
+        commandTabExecutor = new CommandTabExecutor() {
+            @Override
+            public void execute(@NotNull CommandContext context) {
+
+            }
+
+            @Override
+            public List<String> tabComplete(@NotNull CommandContext context) {
+                return null;
+            }
+        };
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        // Get arg list
-        final List<String> argsList =
-                args == null ?
-                        new ArrayList<>() :
-                        new ArrayList<>(Arrays.asList(args));
-        // Get first arg
-        final String arg =
-                argsList.isEmpty() ?
-                        "" :
-                        argsList.get(0).toLowerCase(Locale.ROOT);
-        // Check if it's a player
-        final boolean isPlayer = sender instanceof Player;
-        // Get matching sub-command
-        final Optional<SubCommand> matchingSubCommand = getSubCommand(arg);
-        // Check wrong command call and correct command call without permission
-        if (matchingSubCommand.isEmpty() || !sender.hasPermission(matchingSubCommand.get().getPermission())) {
-            // Send general help if the sender have the permission
-            if (sender.hasPermission(helpSubCommand.getPermission())) {
-                executeSubCommand(helpSubCommand, sender, Collections.singletonList(helpSubCommand.getName()), isPlayer);
-            }
-            return true;
-        }
-        // The called sub-command exist and the sender have the permission to use it
-        final SubCommand calledSubCommand = matchingSubCommand.get();
-        // Check if the command is executable by a non-player
-        if(!isPlayer && !calledSubCommand.isConsole()) {
-            return messages.sendMessage(sender, "util.onlyplayer");
-        }
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        final fr.flowsqy.stelyclaim.command.sender.CommandSender commandSender = getSender(sender);
+        final CommandContext context = new CommandContext(commandSender, args, 0);
 
-        executeSubCommand(calledSubCommand, sender, argsList, isPlayer);
+        // TODO Check for statistics
+        commandTabExecutor.execute(context);
         return true;
-    }
-
-
-    /**
-     * Execute a sub-command
-     *
-     * @param command The {@link SubCommand} to execute
-     * @param sender The {@link CommandSender}
-     * @param argsList The {@link List} of arguments
-     * @param isPlayer Whether the sender is a {@link Player}
-     */
-    private void executeSubCommand(SubCommand command, CommandSender sender, List<String> argsList, boolean isPlayer) {
-        // Check if it's a player in a disallowed world
-        if (isPlayer && !command.isAllowedInWorld(((Player) sender).getWorld().getName())){ // || sender.hasPermission("claim." + command.getName() + ".world-bypass")
-            messages.sendMessage(sender, "claim.world.notallowed");
-            return;
-        }
-
-        // Execute
-        final boolean success = command.execute(sender, argsList, argsList.size(), isPlayer);
-        // Increment and save statistics
-        if (success && command.isStatistic()) {
-            statisticManager.add(sender, command.getName());
-            statisticManager.saveTask();
-        }
     }
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-        // Get arg list
-        final List<String> argsList =
-                args == null ?
-                        new ArrayList<>() :
-                        new ArrayList<>(Arrays.asList(args));
-        // Get first arg
-        final String arg =
-                argsList.isEmpty() ?
-                        "" :
-                        argsList.get(0).toLowerCase(Locale.ROOT);
-        final Optional<SubCommand> matchingSubCommand = getSubCommand(arg);
-        final boolean isPlayer = sender instanceof Player;
-        if (
-                matchingSubCommand.isPresent() // The first argument is a valid command
-                        && argsList.size() > 1 // Typed more than one argument
-                        && sender.hasPermission(matchingSubCommand.get().getPermission()) // The sender can execute (and tab) the sub-command
-                        && (isPlayer || matchingSubCommand.get().isConsole()) // The sub-command can be executed by this type of sender
-        ) {
-            // Redirect to the sub-command
-            return matchingSubCommand.get().tab(sender, argsList, isPlayer);
-        } else if (argsList.size() < 2) {
-            // Tab all SubCommands
-            return getAvailableSubCommandNameCompletion(sender, arg, isPlayer);
-        } else {
-            // Wrong sub-command name and more than one argument -> do nothing
-            return Collections.emptyList();
-        }
+        final fr.flowsqy.stelyclaim.command.sender.CommandSender commandSender = getSender(sender);
+        final CommandContext context = new CommandContext(commandSender, args, 0);
+        return commandTabExecutor.tabComplete(context);
     }
 
-    /**
-     * Get the sub-commands that can be viewed by a {@link CommandSender}
-     *
-     * @param sender   The {@link CommandSender}
-     * @param isPlayer Whether the sender is a {@link Player}
-     * @return A {@link Stream} of the {@link SubCommand} that the sender can view
-     */
-    public Stream<SubCommand> getAvailableSubCommand(CommandSender sender, boolean isPlayer) {
-        // Exclude non tab commands
-        Stream<SubCommand> subCommandStream = subCommands.stream().limit(tabLimit);
-        // Keep only non-player ready sub-command if the sender is not a player
-        if (!isPlayer) {
-            subCommandStream = subCommandStream.filter(SubCommand::isConsole);
+    @NotNull
+    private fr.flowsqy.stelyclaim.command.sender.CommandSender getSender(@NotNull CommandSender sender) {
+        if (sender instanceof Entity entity) {
+            return new EntityCommandSender(entity);
         }
-        return subCommandStream.filter(subCmd -> sender.hasPermission(subCmd.getPermission())); // Check permissions
-    }
-
-    /**
-     * Get the sub-command name completions
-     *
-     * @param sender   The {@link CommandSender}
-     * @param argument The argument to compare to sub-command names and aliases
-     * @param isPlayer Whether the sender is a {@link Player}
-     * @return A {@link List} of possible completions for the final argument
-     */
-    public List<String> getAvailableSubCommandNameCompletion(CommandSender sender, String argument, boolean isPlayer) {
-        Stream<String> subCommandNameStream = getAvailableSubCommand(sender, isPlayer).map(SubCommand::getName); // Just keep the name
-
-        // If the argument is not blank, remove the one that does not start by the argument
-        if (!argument.isEmpty()) {
-            subCommandNameStream = subCommandNameStream.filter(cmd -> cmd.startsWith(argument));
+        if (sender instanceof org.bukkit.command.ConsoleCommandSender console) {
+            return new ConsoleCommandSender(console);
         }
-        return subCommandNameStream.collect(Collectors.toList());
-    }
-
-    /**
-     * Get a sub-command from its name or its alias
-     *
-     * @param arg The {@link String} name or alias
-     * @return An {@link Optional} sub-command that matches
-     */
-    private Optional<SubCommand> getSubCommand(String arg) {
-        if (arg.isEmpty()) {
-            return Optional.empty();
+        if (sender instanceof org.bukkit.command.BlockCommandSender block) {
+            return new BlockCommandSender(block);
         }
-        return subCommands.stream()
-                .filter(cmd -> cmd.getName().equals(arg) || cmd.getAlias().equals(arg))
-                .findAny();
+        throw new UnsupportedOperationException("Unsupported command sender type: " + sender.getClass());
     }
 
     /**

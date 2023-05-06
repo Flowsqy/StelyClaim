@@ -5,6 +5,7 @@ import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -29,7 +30,7 @@ public class HelpSubCommand extends SubCommand {
             // Wrong call
             return messages.sendMessage(sender, "help.help");
         }
-        List<SubCommand> availableSubCommands = claimCommand.getAvailableSubCommand(sender, isPlayer).collect(Collectors.toList());
+        List<SubCommand> availableSubCommands = new LinkedList<>();//claimCommand.getAvailableSubCommand(sender, isPlayer).collect(Collectors.toList());
         // Check for specific help
         if (size == 2) {
             final String secondArg = args.get(1).toLowerCase(Locale.ROOT);
@@ -62,7 +63,7 @@ public class HelpSubCommand extends SubCommand {
             return Collections.emptyList();
         }
 
-        return claimCommand.getAvailableSubCommandNameCompletion(sender, args.get(1).toLowerCase(Locale.ROOT), isPlayer);
+        return Collections.emptyList();//claimCommand.getAvailableSubCommandNameCompletion(sender, args.get(1).toLowerCase(Locale.ROOT), isPlayer);
     }
 
 }
