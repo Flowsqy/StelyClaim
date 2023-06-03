@@ -28,16 +28,6 @@ public class BlockCommandSender implements CommandSender {
         return new PhysicImpl();
     }
 
-    @Override
-    public boolean isMovable() {
-        return false;
-    }
-
-    @Override
-    public MovableCommandSender getMovable() {
-        return null;
-    }
-
     private class PhysicImpl implements PhysicCommandSender {
 
         @NotNull

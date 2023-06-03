@@ -13,23 +13,4 @@ public class ConsoleCommandSender implements CommandSender {
         return console;
     }
 
-    @Override
-    public boolean isPhysic() {
-        return false;
-    }
-
-    @Override
-    public PhysicCommandSender getPhysic() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isMovable() {
-        return false;
-    }
-
-    @Override
-    public MovableCommandSender getMovable() {
-        throw new UnsupportedOperationException();
-    }
 }

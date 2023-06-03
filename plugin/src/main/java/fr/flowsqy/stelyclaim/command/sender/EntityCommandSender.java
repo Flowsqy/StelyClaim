@@ -6,11 +6,11 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
-public class EntityCommandSender implements CommandSender {
+public class EntityCommandSender<T extends Entity> implements CommandSender {
 
-    private final Entity entity;
+    protected final T entity;
 
-    public EntityCommandSender(@NotNull Entity entity) {
+    public EntityCommandSender(@NotNull T entity) {
         this.entity = entity;
     }
 

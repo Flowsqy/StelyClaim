@@ -1,15 +1,33 @@
 package fr.flowsqy.stelyclaim.command.sender;
 
+import org.bukkit.entity.Player;
+
 public interface CommandSender {
 
     org.bukkit.command.CommandSender getBukkit();
 
-    boolean isPhysic();
+    default boolean isPhysic() {
+        return false;
+    }
 
-    PhysicCommandSender getPhysic();
+    default PhysicCommandSender getPhysic() {
+        throw new UnsupportedOperationException();
+    }
 
-    boolean isMovable();
+    default boolean isMovable() {
+        return false;
+    }
 
-    MovableCommandSender getMovable();
+    default MovableCommandSender getMovable() {
+        throw new UnsupportedOperationException();
+    }
+
+    default boolean isPlayer() {
+        return false;
+    }
+
+    default Player getPlayer() {
+        throw new UnsupportedOperationException();
+    }
 
 }
