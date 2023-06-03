@@ -9,6 +9,9 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
+import fr.flowsqy.stelyclaim.command.struct.CommandContext;
+import fr.flowsqy.stelyclaim.command.struct.CommandNode;
+import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.protocol.RegionFinder;
 import fr.flowsqy.stelyclaim.util.WorldName;
 import org.bukkit.Location;
@@ -16,11 +19,13 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class NearSubCommand extends SubCommand {
+public class NearSubCommand implements CommandNode {
 
+    private final ConfigurationFormattedMessages messages;
     private final ProtocolManager protocolManager;
     private final int DEFAULT_DISTANCE;
     private final int DEFAULT_MAX_DISTANCE;
@@ -29,36 +34,101 @@ public class NearSubCommand extends SubCommand {
     private final int MAXIMAL_REGION_AMOUNT;
     private final Map<UUID, Long> lastExecTimeByPlayerId;
 
-    public NearSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
-        super(plugin.getMessages(), name, alias, permission, console, allowedWorlds, statistic);
+    public NearSubCommand(@NotNull StelyClaimPlugin plugin) {
+        messages = plugin.getMessages();
         final YamlConfiguration configuration = plugin.getConfiguration();
         // The distances should be >= 1 (0 is /claim here and bellow it does not make any sense)
-        DEFAULT_DISTANCE = Math.max(configuration.getInt(getName() + ".default-distance", 200), 1);
-        DEFAULT_MAX_DISTANCE = Math.max(configuration.getInt(getName() + ".base-max-distance", 200), 1);
-        COOLDOWN = configuration.getLong(getName() + ".cooldown", 1000L);
-        COOLDOWN_SIZE_CLEAR_CHECK = configuration.getInt(getName() + ".cooldown-size-clear-check", 4);
+        DEFAULT_DISTANCE = Math.max(configuration.getInt("near.default-distance", 200), 1);
+        DEFAULT_MAX_DISTANCE = Math.max(configuration.getInt("near.base-max-distance", 200), 1);
+        COOLDOWN = configuration.getLong("near.cooldown", 1000L);
+        COOLDOWN_SIZE_CLEAR_CHECK = configuration.getInt("near.cooldown-size-clear-check", 4);
         // The minimal amount should be one (0 Show nothing and bellow, it does not make any sense)
-        MAXIMAL_REGION_AMOUNT = Math.max(configuration.getInt(getName() + ".maximal-region-amount", 10), 1);
+        MAXIMAL_REGION_AMOUNT = Math.max(configuration.getInt("near.maximal-region-amount", 10), 1);
         lastExecTimeByPlayerId = new HashMap<>();
         protocolManager = plugin.getProtocolManager();
     }
 
-    @Override
-    public String getHelpMessage(CommandSender sender) {
-        return messages.getFormattedMessage("help." + getName());
+    /**
+     * Get the nearest point of the region from a position
+     *
+     * @param posX            The x coordinate of the position
+     * @param posZ            The z coordinate of the position
+     * @param protectedRegion The {@link ProtectedRegion}
+     * @return An {@code int} array of two elements, the x and z coordinate of the nearest point
+     */
+    private int[] getNearestPoint(int posX, int posZ, ProtectedRegion protectedRegion) {
+        final int[] nearestPoint = new int[2];
+        // TODO Better check for polygon region
+        // This check is exact only for cuboid
+        final BlockVector3 max = protectedRegion.getMaximumPoint();
+        final BlockVector3 min = protectedRegion.getMinimumPoint();
+        nearestPoint[0] = getNearestPointOnLine(posX, min.getBlockX(), max.getBlockX());
+        nearestPoint[1] = getNearestPointOnLine(posZ, min.getBlockZ(), max.getBlockZ());
+        return nearestPoint;
+    }
+
+    /**
+     * Get the nearest point on a line from another point
+     *
+     * @param p   The coordinate of the point
+     * @param min The minimum coordinate of the segment
+     * @param max The maximum coordinate of the segment
+     * @return The coordinate of the nearest point
+     */
+    private int getNearestPointOnLine(int p, int min, int max) {
+        // p is too far in positive way
+        if (p > max) {
+            return max;
+        }
+        // p is too far in negative way
+        if (p < min) {
+            return min;
+        }
+        // p is
+        return p;
+    }
+
+    /**
+     * Get a direction message from the message configuration
+     *
+     * @param path The path of the specific direction
+     * @return The message stored in the configuration
+     */
+    private String getDirectionMessage(String path) {
+        final String directionMessage = messages.getFormattedMessage("claim.near.direction." + path);
+        return directionMessage == null ? "" : directionMessage;
+    }
+
+    /**
+     * Get the region id to the nearest point of a region from the player position
+     *
+     * @param regionData The {@link RegionData}
+     * @param x          The x coordinate of the player
+     * @param z          The z coordinate of the player
+     * @return The region id that corresponds to the direction in which is the nearest point from the player position
+     */
+    private int getDirectionId(RegionData regionData, int x, int z) {
+        // Calculate the angle
+        // y = -z (towards the North) and x = x (towards East)
+        final double rawAngle = Math.atan2(z - regionData.nearestZ, regionData.nearestX - x);
+        // Transform the angle from -pi to pi in radian to 0 to 359 in degrees as an int
+        final int sanitizedAngle = (int) Math.toDegrees(rawAngle >= 0 ? rawAngle : rawAngle + Math.PI * 2);
+        // Get the id
+        // Multiply by 10 to avoid loss of precision and add an offset of 22.5 (*10) to get the right
+        // zone as we start at the middle of the East zone
+        return (sanitizedAngle * 10 + 225) % 3600 / 450;
     }
 
     @Override
-    public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
+    public void execute(@NotNull CommandContext context) {
         // Check if there is more than 'near' and a distance
-        if (size > 2) {
+        if (context.getArgsLength() > 1) {
             // Send help message
-            final String helpMessage = getHelpMessage(sender);
-            if (helpMessage != null) {
-                sender.sendMessage(getHelpMessage(sender));
-            }
-            return false;
+            new HelpMessage().sendMessage(context); // TODO Specify near
+            return;
         }
+
+        final CommandSender sender = context.getSender().getBukkit();
 
         // Check full perm
         final boolean hasFullPerm = sender.hasPermission(getPermission() + "-full");
@@ -67,30 +137,30 @@ public class NearSubCommand extends SubCommand {
         final int distance;
 
         // Check desired distance
-        if (size == 2) {
+        if (context.getArgsLength() == 1) {
             // Check if it's a number
-            final String distanceArg = args.get(1);
+            final String distanceArg = context.getArg(0);
             try {
                 distance = Integer.parseInt(distanceArg);
             } catch (Exception ignored) {
                 messages.sendMessage(sender, "util.not-a-number", "%arg%", distanceArg);
-                return false;
+                return;
             }
 
             // Check if the distance is valid (>= 1)
             if (distance < 1) {
-                messages.sendMessage(sender, "claim." + getName() + ".invalid-distance", "%distance%", String.valueOf(distance));
-                return false;
+                messages.sendMessage(sender, "claim.near.invalid-distance", "%distance%", String.valueOf(distance));
+                return;
             }
 
             // Check if the player request a distance above his limit
             if (distance > DEFAULT_MAX_DISTANCE && !hasFullPerm) {
                 messages.sendMessage(
                         sender,
-                        "claim." + getName() + ".limit",
+                        "claim.near.limit",
                         "%distance%", "%max-distance%", String.valueOf(distance), String.valueOf(DEFAULT_MAX_DISTANCE)
                 );
-                return false;
+                return;
             }
         } else {
             // Set to default distance and limit if sender does not have full permission
@@ -102,8 +172,8 @@ public class NearSubCommand extends SubCommand {
         // Cooldown of the command
         // Check if cooldown is still active
         if (System.currentTimeMillis() - lastExecTimeByPlayerId.getOrDefault(player.getUniqueId(), 0L) < COOLDOWN) {
-            messages.sendMessage(sender, "claim." + getName() + ".cooldown");
-            return false;
+            messages.sendMessage(sender, "claim.near.cooldown");
+            return;
         }
 
         // Clear the cache of the cooldown if needed
@@ -122,7 +192,7 @@ public class NearSubCommand extends SubCommand {
         final World world = player.getWorld();
         final RegionManager regionManager = RegionFinder.getRegionManager(new WorldName(world.getName()), player, messages);
         if (regionManager == null) {
-            return false;
+            return;
         }
 
         final Location pos = player.getLocation();
@@ -185,15 +255,16 @@ public class NearSubCommand extends SubCommand {
 
         // If there is no intersection, it means there is no region
         if (detectedRegions.isEmpty()) {
-            messages.sendMessage(sender, "claim." + getName() + ".no-region", "%distance%", String.valueOf(distance));
-            return true;
+            messages.sendMessage(sender, "claim.near.no-region", "%distance%", String.valueOf(distance));
+            // TODO Update stats
+            return;
         }
 
         // Send header
-        messages.sendMessage(sender, "claim." + getName() + ".header", "%region-count%", String.valueOf(detectedRegions.size()));
+        messages.sendMessage(sender, "claim.near.header", "%region-count%", String.valueOf(detectedRegions.size()));
 
         // Get the general message
-        final String nearMessage = messages.getFormattedMessage("claim." + getName() + ".region");
+        final String nearMessage = messages.getFormattedMessage("claim.near.region");
         if (nearMessage != null) {
             // Sort it by distances
             detectedRegions.sort(Comparator.comparingDouble(RegionData::getDistance));
@@ -230,85 +301,34 @@ public class NearSubCommand extends SubCommand {
         }
 
         // Send footer
-        messages.sendMessage(sender, "claim." + getName() + ".footer", "%region-count%", String.valueOf(detectedRegions.size()));
+        messages.sendMessage(sender, "claim.near.footer", "%region-count%", String.valueOf(detectedRegions.size()));
 
-        return true;
-    }
-
-
-    /**
-     * Get the nearest point of the region from a position
-     *
-     * @param posX            The x coordinate of the position
-     * @param posZ            The z coordinate of the position
-     * @param protectedRegion The {@link ProtectedRegion}
-     * @return An {@code int} array of two elements, the x and z coordinate of the nearest point
-     */
-    private int[] getNearestPoint(int posX, int posZ, ProtectedRegion protectedRegion) {
-        final int[] nearestPoint = new int[2];
-        // TODO Better check for polygon region
-        // This check is exact only for cuboid
-        final BlockVector3 max = protectedRegion.getMaximumPoint();
-        final BlockVector3 min = protectedRegion.getMinimumPoint();
-        nearestPoint[0] = getNearestPointOnLine(posX, min.getBlockX(), max.getBlockX());
-        nearestPoint[1] = getNearestPointOnLine(posZ, min.getBlockZ(), max.getBlockZ());
-        return nearestPoint;
-    }
-
-    /**
-     * Get the nearest point on a line from another point
-     *
-     * @param p   The coordinate of the point
-     * @param min The minimum coordinate of the segment
-     * @param max The maximum coordinate of the segment
-     * @return The coordinate of the nearest point
-     */
-    private int getNearestPointOnLine(int p, int min, int max) {
-        // p is too far in positive way
-        if (p > max) {
-            return max;
-        }
-        // p is too far in negative way
-        if (p < min) {
-            return min;
-        }
-        // p is
-        return p;
-    }
-
-    /**
-     * Get a direction message from the message configuration
-     *
-     * @param path The path of the specific direction
-     * @return The message stored in the configuration
-     */
-    private String getDirectionMessage(String path) {
-        final String directionMessage = messages.getFormattedMessage("claim." + getName() + ".direction." + path);
-        return directionMessage == null ? "" : directionMessage;
-    }
-
-    /**
-     * Get the region id to the nearest point of a region from the player position
-     *
-     * @param regionData The {@link RegionData}
-     * @param x          The x coordinate of the player
-     * @param z          The z coordinate of the player
-     * @return The region id that corresponds to the direction in which is the nearest point from the player position
-     */
-    private int getDirectionId(RegionData regionData, int x, int z) {
-        // Calculate the angle
-        // y = -z (towards the North) and x = x (towards East)
-        final double rawAngle = Math.atan2(z - regionData.nearestZ, regionData.nearestX - x);
-        // Transform the angle from -pi to pi in radian to 0 to 359 in degrees as an int
-        final int sanitizedAngle = (int) Math.toDegrees(rawAngle >= 0 ? rawAngle : rawAngle + Math.PI * 2);
-        // Get the id
-        // Multiply by 10 to avoid loss of precision and add an offset of 22.5 (*10) to get the right
-        // zone as we start at the middle of the East zone
-        return (sanitizedAngle * 10 + 225) % 3600 / 450;
+        // TODO Update stats
     }
 
     @Override
-    public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
+    public @NotNull String[] getTriggers() {
+        return new String[]{"near", "n"};
+    }
+
+    @Override
+    public @NotNull String getTabCompletion() {
+        return "near";
+    }
+
+    @Override
+    public boolean canExecute(@NotNull CommandContext context) {
+        // TODO Check for world and permissions
+        return false;
+    }
+
+    @Override
+    public boolean canTabComplete(@NotNull CommandContext context) {
+        return false;
+    }
+
+    @Override
+    public List<String> tabComplete(@NotNull CommandContext context) {
         return Collections.emptyList();
     }
 
