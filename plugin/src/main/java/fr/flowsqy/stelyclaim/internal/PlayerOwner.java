@@ -27,7 +27,7 @@ public record PlayerOwner(@NotNull OfflinePlayer player) implements ClaimOwner {
 
     @Override
     public boolean own(Player player) {
-        return this.player.equals(player);
+        return Objects.equals(this.player.getUniqueId(), player.getUniqueId());
     }
 
 }
