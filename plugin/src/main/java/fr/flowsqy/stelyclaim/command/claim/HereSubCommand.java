@@ -7,7 +7,12 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
+import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
+import fr.flowsqy.stelyclaim.command.sender.PhysicCommandSender;
+import fr.flowsqy.stelyclaim.command.struct.CommandContext;
+import fr.flowsqy.stelyclaim.command.struct.CommandNode;
+import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.internal.PlayerHandler;
 import fr.flowsqy.stelyclaim.protocol.RegionFinder;
 import fr.flowsqy.stelyclaim.util.WorldName;
@@ -18,49 +23,46 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class HereSubCommand extends ProtocolSubCommand {
+public class HereSubCommand implements CommandNode {
 
-    public HereSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
-        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
+    private final ConfigurationFormattedMessages messages;
+    private final ProtocolManager protocolManager;
+
+    public HereSubCommand(@NotNull StelyClaimPlugin plugin) {
+        messages = plugin.getMessages();
+        protocolManager = plugin.getProtocolManager();
     }
 
     @Override
-    public String getHelpMessage(CommandSender sender) {
-        // It's an OtherSubCommand but the syntax does not change
-        return messages.getFormattedMessage("help." + getName());
-    }
-
-    @Override
-    public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
-        if (size != 1) {
-            final String helpMessage = getHelpMessage(sender);
-            if (helpMessage != null) {
-                sender.sendMessage(getHelpMessage(sender));
-            }
-            return false;
+    public void execute(@NotNull CommandContext context) {
+        if (context.getArgsLength() != 0) {
+            new HelpMessage().sendMessage(context); // TODO Specify here
+            return;
         }
-        final PlayerHandler handler = protocolManager.getHandler("player");
+        //final PlayerHandler handler = protocolManager.getHandler("player");
 
-        final Player player = (Player) sender;
-        final Location playerLoc = player.getLocation();
-        final RegionManager regionManager = RegionFinder.getRegionManager(new WorldName(player.getWorld().getName()), player, handler.getMessages());
+        //final Player player = (Player) sender;
+        final CommandSender sender = context.getSender().getBukkit();
+        final PhysicCommandSender physicCommandSender = context.getSender().getPhysic();
+        final Location senderLoc = physicCommandSender.getLocation();
+        final RegionManager regionManager = RegionFinder.getRegionManager(new WorldName(physicCommandSender.getWorld().getName()), sender, messages);
 
         final ApplicableRegionSet intersecting = regionManager.getApplicableRegions(
                 BlockVector3.at(
-                        playerLoc.getBlockX(),
-                        playerLoc.getBlockY(),
-                        playerLoc.getBlockZ()
+                        senderLoc.getBlockX(),
+                        senderLoc.getBlockY(),
+                        senderLoc.getBlockZ()
                 )
         );
 
-        if (!player.hasPermission(getOtherPermission())) {
+        if (!context.hasPermission(getOtherPermission())) {
             for (ProtectedRegion overlapRegion : intersecting) {
                 if (!RegionFinder.isCorrectId(overlapRegion.getId())) {
                     continue;
@@ -71,20 +73,21 @@ public class HereSubCommand extends ProtocolSubCommand {
                     continue;
                 }
 
-                if (intersectingHandler.getOwner(part[2]).own(player)) {
-                    messages.sendMessage(player, "claim.here.inside");
-                    return true;
+                if (context.getSender().isPlayer() && intersectingHandler.getOwner(part[2]).own(context.getSender().getPlayer())) {
+                    messages.sendMessage(sender, "claim.here.inside");
+                    // TODO Update stats
+                    return;
                 }
             }
-            messages.sendMessage(player, "claim.here.not-inside");
-            return true;
+            messages.sendMessage(sender, "claim.here.not-inside");
+            return; // TODO Update stats
         }
 
         final String baseMessage = messages.getFormattedMessage("claim.here.message");
         final String text = messages.getFormattedMessage("claim.here.text");
         final String separatorMessage = messages.getFormattedMessage("claim.here.separator");
 
-        if (player.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.INFO))) {
+        if (context.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.INFO))) {
             final String hover = messages.getFormattedMessage("claim.here.hover");
             final List<BaseComponent> separator = new ArrayList<>(
                     Arrays.asList(
@@ -145,13 +148,15 @@ public class HereSubCommand extends ProtocolSubCommand {
                 regions.add(component);
             }
             if (regions.isEmpty()) {
-                messages.sendMessage(player, "claim.here.nothing");
-                return true;
+                messages.sendMessage(sender, "claim.here.nothing");
+                // TODO Update stats
+                return;
             }
             final ComponentReplacer replacer = new ComponentReplacer(baseMessage);
             replacer.replace("%regions%", regions.toArray(new BaseComponent[0]));
-            player.spigot().sendMessage(replacer.create());
-            return true;
+            sender.spigot().sendMessage(replacer.create());
+            // TODO Update stats
+            return;
         }
 
         final StringBuilder builder = new StringBuilder();
@@ -176,17 +181,38 @@ public class HereSubCommand extends ProtocolSubCommand {
         }
 
         if (builder.length() == 0) {
-            messages.sendMessage(player, "claim.here.nothing");
-            return true;
+            messages.sendMessage(sender, "claim.here.nothing");
+            // TODO Update stats
+            return;
         }
 
-        player.sendMessage(baseMessage.replace("%regions%", builder.toString()));
+        sender.sendMessage(baseMessage.replace("%regions%", builder.toString()));
 
-        return true;
+        return; // TODO Update stats
     }
 
     @Override
-    public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
+    public @NotNull String[] getTriggers() {
+        return new String[]{"here", "hr"};
+    }
+
+    @Override
+    public @NotNull String getTabCompletion() {
+        return "here";
+    }
+
+    @Override
+    public boolean canExecute(@NotNull CommandContext context) {
+        return context.getSender().isPhysic() && context.hasPermission(getBasePerm());
+    }
+
+    @Override
+    public boolean canTabComplete(@NotNull CommandContext context) {
+        return canExecute(context);
+    }
+
+    @Override
+    public List<String> tabComplete(@NotNull CommandContext context) {
         return Collections.emptyList();
     }
 
