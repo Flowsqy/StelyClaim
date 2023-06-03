@@ -5,7 +5,10 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
-import fr.flowsqy.stelyclaim.internal.PlayerOwner;
+import fr.flowsqy.stelyclaim.api.ProtocolManager;
+import fr.flowsqy.stelyclaim.command.struct.CommandContext;
+import fr.flowsqy.stelyclaim.command.struct.CommandNode;
+import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.protocol.RegionFinder;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
 import fr.flowsqy.stelyclaim.util.WorldName;
@@ -15,18 +18,20 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ListAddSubCommand extends ProtocolSubCommand {
+public class ListAddSubCommand implements CommandNode {
 
+    private final ConfigurationFormattedMessages messages;
+    private final ProtocolManager protocolManager;
     private final long CACHE_PERIOD;
     private final int CACHE_SIZE_CLEAR_CHECK;
     private final int REGION_BY_PAGE;
@@ -35,68 +40,99 @@ public class ListAddSubCommand extends ProtocolSubCommand {
 
     private final String regionMessage;
 
-    public ListAddSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
-        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
+    public ListAddSubCommand(@NotNull StelyClaimPlugin plugin) {
+        messages = plugin.getMessages();
+        protocolManager = plugin.getProtocolManager();
         final Configuration configuration = plugin.getConfiguration();
-        CACHE_PERIOD = configuration.getLong(getName() + ".cache-period", 4000);
-        CACHE_SIZE_CLEAR_CHECK = configuration.getInt(getName() + ".cache-size-clear-check", 4);
-        REGION_BY_PAGE = Math.max(configuration.getInt(getName() + ".region-by-page", 5), 1);
+        CACHE_PERIOD = configuration.getLong("listadd.cache-period", 4000);
+        CACHE_SIZE_CLEAR_CHECK = configuration.getInt("listadd.cache-size-clear-check", 4);
+        REGION_BY_PAGE = Math.max(configuration.getInt("listadd.region-by-page", 5), 1);
         cache = new HashMap<>();
-        regionMessage = messages.getFormattedMessage("claim." + getName() + ".region-message");
+        regionMessage = messages.getFormattedMessage("claim.listadd.region-message");
+    }
+
+    private TextComponent getTextComponent(String category, int page, String player) {
+        final TextComponent component = new TextComponent();
+        component.setExtra(
+                Arrays.asList(
+                        TextComponent.fromLegacyText(
+                                messages.getFormattedMessage("claim.listadd." + category + "-text")
+                        )
+                )
+        );
+        component.setHoverEvent(
+                new HoverEvent(
+                        HoverEvent.Action.SHOW_TEXT,
+                        new Text(
+                                messages.getFormattedMessage("claim.listadd." + category + "-hover")
+                        )
+                )
+        );
+        component.setClickEvent(
+                new ClickEvent(
+                        ClickEvent.Action.RUN_COMMAND,
+                        "/claim listadd " + player + page
+                )
+        );
+        return component;
     }
 
     @Override
-    public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
-        final Player player = (Player) sender;
-
+    public void execute(@NotNull CommandContext context) {
         if (regionMessage == null)
-            return true;
+            return; // TODO Update stats ?
 
-        final boolean hasOtherPerm = player.hasPermission(getOtherPermission());
-        final PlayerOwner target;
+        final boolean hasOtherPerm = context.hasPermission(getOtherPermission());
+        final OfflinePlayer target;
         String pageArg = null;
         int page = 1;
-        if (size == 1) {
-            target = new PlayerOwner(player);
-        } else if (size == 2) {
-            if (hasOtherPerm) {
-                target = new PlayerOwner(OfflinePlayerRetriever.getOfflinePlayer(args.get(1)));
-            } else {
-                target = new PlayerOwner(player);
-                pageArg = args.get(1);
+        if (context.getArgsLength() == 0) {
+            if (!context.getSender().isPlayer()) {
+                new HelpMessage().sendMessage(context); // TODO Specify listadd
+                return;
             }
-        } else if (size == 3 && hasOtherPerm) {
-            target = new PlayerOwner(OfflinePlayerRetriever.getOfflinePlayer(args.get(1)));
-            pageArg = args.get(2);
+            target = context.getSender().getPlayer();
+        } else if (context.getArgsLength() == 1) {
+            if (hasOtherPerm) {
+                target = OfflinePlayerRetriever.getOfflinePlayer(context.getArg(0));
+            } else {
+                target = context.getSender().getPlayer();
+                pageArg = context.getArg(0);
+            }
+        } else if (context.getArgsLength() == 3 && hasOtherPerm) {
+            target = OfflinePlayerRetriever.getOfflinePlayer(context.getArg(0));
+            pageArg = context.getArg(1);
         } else {
-            messages.sendMessage(player, "help." + getName() + (hasOtherPerm ? "-other" : ""));
-            return false;
+            new HelpMessage().sendMessage(context); // TODO Specify listadd
+            return;
         }
-        final boolean own = target.own(player);
+        final CommandSender sender = context.getSender().getBukkit();
+        final boolean targetedIsSender = context.getSender().isPlayer() &&
+                context.getSender().getPlayer().getUniqueId().equals(target.getUniqueId());
         if (pageArg != null) {
             try {
                 page = Integer.parseInt(pageArg);
             } catch (NumberFormatException e) {
-                messages.sendMessage(player, "util.not-a-number", "%arg%", pageArg);
-                return false;
+                messages.sendMessage(sender, "util.not-a-number", "%arg%", pageArg);
+                return;
             }
             if (page < 1) {
-                messages.sendMessage(player, "claim." + getName() + ".invalid-page", "%page%", String.valueOf(page));
-                return false;
+                messages.sendMessage(sender, "claim.listadd.invalid-page", "%page%", String.valueOf(page));
+                return;
             }
         }
 
-        final World world = player.getWorld();
-        final UUID targetUUID = target.player().getUniqueId();
+        final World world = context.getSender().getPhysic().getWorld();
+        final UUID targetUUID = target.getUniqueId();
         final CacheKey cacheKey = new CacheKey(targetUUID, world.getName());
 
         CacheData cacheData = cache.get(cacheKey);
 
         // Get from cache or register
         if (cacheData == null || System.currentTimeMillis() - cacheData.initialInput > CACHE_PERIOD) {
-            final RegionManager manager = RegionFinder.getRegionManager(new WorldName(world.getName()), player, messages);
+            final RegionManager manager = RegionFinder.getRegionManager(new WorldName(world.getName()), sender, messages);
             if (manager == null)
-                return false;
+                return;
             final List<String> result = manager.getRegions().entrySet().stream()
                     .filter(entry -> {
                         final ProtectedRegion region = entry.getValue();
@@ -126,12 +162,12 @@ public class ListAddSubCommand extends ProtocolSubCommand {
         // No regions
         if (result.isEmpty()) {
             messages.sendMessage(
-                    player,
-                    "claim." + getName() + ".no-region" + (own ? "" : "-other"),
+                    sender,
+                    "claim.listadd.no-region" + (targetedIsSender ? "" : "-other"),
                     "%player%",
                     targetName
             );
-            return false;
+            return;
         }
 
         final int modulo = result.size() % REGION_BY_PAGE;
@@ -139,12 +175,12 @@ public class ListAddSubCommand extends ProtocolSubCommand {
         // Wrong page number
         if (page > pageCount) {
             messages.sendMessage(
-                    player,
-                    "claim." + getName() + ".not-enough-page",
+                    sender,
+                    "claim.listadd.not-enough-page",
                     "%page%", "%arg%",
                     String.valueOf(pageCount), String.valueOf(page)
             );
-            return false;
+            return;
         }
 
         // Send region list
@@ -162,26 +198,27 @@ public class ListAddSubCommand extends ProtocolSubCommand {
             } else {
                 regionName = regionId;
             }
-            player.sendMessage(regionMessage.replace("%region%", regionName));
+            sender.sendMessage(regionMessage.replace("%region%", regionName));
         }
 
         // Send page navigation message
-        final String pageMessage = messages.getFormattedMessage("claim." + getName() + ".page-message");
+        final String pageMessage = messages.getFormattedMessage("claim.listadd.page-message");
         if (pageMessage != null) {
             String finalMessage = pageMessage.replace("%page%", String.valueOf(page));
             if (page == 1) {
                 finalMessage = finalMessage.replace(
                         "%previous%",
-                        messages.getFormattedMessage("claim." + getName() + ".no-previous")
+                        messages.getFormattedMessage("claim.listadd.no-previous")
                 );
                 if (page == pageCount) {
                     // No previous and no next
                     finalMessage = finalMessage.replace(
                             "%next%",
-                            messages.getFormattedMessage("claim." + getName() + ".no-next")
+                            messages.getFormattedMessage("claim.listadd.no-next")
                     );
-                    player.sendMessage(finalMessage);
-                    return true;
+                    sender.sendMessage(finalMessage);
+                    // TODO Update stats
+                    return;
                 }
                 // No previous but next
                 final TextComponent nextComponent = getTextComponent(
@@ -190,17 +227,18 @@ public class ListAddSubCommand extends ProtocolSubCommand {
                         hasOtherPerm ? (targetName + " ") : ""
                 );
                 final ComponentReplacer replacer = new ComponentReplacer(finalMessage);
-                player.spigot().sendMessage(
+                sender.spigot().sendMessage(
                         replacer.replace(
                                 "%next%", new BaseComponent[]{nextComponent}
                         ).create()
                 );
-                return true;
+                // TODO Update stats
+                return;
             } else if (page == pageCount) {
                 // Previous but no next
                 finalMessage = finalMessage.replace(
                         "%next%",
-                        messages.getFormattedMessage("claim." + getName() + ".no-next")
+                        messages.getFormattedMessage("claim.listadd.no-next")
                 );
                 final TextComponent previousComponent = getTextComponent(
                         "previous",
@@ -208,12 +246,13 @@ public class ListAddSubCommand extends ProtocolSubCommand {
                         hasOtherPerm ? (targetName + " ") : ""
                 );
                 final ComponentReplacer replacer = new ComponentReplacer(finalMessage);
-                player.spigot().sendMessage(
+                sender.spigot().sendMessage(
                         replacer.replace(
                                 "%previous%", new BaseComponent[]{previousComponent}
                         ).create()
                 );
-                return true;
+                // TODO Update stats
+                return;
             } else {
                 // Previous and next
                 final ComponentReplacer replacer = new ComponentReplacer(finalMessage);
@@ -227,7 +266,7 @@ public class ListAddSubCommand extends ProtocolSubCommand {
                         page + 1,
                         hasOtherPerm ? (targetName + " ") : ""
                 );
-                player.spigot().sendMessage(
+                sender.spigot().sendMessage(
                         replacer
                                 .replace(
                                         "%previous%", new BaseComponent[]{previousComponent}
@@ -238,52 +277,43 @@ public class ListAddSubCommand extends ProtocolSubCommand {
                 );
             }
         }
-        return true;
-    }
-
-    private TextComponent getTextComponent(String category, int page, String player) {
-        final TextComponent component = new TextComponent();
-        component.setExtra(
-                Arrays.asList(
-                        TextComponent.fromLegacyText(
-                                messages.getFormattedMessage("claim." + getName() + "." + category + "-text")
-                        )
-                )
-        );
-        component.setHoverEvent(
-                new HoverEvent(
-                        HoverEvent.Action.SHOW_TEXT,
-                        new Text(
-                                messages.getFormattedMessage("claim." + getName() + "." + category + "-hover")
-                        )
-                )
-        );
-        component.setClickEvent(
-                new ClickEvent(
-                        ClickEvent.Action.RUN_COMMAND,
-                        "/claim " + getName() + " " + player + page
-                )
-        );
-        return component;
+        // TODO Update stats
     }
 
     @Override
-    public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
-        if (args.size() == 2 && sender.hasPermission(getOtherPermission())) {
-            final String arg = args.get(1).toLowerCase(Locale.ROOT);
-            final Player player = (Player) sender;
-            if (arg.isEmpty())
-                return Bukkit.getOnlinePlayers().stream()
-                        .filter(player::canSee)
-                        .map(HumanEntity::getName)
-                        .collect(Collectors.toList());
-            return Bukkit.getOnlinePlayers().stream()
-                    .filter(player::canSee)
-                    .map(HumanEntity::getName)
-                    .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(arg))
-                    .collect(Collectors.toList());
+    public @NotNull String[] getTriggers() {
+        return new String[]{"listadd", "la"};
+    }
+
+    @Override
+    public @NotNull String getTabCompletion() {
+        return "listadd";
+    }
+
+    @Override
+    public boolean canExecute(@NotNull CommandContext context) {
+        return context.getSender().isPhysic() && context.hasPermission(getCommandPerm);
+    }
+
+    @Override
+    public boolean canTabComplete(@NotNull CommandContext context) {
+        return canExecute(context);
+    }
+
+    @Override
+    public List<String> tabComplete(@NotNull CommandContext context) {
+        if (context.getArgsLength() != 1 || !context.hasPermission(getOtherPerm)) {
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
+        final String arg = context.getArg(0).toLowerCase(Locale.ROOT);
+        if (arg.isEmpty())
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(HumanEntity::getName)
+                    .collect(Collectors.toList());
+        return Bukkit.getOnlinePlayers().stream()
+                .map(HumanEntity::getName)
+                .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(arg))
+                .collect(Collectors.toList());
     }
 
     private record CacheKey(@NotNull UUID playerName, @NotNull String world) {
