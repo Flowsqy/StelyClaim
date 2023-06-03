@@ -1,58 +1,50 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.command.struct.CommandContext;
+import fr.flowsqy.stelyclaim.command.struct.CommandNode;
 import fr.flowsqy.stelyclaim.util.PillarData;
 import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class PillarSubCommand extends SubCommand {
+public class PillarSubCommand implements CommandNode {
 
-    private final HelpSubCommand helpSubCommand;
     private final Map<String, PillarData> pillarData;
     private final TeleportSync teleportSync;
 
-    public PillarSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic, HelpSubCommand helpSubCommand) {
-        super(plugin.getMessages(), name, alias, permission, console, allowedWorlds, statistic);
-        this.helpSubCommand = helpSubCommand;
+    public PillarSubCommand(@NotNull StelyClaimPlugin plugin) {
         this.pillarData = plugin.getPillarData();
         this.teleportSync = plugin.getTeleportSync();
     }
 
     @Override
-    public String getHelpMessage(CommandSender sender) {
-        // Nothing to send, invisible command
-        return null;
-    }
-
-    @Override
-    public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
-        if (args.size() != 2) {
-            helpSubCommand.execute(sender, args, size, isPlayer);
-            return false;
+    public void execute(@NotNull CommandContext context) {
+        final HelpMessage helpMessage = new HelpMessage();
+        if (context.getArgsLength() != 1) {
+            helpMessage.sendMessage(context);
+            return;
         }
-        final PillarData pillarData = this.pillarData.get(sender.getName());
+        final PillarData pillarData = this.pillarData.get(context.getSender().getBukkit().getName());
         if (pillarData == null) {
-            helpSubCommand.execute(sender, args, size, isPlayer);
-            return false;
+            helpMessage.sendMessage(context);
+            return;
         }
-        final String arg = args.get(1);
+        final String arg = context.getArg(0);
         if (arg.length() != 1) {
-            helpSubCommand.execute(sender, args, size, isPlayer);
-            return false;
+            helpMessage.sendMessage(context);
+            return;
         }
         final Location loc = pillarData.getLocations().get(arg);
         if (loc == null) {
-            helpSubCommand.execute(sender, args, size, isPlayer);
-            return false;
+            helpMessage.sendMessage(context);
+            return;
         }
         if (loc.getWorld() == null) // Normally impossible
-            return false;
+            return;
 
         final Location teleportLoc = loc.clone();
         if (teleportLoc.getX() == Math.floor(teleportLoc.getX())) {
@@ -60,13 +52,33 @@ public class PillarSubCommand extends SubCommand {
             teleportLoc.setY(loc.getWorld().getHighestBlockYAt(loc));
             teleportLoc.add(0.5, 1, 0.5);
         }
-        teleportSync.addTeleport((Player) sender, teleportLoc);
-        return true;
+        context.getSender().getMovable().setLocation(teleportSync, teleportLoc);
+        // TODO Update stats
     }
 
     @Override
-    public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
-        return Collections.emptyList();
+    public @NotNull String[] getTriggers() {
+        return new String[]{"pillar"};
+    }
+
+    @Override
+    public @NotNull String getTabCompletion() {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean canExecute(@NotNull CommandContext context) {
+        return context.getSender().isMovable();
+    }
+
+    @Override
+    public boolean canTabComplete(@NotNull CommandContext context) {
+        return false;
+    }
+
+    @Override
+    public List<String> tabComplete(@NotNull CommandContext context) {
+        throw new IllegalStateException();
     }
 
 }
