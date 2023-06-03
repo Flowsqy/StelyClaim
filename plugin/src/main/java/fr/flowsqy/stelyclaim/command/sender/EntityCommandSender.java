@@ -1,5 +1,6 @@
 package fr.flowsqy.stelyclaim.command.sender;
 
+import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -41,8 +42,8 @@ public class EntityCommandSender implements CommandSender {
     private class MovableImpl implements MovableCommandSender {
 
         @Override
-        public boolean setLocation(@NotNull Location location) {
-            return entity.teleport(location);
+        public void setLocation(@NotNull TeleportSync teleportSync, @NotNull Location location) {
+            teleportSync.addTeleport(entity, location);
         }
 
         @Override
