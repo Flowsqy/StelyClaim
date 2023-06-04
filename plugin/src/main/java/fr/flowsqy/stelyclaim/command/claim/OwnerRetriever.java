@@ -19,6 +19,10 @@ public class OwnerRetriever {
             return new HandledOwner<>(handler, owner.orElseThrow());
         }
 
+        public boolean isEmpty() {
+            return owner.isEmpty();
+        }
+
     }
 
     public static <T extends ClaimOwner> Result<T> retrieve(@NotNull Actor actor, @NotNull ClaimHandler<T> handler, @NotNull String arg) {

@@ -49,7 +49,7 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContextData> 
             return;
         }
 
-        if (owner.owner().isEmpty()) {
+        if (owner.isEmpty()) {
             return;
         }
 
