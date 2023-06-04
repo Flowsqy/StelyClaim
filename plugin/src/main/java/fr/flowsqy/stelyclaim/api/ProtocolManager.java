@@ -8,7 +8,6 @@ import fr.flowsqy.stelyclaim.protocol.selection.SelectionProtocol;
 import fr.flowsqy.stelyclaim.util.MailManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -57,12 +56,12 @@ public class ProtocolManager {
         return id == null ? null : (S) handlers.get(id);
     }
 
-    public <T extends ClaimOwner> boolean define(Player sender, ClaimHandler<T> handler, T owner) {
-        return selectionProtocol.process(sender, handler, owner, SelectionProtocol.Protocol.DEFINE);
+    public <T extends ClaimOwner> boolean define(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
+        return selectionProtocol.process(world, actor, owner, SelectionProtocol.Protocol.DEFINE);
     }
 
-    public <T extends ClaimOwner> boolean redefine(Player sender, ClaimHandler<T> handler, T owner) {
-        return selectionProtocol.process(sender, handler, owner, SelectionProtocol.Protocol.REDEFINE);
+    public <T extends ClaimOwner> boolean redefine(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
+        return selectionProtocol.process(world, actor, owner, SelectionProtocol.Protocol.REDEFINE);
     }
 
     public <T extends ClaimOwner> boolean addMember(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner, @NotNull OfflinePlayer target) {

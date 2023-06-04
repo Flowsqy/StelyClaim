@@ -17,11 +17,15 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.FormattedMessages;
+import fr.flowsqy.stelyclaim.api.HandledOwner;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.protocol.RegionFinder;
 import fr.flowsqy.stelyclaim.util.PillarTextSender;
+import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class SelectionProtocol {
 
@@ -43,37 +47,43 @@ public class SelectionProtocol {
         previousPillarTextSender = new PillarTextSender(plugin.getMessages(), "previous", plugin.getPillarData());
     }
 
-    public <T extends ClaimOwner> boolean process(Player sender, ClaimHandler<T> handler, T owner, Protocol protocol) {
+    public <T extends ClaimOwner> boolean process(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> handledOwner, @NotNull Protocol protocol) {
+        final ClaimHandler<T> handler = handledOwner.handler();
         final FormattedMessages messages = handler.getMessages();
-        final LocalSession session = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(sender));
-        final com.sk89q.worldedit.world.World world = new BukkitWorld(sender.getWorld());
+        if (!actor.isPlayer()) {
+            throw new IllegalArgumentException("Actor should be a player");
+        }
+        final Player player = actor.getPlayer();
+        final LocalSession session = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player));
+        final com.sk89q.worldedit.world.World weWorld = new BukkitWorld(world);
 
         final Region selection;
         try {
-            selection = session.getSelection(world);
+            selection = session.getSelection(weWorld);
         } catch (IncompleteRegionException exception) {
-            messages.sendMessage(sender, "claim.selection.empty");
+            messages.sendMessage(player, "claim.selection.empty");
             return false;
         }
 
         if (!(selection instanceof CuboidRegion)) {
-            messages.sendMessage(sender, "claim.selection.cuboid");
+            messages.sendMessage(player, "claim.selection.cuboid");
             return false;
         }
 
-        final boolean ownRegion = owner.own(sender);
+        final T owner = handledOwner.owner();
+        final boolean ownRegion = owner.own(player);
 
         if (!ownRegion) {
-            if (protocol == Protocol.DEFINE && !sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.DEFINE))) {
-                messages.sendMessage(sender, "help.define");
+            if (protocol == Protocol.DEFINE && !player.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.DEFINE))) {
+                messages.sendMessage(player, "help.define");
                 return false;
-            } else if (!sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.REDEFINE))) {
-                messages.sendMessage(sender, "help.redefine");
+            } else if (!player.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.REDEFINE))) {
+                messages.sendMessage(player, "help.redefine");
                 return false;
             }
         }
 
-        final RegionManager regionManager = RegionFinder.getRegionManager(world, sender, messages);
+        final RegionManager regionManager = RegionFinder.getRegionManager(weWorld, player, messages);
 
         if (regionManager == null)
             return false;
@@ -82,12 +92,12 @@ public class SelectionProtocol {
 
         final ProtectedRegion region;
         if (protocol == Protocol.DEFINE) {
-            if (RegionFinder.mustNotExist(regionManager, regionName, owner.getName(), ownRegion, sender, messages)) {
+            if (RegionFinder.mustNotExist(regionManager, regionName, owner.getName(), ownRegion, player, messages)) {
                 return false;
             }
             region = null;
         } else {
-            region = RegionFinder.mustExist(regionManager, regionName, owner.getName(), ownRegion, sender, messages);
+            region = RegionFinder.mustExist(regionManager, regionName, owner.getName(), ownRegion, actor, messages);
             if (region == null) {
                 return false;
             }
@@ -101,7 +111,7 @@ public class SelectionProtocol {
                         BlockVector3.ZERO.withY(minY - cuboidSelection.getMinimumY())
                 );
             } catch (RegionOperationException e) {
-                messages.sendMessage(sender, "util.error", "%error%", "ExpandSelection");
+                messages.sendMessage(player, "util.error", "%error%", "ExpandSelection");
                 return false;
             }
         }
@@ -140,41 +150,41 @@ public class SelectionProtocol {
         }
 
         if (builder.length() != 0) {
-            messages.sendMessage(sender, "claim.selection.overlap", "%regions%", builder.toString());
+            messages.sendMessage(player, "claim.selection.overlap", "%regions%", builder.toString());
             return false;
         }
 
         if (protocol == Protocol.DEFINE) {
-            handler.getDefineModifier().modify(sender, newRegion, owner);
+            handler.getDefineModifier().modify(player, newRegion, owner);
 
             regionManager.addRegion(newRegion);
 
-            messages.sendMessage(sender, "claim.command.define" + (ownRegion ? "" : "-other"), "%region%", owner.getName());
+            messages.sendMessage(player, "claim.command.define" + (ownRegion ? "" : "-other"), "%region%", owner.getName());
         } else {
             if (!overlapSame) {
-                messages.sendMessage(sender, "claim.selection.redefinenotoverlap");
+                messages.sendMessage(player, "claim.selection.redefinenotoverlap");
             }
 
             newRegion.copyFrom(region);
-            handler.getRedefineModifier().modify(sender, newRegion, owner);
+            handler.getRedefineModifier().modify(player, newRegion, owner);
             regionManager.addRegion(newRegion);
 
-            messages.sendMessage(sender, "claim.command.redefine" + (ownRegion ? "" : "-other"), "%region%", owner.getName());
+            messages.sendMessage(player, "claim.command.redefine" + (ownRegion ? "" : "-other"), "%region%", owner.getName());
 
             // Previous pillar manage
 
-            previousPillarTextSender.sendMessage(sender, region);
+            previousPillarTextSender.sendMessage(player, region);
         }
 
         // Pillars manage
 
-        newPillarTextSender.sendMessage(sender, newRegion);
+        newPillarTextSender.sendMessage(player, newRegion);
 
         // Mail manage
 
         if (!ownRegion) {
             plugin.getMailManager().sendInfoToOwner(
-                    sender,
+                    actor,
                     owner,
                     messages,
                     protocol == Protocol.DEFINE ? "define" : "redefine"
