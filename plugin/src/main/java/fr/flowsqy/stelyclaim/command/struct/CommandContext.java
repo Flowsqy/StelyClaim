@@ -6,16 +6,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommandContext {
+public class CommandContext<T> {
 
     private final CommandSender sender;
     private final Map<String, Boolean> permissions;
+    private final T data;
     private final String[] args;
     private int argPos;
 
-    public CommandContext(@NotNull CommandSender sender, @NotNull String[] args, int argPos) {
+    public CommandContext(@NotNull CommandSender sender, @NotNull String[] args, @NotNull T data, int argPos) {
         this.sender = sender;
         permissions = new HashMap<>();
+        this.data = data;
         this.args = args;
         this.argPos = argPos;
     }
@@ -27,6 +29,11 @@ public class CommandContext {
 
     public boolean hasPermission(@NotNull String permission) {
         return permissions.computeIfAbsent(permission, perm -> sender.getBukkit().hasPermission(perm));
+    }
+
+    @NotNull
+    public T getData() {
+        return data;
     }
 
     public int getArgsLength() {

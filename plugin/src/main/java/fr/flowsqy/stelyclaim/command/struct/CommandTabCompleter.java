@@ -4,8 +4,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface CommandTabCompleter {
+public interface CommandTabCompleter<T> {
 
-    List<String> tabComplete(@NotNull CommandContext context);
+    List<String> tabComplete(@NotNull CommandContext<T> context);
 
 }

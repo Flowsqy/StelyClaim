@@ -7,20 +7,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-public abstract class DispatchCommandTabExecutor implements CommandTabExecutor {
+public abstract class DispatchCommandTabExecutor<T> implements CommandTabExecutor<T> {
 
     @NotNull
-    public abstract List<CommandNode> getChildren();
+    public abstract List<CommandNode<T>> getChildren();
 
     @Override
-    public void execute(@NotNull CommandContext context) {
+    public void execute(@NotNull CommandContext<T> context) {
         if (context.getArgsLength() == 0) {
             return;
         }
         final String arg = context.getArg(0).toLowerCase(Locale.ENGLISH);
-        CommandNode selectedChild = null;
+        CommandNode<T> selectedChild = null;
         nodeLoop:
-        for (CommandNode child : getChildren()) {
+        for (CommandNode<T> child : getChildren()) {
             if (!child.canExecute(context)) {
                 continue;
             }
@@ -41,15 +41,15 @@ public abstract class DispatchCommandTabExecutor implements CommandTabExecutor {
         context.restoreArg();
     }
 
-    public abstract void fallBackExecute(@NotNull CommandContext context);
+    public abstract void fallBackExecute(@NotNull CommandContext<T> context);
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext context) {
+    public List<String> tabComplete(@NotNull CommandContext<T> context) {
         final String arg = context.getArg(0).toLowerCase(Locale.ENGLISH);
         if (context.getArgsLength() > 1) {
-            CommandNode selectedChild = null;
+            CommandNode<T> selectedChild = null;
             nodeLoop:
-            for (CommandNode child : getChildren()) {
+            for (CommandNode<T> child : getChildren()) {
                 if (!child.canTabComplete(context)) {
                     continue;
                 }
@@ -68,7 +68,7 @@ public abstract class DispatchCommandTabExecutor implements CommandTabExecutor {
             return selectedChild.tabComplete(context);
         }
         final List<String> completions = new LinkedList<>();
-        for (CommandNode child : getChildren()) {
+        for (CommandNode<T> child : getChildren()) {
             if (!child.canTabComplete(context)) {
                 continue;
             }

@@ -40,7 +40,7 @@ public class ClaimCommand implements TabExecutor {
     private final List<SubCommand> subCommands;
     private final SubCommand helpSubCommand;
     private int tabLimit;
-    private final CommandTabExecutor commandTabExecutor;
+    private final CommandTabExecutor<ClaimContextData> commandTabExecutor;
 
     public ClaimCommand(StelyClaimPlugin plugin) {
         this.messages = plugin.getMessages();
@@ -49,14 +49,14 @@ public class ClaimCommand implements TabExecutor {
         initCommands(plugin);
         this.statisticManager.initSubCommands(subCommands);
         helpSubCommand = subCommands.get(0);
-        commandTabExecutor = new CommandTabExecutor() {
+        commandTabExecutor = new CommandTabExecutor<>() {
             @Override
-            public void execute(@NotNull CommandContext context) {
+            public void execute(@NotNull CommandContext<ClaimContextData> context) {
 
             }
 
             @Override
-            public List<String> tabComplete(@NotNull CommandContext context) {
+            public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
                 return null;
             }
         };
@@ -65,7 +65,7 @@ public class ClaimCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         final fr.flowsqy.stelyclaim.command.sender.CommandSender commandSender = getSender(sender);
-        final CommandContext context = new CommandContext(commandSender, args, 0);
+        final CommandContext<ClaimContextData> context = new CommandContext<>(commandSender, args, new ClaimContextData(), 0);
 
         // TODO Check for statistics
         commandTabExecutor.execute(context);
@@ -75,14 +75,14 @@ public class ClaimCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         final fr.flowsqy.stelyclaim.command.sender.CommandSender commandSender = getSender(sender);
-        final CommandContext context = new CommandContext(commandSender, args, 0);
+        final CommandContext<ClaimContextData> context = new CommandContext<>(commandSender, args, new ClaimContextData(), 0);
         return commandTabExecutor.tabComplete(context);
     }
 
     @NotNull
     private fr.flowsqy.stelyclaim.command.sender.CommandSender getSender(@NotNull CommandSender sender) {
         if (sender instanceof Entity entity) {
-            return new EntityCommandSender(entity);
+            return new EntityCommandSender<>(entity);
         }
         if (sender instanceof org.bukkit.command.ConsoleCommandSender console) {
             return new ConsoleCommandSender(console);
