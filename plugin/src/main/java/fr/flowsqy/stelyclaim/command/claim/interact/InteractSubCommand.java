@@ -75,7 +75,7 @@ public abstract class InteractSubCommand implements CommandNode<ClaimContextData
 
     @Override
     public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
-        if (context.getArgsLength() != 2 || !context.hasPermission(getOtherPermission)) {
+        if (context.getArgsLength() != 1 || !context.hasPermission(getOtherPermission)) {
             return Collections.emptyList();
         }
         final String arg = context.getArg(0).toLowerCase(Locale.ENGLISH);
