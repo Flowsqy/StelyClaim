@@ -1,22 +1,27 @@
 package fr.flowsqy.stelyclaim.command.claim.selection;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.internal.PlayerHandler;
-import fr.flowsqy.stelyclaim.internal.PlayerOwner;
-import org.bukkit.entity.Player;
-
-import java.util.List;
+import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import fr.flowsqy.stelyclaim.api.HandledOwner;
+import fr.flowsqy.stelyclaim.api.ProtocolManager;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
+import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
 public class DefineSubCommand extends SelectionSubCommand {
 
-    public DefineSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
-        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
+    private final static String NAME = "define";
+    private final static String[] TRIGGERS = new String[]{NAME, "d"};
+    private final ProtocolManager protocolManager;
+
+    public DefineSubCommand(@NotNull StelyClaimPlugin plugin) {
+        super(NAME, TRIGGERS);
+        protocolManager = plugin.getProtocolManager();
     }
 
     @Override
-    protected boolean process(Player player, PlayerHandler handler, PlayerOwner owner) {
-        return protocolManager.define(player, handler, owner);
+    protected <T extends ClaimOwner> boolean interactRegion(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
+        return protocolManager.define(world, actor, owner);
     }
-
 
 }
