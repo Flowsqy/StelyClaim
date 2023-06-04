@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 public class ListAddSubCommand implements CommandNode {
 
     private final static String NAME = "listadd";
+    private final static String[] TRIGGERS = new String[]{NAME, "la"};
     private final ConfigurationFormattedMessages messages;
     private final ProtocolManager protocolManager;
     private final long CACHE_PERIOD;
@@ -283,7 +284,7 @@ public class ListAddSubCommand implements CommandNode {
 
     @Override
     public @NotNull String[] getTriggers() {
-        return new String[]{NAME, "la"};
+        return TRIGGERS;
     }
 
     @Override

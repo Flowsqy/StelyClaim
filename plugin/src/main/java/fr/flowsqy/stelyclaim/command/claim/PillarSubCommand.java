@@ -14,6 +14,7 @@ import java.util.Map;
 public class PillarSubCommand implements CommandNode {
 
     private final static String NAME = "pillar";
+    private final static String[] TRIGGERS = new String[]{NAME};
     private final Map<String, PillarData> pillarData;
     private final TeleportSync teleportSync;
 
@@ -59,7 +60,7 @@ public class PillarSubCommand implements CommandNode {
 
     @Override
     public @NotNull String[] getTriggers() {
-        return new String[]{NAME};
+        return TRIGGERS;
     }
 
     @Override

@@ -33,6 +33,7 @@ import java.util.List;
 public class HereSubCommand implements CommandNode {
 
     private final static String NAME = "here";
+    private final static String[] TRIGGERS = new String[]{NAME, "hr"};
     private final ConfigurationFormattedMessages messages;
     private final ProtocolManager protocolManager;
 
@@ -194,7 +195,7 @@ public class HereSubCommand implements CommandNode {
 
     @Override
     public @NotNull String[] getTriggers() {
-        return new String[]{NAME, "hr"};
+        return TRIGGERS;
     }
 
     @Override

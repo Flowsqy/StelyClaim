@@ -26,6 +26,7 @@ import java.util.*;
 public class NearSubCommand implements CommandNode {
 
     private final static String NAME = "near";
+    private final static String[] TRIGGERS = new String[]{NAME, "n"};
     private final ConfigurationFormattedMessages messages;
     private final ProtocolManager protocolManager;
     private final int DEFAULT_DISTANCE;
@@ -309,7 +310,7 @@ public class NearSubCommand implements CommandNode {
 
     @Override
     public @NotNull String[] getTriggers() {
-        return new String[]{NAME, "n"};
+        return TRIGGERS;
     }
 
     @Override
