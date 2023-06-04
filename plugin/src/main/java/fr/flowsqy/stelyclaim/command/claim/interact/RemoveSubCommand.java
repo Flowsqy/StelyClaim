@@ -16,7 +16,7 @@ public class RemoveSubCommand extends InteractSubCommand {
 
     public RemoveSubCommand(@NotNull StelyClaimPlugin plugin) {
         super(NAME, TRIGGERS);
-        this.protocolManager = plugin.getProtocolManager();
+        protocolManager = plugin.getProtocolManager();
     }
 
     @Override

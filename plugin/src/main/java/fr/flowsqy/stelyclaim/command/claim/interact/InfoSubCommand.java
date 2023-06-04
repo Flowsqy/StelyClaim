@@ -17,7 +17,7 @@ public class InfoSubCommand extends InteractSubCommand {
 
     public InfoSubCommand(@NotNull StelyClaimPlugin plugin) {
         super(NAME, TRIGGERS);
-        this.protocolManager = plugin.getProtocolManager();
+        protocolManager = plugin.getProtocolManager();
     }
 
     @Override
