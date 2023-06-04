@@ -1,22 +1,28 @@
 package fr.flowsqy.stelyclaim.command.claim.interact;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import fr.flowsqy.stelyclaim.api.HandledOwner;
+import fr.flowsqy.stelyclaim.api.ProtocolManager;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.protocol.interact.InfoHandler;
-import org.bukkit.entity.Player;
-
-import java.util.List;
+import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
 public class InfoSubCommand extends InteractSubCommand {
 
-    public InfoSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
-        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
+    private final static String NAME = "info";
+    private final static String[] TRIGGERS = new String[]{NAME, "i"};
+    private final ProtocolManager protocolManager;
+
+    public InfoSubCommand(@NotNull StelyClaimPlugin plugin) {
+        super(NAME, TRIGGERS);
+        this.protocolManager = plugin.getProtocolManager();
     }
 
     @Override
-    protected <T extends ClaimOwner> boolean interactRegion(Player sender, ClaimHandler<T> handler, T owner) {
-        return protocolManager.interact(sender.getWorld(), sender, handler, owner, new InfoHandler());
+    protected <T extends ClaimOwner> boolean interactRegion(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
+        return protocolManager.interact(world, actor, owner, new InfoHandler());
     }
 
 }
