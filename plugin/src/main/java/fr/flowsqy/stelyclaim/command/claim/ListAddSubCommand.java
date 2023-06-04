@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 public class ListAddSubCommand implements CommandNode {
 
+    private final static String NAME = "listadd";
     private final ConfigurationFormattedMessages messages;
     private final ProtocolManager protocolManager;
     private final long CACHE_PERIOD;
@@ -44,11 +45,11 @@ public class ListAddSubCommand implements CommandNode {
         messages = plugin.getMessages();
         protocolManager = plugin.getProtocolManager();
         final Configuration configuration = plugin.getConfiguration();
-        CACHE_PERIOD = configuration.getLong("listadd.cache-period", 4000);
-        CACHE_SIZE_CLEAR_CHECK = configuration.getInt("listadd.cache-size-clear-check", 4);
-        REGION_BY_PAGE = Math.max(configuration.getInt("listadd.region-by-page", 5), 1);
+        CACHE_PERIOD = configuration.getLong(NAME + ".cache-period", 4000);
+        CACHE_SIZE_CLEAR_CHECK = configuration.getInt(NAME + ".cache-size-clear-check", 4);
+        REGION_BY_PAGE = Math.max(configuration.getInt(NAME + ".region-by-page", 5), 1);
         cache = new HashMap<>();
-        regionMessage = messages.getFormattedMessage("claim.listadd.region-message");
+        regionMessage = messages.getFormattedMessage("claim." + NAME + ".region-message");
     }
 
     private TextComponent getTextComponent(String category, int page, String player) {
@@ -56,7 +57,7 @@ public class ListAddSubCommand implements CommandNode {
         component.setExtra(
                 Arrays.asList(
                         TextComponent.fromLegacyText(
-                                messages.getFormattedMessage("claim.listadd." + category + "-text")
+                                messages.getFormattedMessage("claim." + NAME + "." + category + "-text")
                         )
                 )
         );
@@ -64,14 +65,14 @@ public class ListAddSubCommand implements CommandNode {
                 new HoverEvent(
                         HoverEvent.Action.SHOW_TEXT,
                         new Text(
-                                messages.getFormattedMessage("claim.listadd." + category + "-hover")
+                                messages.getFormattedMessage("claim." + NAME + "." + category + "-hover")
                         )
                 )
         );
         component.setClickEvent(
                 new ClickEvent(
                         ClickEvent.Action.RUN_COMMAND,
-                        "/claim listadd " + player + page
+                        "/claim " + NAME + " " + player + page
                 )
         );
         return component;
@@ -117,7 +118,7 @@ public class ListAddSubCommand implements CommandNode {
                 return;
             }
             if (page < 1) {
-                messages.sendMessage(sender, "claim.listadd.invalid-page", "%page%", String.valueOf(page));
+                messages.sendMessage(sender, "claim." + NAME + ".invalid-page", "%page%", String.valueOf(page));
                 return;
             }
         }
@@ -163,7 +164,7 @@ public class ListAddSubCommand implements CommandNode {
         if (result.isEmpty()) {
             messages.sendMessage(
                     sender,
-                    "claim.listadd.no-region" + (targetedIsSender ? "" : "-other"),
+                    "claim." + NAME + ".no-region" + (targetedIsSender ? "" : "-other"),
                     "%player%",
                     targetName
             );
@@ -176,7 +177,7 @@ public class ListAddSubCommand implements CommandNode {
         if (page > pageCount) {
             messages.sendMessage(
                     sender,
-                    "claim.listadd.not-enough-page",
+                    "claim." + NAME + ".not-enough-page",
                     "%page%", "%arg%",
                     String.valueOf(pageCount), String.valueOf(page)
             );
@@ -202,19 +203,19 @@ public class ListAddSubCommand implements CommandNode {
         }
 
         // Send page navigation message
-        final String pageMessage = messages.getFormattedMessage("claim.listadd.page-message");
+        final String pageMessage = messages.getFormattedMessage("claim." + NAME + ".page-message");
         if (pageMessage != null) {
             String finalMessage = pageMessage.replace("%page%", String.valueOf(page));
             if (page == 1) {
                 finalMessage = finalMessage.replace(
                         "%previous%",
-                        messages.getFormattedMessage("claim.listadd.no-previous")
+                        messages.getFormattedMessage("claim." + NAME + ".no-previous")
                 );
                 if (page == pageCount) {
                     // No previous and no next
                     finalMessage = finalMessage.replace(
                             "%next%",
-                            messages.getFormattedMessage("claim.listadd.no-next")
+                            messages.getFormattedMessage("claim." + NAME + ".no-next")
                     );
                     sender.sendMessage(finalMessage);
                     // TODO Update stats
@@ -238,7 +239,7 @@ public class ListAddSubCommand implements CommandNode {
                 // Previous but no next
                 finalMessage = finalMessage.replace(
                         "%next%",
-                        messages.getFormattedMessage("claim.listadd.no-next")
+                        messages.getFormattedMessage("claim." + NAME + ".no-next")
                 );
                 final TextComponent previousComponent = getTextComponent(
                         "previous",
@@ -282,12 +283,12 @@ public class ListAddSubCommand implements CommandNode {
 
     @Override
     public @NotNull String[] getTriggers() {
-        return new String[]{"listadd", "la"};
+        return new String[]{NAME, "la"};
     }
 
     @Override
     public @NotNull String getTabCompletion() {
-        return "listadd";
+        return NAME;
     }
 
     @Override
