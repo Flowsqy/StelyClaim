@@ -12,6 +12,8 @@ public interface CommandNode<T> extends CommandTabExecutor<T> {
 
     boolean canExecute(@NotNull CommandContext<T> context);
 
-    boolean canTabComplete(@NotNull CommandContext<T> context);
+    default boolean canTabComplete(@NotNull CommandContext<T> context) {
+        return canExecute(context);
+    }
 
 }

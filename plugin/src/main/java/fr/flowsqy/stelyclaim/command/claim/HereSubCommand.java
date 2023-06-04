@@ -208,11 +208,6 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
     }
 
     @Override
-    public boolean canTabComplete(@NotNull CommandContext<ClaimContextData> context) {
-        return canExecute(context);
-    }
-
-    @Override
     public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
         return Collections.emptyList();
     }

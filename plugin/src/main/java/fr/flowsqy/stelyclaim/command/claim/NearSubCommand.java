@@ -321,12 +321,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
         // TODO Check for world and permissions
-        return false;
-    }
-
-    @Override
-    public boolean canTabComplete(@NotNull CommandContext<ClaimContextData> context) {
-        return false;
+        return context.getSender().isPhysic() && context.hasPermission(getBasePerm());
     }
 
     @Override

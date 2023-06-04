@@ -300,11 +300,6 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
     }
 
     @Override
-    public boolean canTabComplete(@NotNull CommandContext<ClaimContextData> context) {
-        return canExecute(context);
-    }
-
-    @Override
     public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
         if (context.getArgsLength() != 1 || !context.hasPermission(getOtherPerm)) {
             return Collections.emptyList();

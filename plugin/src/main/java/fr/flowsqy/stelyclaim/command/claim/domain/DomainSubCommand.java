@@ -77,11 +77,6 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContextData> 
     }
 
     @Override
-    public boolean canTabComplete(@NotNull CommandContext<ClaimContextData> context) {
-        return canExecute(context);
-    }
-
-    @Override
     public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
         final int size = context.getArgsLength();
         if (size != 1 && !(size == 2 || context.hasPermission(getOtherPerm()))) {

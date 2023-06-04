@@ -69,11 +69,6 @@ public abstract class InteractSubCommand implements CommandNode<ClaimContextData
     }
 
     @Override
-    public boolean canTabComplete(@NotNull CommandContext<ClaimContextData> context) {
-        return canExecute(context);
-    }
-
-    @Override
     public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
         if (context.getArgsLength() != 1 || !context.hasPermission(getOtherPermission)) {
             return Collections.emptyList();
