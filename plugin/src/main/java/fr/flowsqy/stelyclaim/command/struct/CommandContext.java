@@ -1,6 +1,6 @@
 package fr.flowsqy.stelyclaim.command.struct;
 
-import fr.flowsqy.stelyclaim.command.sender.CommandSender;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -8,13 +8,13 @@ import java.util.Map;
 
 public class CommandContext<T> {
 
-    private final CommandSender sender;
+    private final Actor sender;
     private final Map<String, Boolean> permissions;
     private final T data;
     private final String[] args;
     private int argPos;
 
-    public CommandContext(@NotNull CommandSender sender, @NotNull String[] args, @NotNull T data, int argPos) {
+    public CommandContext(@NotNull Actor sender, @NotNull String[] args, @NotNull T data, int argPos) {
         this.sender = sender;
         permissions = new HashMap<>();
         this.data = data;
@@ -23,7 +23,7 @@ public class CommandContext<T> {
     }
 
     @NotNull
-    public CommandSender getSender() {
+    public Actor getSender() {
         return sender;
     }
 

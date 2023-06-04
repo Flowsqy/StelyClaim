@@ -1,21 +1,22 @@
-package fr.flowsqy.stelyclaim.command.sender;
+package fr.flowsqy.stelyclaim.api.actor;
 
 import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
-public class EntityCommandSender<T extends Entity> implements CommandSender {
+public class EntityActor<T extends Entity> implements Actor {
 
     protected final T entity;
 
-    public EntityCommandSender(@NotNull T entity) {
+    public EntityActor(@NotNull T entity) {
         this.entity = entity;
     }
 
     @Override
-    public org.bukkit.command.CommandSender getBukkit() {
+    public CommandSender getBukkit() {
         return entity;
     }
 
@@ -25,7 +26,7 @@ public class EntityCommandSender<T extends Entity> implements CommandSender {
     }
 
     @Override
-    public PhysicCommandSender getPhysic() {
+    public PhysicActor getPhysic() {
         return new MovableImpl();
     }
 
@@ -35,11 +36,11 @@ public class EntityCommandSender<T extends Entity> implements CommandSender {
     }
 
     @Override
-    public MovableCommandSender getMovable() {
+    public MovableActor getMovable() {
         return new MovableImpl();
     }
 
-    private class MovableImpl implements MovableCommandSender {
+    private class MovableImpl implements MovableActor {
 
         @Override
         public void setLocation(@NotNull TeleportSync teleportSync, @NotNull Location location) {

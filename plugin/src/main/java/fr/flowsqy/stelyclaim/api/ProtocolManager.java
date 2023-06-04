@@ -1,6 +1,7 @@
 package fr.flowsqy.stelyclaim.api;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.protocol.domain.DomainProtocol;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import fr.flowsqy.stelyclaim.protocol.selection.SelectionProtocol;
@@ -8,6 +9,7 @@ import fr.flowsqy.stelyclaim.util.MailManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,8 +65,8 @@ public class ProtocolManager {
         return selectionProtocol.process(sender, handler, owner, SelectionProtocol.Protocol.REDEFINE);
     }
 
-    public <T extends ClaimOwner> boolean addMember(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
-        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.ADDMEMBER, mailManager, player));
+    public <T extends ClaimOwner> boolean addMember(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner, @NotNull OfflinePlayer target) {
+        return interact(world, actor, owner, new DomainProtocol(DomainProtocol.Protocol.ADDMEMBER, mailManager, target));
     }
 
     public <T extends ClaimOwner> boolean removeMember(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
@@ -83,8 +85,8 @@ public class ProtocolManager {
         return interact(world, sender, handler, owner, interactProtocol.getRemoveProtocolHandler());
     }
 
-    public <T extends ClaimOwner> boolean interact(World world, Player sender, ClaimHandler<T> handler, T owner, InteractProtocolHandler interactHandler) {
-        return interactProtocol.process(world, sender, handler, owner, interactHandler);
+    public <T extends ClaimOwner> boolean interact(@NotNull World world, @NotNull Actor sender, @NotNull HandledOwner<T> owner, @NotNull InteractProtocolHandler interactHandler) {
+        return interactProtocol.process(world, sender, owner, interactHandler);
     }
 
 }

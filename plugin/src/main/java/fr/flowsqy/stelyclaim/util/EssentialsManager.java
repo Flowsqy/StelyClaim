@@ -5,6 +5,7 @@ import com.earth2me.essentials.I18n;
 import com.earth2me.essentials.User;
 import com.earth2me.essentials.utils.FormatUtil;
 import com.earth2me.essentials.utils.StringUtil;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.bukkit.OfflinePlayer;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public interface EssentialsManager {
 
     void sendMail(UUID uuid, Supplier<String> message);
 
-    void sendEssentialMail(OfflinePlayer from, List<OfflinePlayer> to, Function<OfflinePlayer, String> message);
+    void sendEssentialMail(Actor from, List<OfflinePlayer> to, Function<OfflinePlayer, String> message);
 
     class NullEssentialsManager implements EssentialsManager {
         @Override
@@ -35,7 +36,7 @@ public interface EssentialsManager {
         }
 
         @Override
-        public void sendEssentialMail(OfflinePlayer from, List<OfflinePlayer> to, Function<OfflinePlayer, String> message) {
+        public void sendEssentialMail(Actor from, List<OfflinePlayer> to, Function<OfflinePlayer, String> message) {
             throw new UnsupportedOperationException();
         }
 
@@ -70,11 +71,14 @@ public interface EssentialsManager {
 
         @SuppressWarnings("deprecation") // TODO Update to new Essentials standards
         @Override
-        public void sendEssentialMail(OfflinePlayer from, List<OfflinePlayer> to, Function<OfflinePlayer, String> message) {
-            final User fromUser = essentials.getUser(from.getUniqueId());
+        public void sendEssentialMail(Actor from, List<OfflinePlayer> to, Function<OfflinePlayer, String> message) {
+            if (!from.isPlayer()) {
+                return;
+            }
+            final User fromUser = essentials.getUser(from.getPlayer().getUniqueId());
             if (fromUser == null)
                 return;
-            final String fromName = from.getName();
+            final String fromName = from.getBukkit().getName();
             for (OfflinePlayer player : to) {
                 final User user = essentials.getUser(player.getUniqueId());
                 if (user == null) {

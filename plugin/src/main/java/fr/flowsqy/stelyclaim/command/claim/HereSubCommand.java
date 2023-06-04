@@ -9,7 +9,7 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
-import fr.flowsqy.stelyclaim.command.sender.PhysicCommandSender;
+import fr.flowsqy.stelyclaim.api.actor.PhysicActor;
 import fr.flowsqy.stelyclaim.command.struct.CommandContext;
 import fr.flowsqy.stelyclaim.command.struct.CommandNode;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
@@ -52,9 +52,9 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
 
         //final Player player = (Player) sender;
         final CommandSender sender = context.getSender().getBukkit();
-        final PhysicCommandSender physicCommandSender = context.getSender().getPhysic();
-        final Location senderLoc = physicCommandSender.getLocation();
-        final RegionManager regionManager = RegionFinder.getRegionManager(new WorldName(physicCommandSender.getWorld().getName()), sender, messages);
+        final PhysicActor physicActor = context.getSender().getPhysic();
+        final Location senderLoc = physicActor.getLocation();
+        final RegionManager regionManager = RegionFinder.getRegionManager(new WorldName(physicActor.getWorld().getName()), sender, messages);
 
         final ApplicableRegionSet intersecting = regionManager.getApplicableRegions(
                 BlockVector3.at(

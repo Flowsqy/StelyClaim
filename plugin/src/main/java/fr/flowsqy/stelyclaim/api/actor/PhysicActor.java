@@ -1,10 +1,10 @@
-package fr.flowsqy.stelyclaim.command.sender;
+package fr.flowsqy.stelyclaim.api.actor;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
-public interface PhysicCommandSender {
+public interface PhysicActor {
 
     @NotNull World getWorld();
 

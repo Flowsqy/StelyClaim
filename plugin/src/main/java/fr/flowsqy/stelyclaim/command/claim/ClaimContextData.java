@@ -1,6 +1,7 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
+import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

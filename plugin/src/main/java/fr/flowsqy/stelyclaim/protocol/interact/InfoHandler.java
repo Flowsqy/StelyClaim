@@ -3,15 +3,15 @@ package fr.flowsqy.stelyclaim.protocol.interact;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.FormattedMessages;
+import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.util.PillarCoordinate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -28,7 +28,7 @@ public class InfoHandler implements InteractProtocolHandler {
     }
 
     @Override
-    public <T extends ClaimOwner> boolean interactRegion(RegionManager regionManager, ProtectedRegion region, boolean ownRegion, ClaimHandler<T> handler, T owner, Player sender, FormattedMessages messages) {
+    public <T extends ClaimOwner> boolean interactRegion(RegionManager regionManager, ProtectedRegion region, boolean ownRegion, HandledOwner<T> owner, Actor actor, FormattedMessages messages) {
         final String memberPlayerSeparator = messages.getFormattedMessage("claim.info.member-player.separator");
         final String memberGroupSeparator = messages.getFormattedMessage("claim.info.member-group.separator");
         final String ownerPlayerSeparator = messages.getFormattedMessage("claim.info.owner-player.separator");
@@ -38,7 +38,7 @@ public class InfoHandler implements InteractProtocolHandler {
         final String ownerPlayerEmpty = messages.getFormattedMessage("claim.info.owner-player.empty");
         final String ownerGroupEmpty = messages.getFormattedMessage("claim.info.owner-group.empty");
 
-        String message = messages.getFormattedMessage("claim.info.message", "%region%", owner.getName());
+        String message = messages.getFormattedMessage("claim.info.message", "%region%", owner.owner().getName());
         message = replaceDomainInfo(
                 message,
                 region.getOwners(),
@@ -54,13 +54,14 @@ public class InfoHandler implements InteractProtocolHandler {
                 memberPlayerEmpty, memberGroupEmpty
         );
 
-        final PillarCoordinate pillarCoordinate = new PillarCoordinate(region, sender.getWorld());
+        if (!actor.isPlayer()) {
+            return true;
+        }
 
+        final PillarCoordinate pillarCoordinate = new PillarCoordinate(region, actor.getPlayer().getWorld());
         message = replaceSize(message, pillarCoordinate, region);
-
         message = replacePillar(message, pillarCoordinate);
-
-        sender.sendMessage(message);
+        actor.getBukkit().sendMessage(message);
 
         return true;
     }

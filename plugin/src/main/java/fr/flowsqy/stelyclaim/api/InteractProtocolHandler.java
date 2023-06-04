@@ -2,6 +2,8 @@ package fr.flowsqy.stelyclaim.api;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public interface InteractProtocolHandler {
@@ -14,9 +16,8 @@ public interface InteractProtocolHandler {
             RegionManager regionManager,
             ProtectedRegion region,
             boolean ownRegion,
-            ClaimHandler<T> handler,
-            T owner,
-            Player sender,
+            HandledOwner<T> owner,
+            Actor actor,
             FormattedMessages messages
     );
 

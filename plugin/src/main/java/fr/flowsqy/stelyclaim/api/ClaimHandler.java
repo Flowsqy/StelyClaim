@@ -1,5 +1,7 @@
 package fr.flowsqy.stelyclaim.api;
 
+import org.jetbrains.annotations.Nullable;
+
 public interface ClaimHandler<T extends ClaimOwner> {
 
     /**
@@ -8,6 +10,8 @@ public interface ClaimHandler<T extends ClaimOwner> {
      * @return The handler identifier
      */
     String getId();
+
+    @Nullable ClaimInteractHandler<T> getClaimCommandHandler();
 
     /**
      * The owner of the claim

@@ -12,11 +12,11 @@ import fr.flowsqy.stelyclaim.command.claim.interact.TeleportSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.selection.DefineSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.selection.RedefineSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.statistics.StatsSubCommand;
-import fr.flowsqy.stelyclaim.command.sender.BlockCommandSender;
-import fr.flowsqy.stelyclaim.command.sender.ConsoleCommandSender;
-import fr.flowsqy.stelyclaim.command.sender.EntityCommandSender;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
+import fr.flowsqy.stelyclaim.api.actor.BlockActor;
+import fr.flowsqy.stelyclaim.api.actor.ConsoleActor;
+import fr.flowsqy.stelyclaim.api.actor.EntityActor;
 import fr.flowsqy.stelyclaim.command.struct.CommandContext;
-import fr.flowsqy.stelyclaim.command.struct.CommandExecutor;
 import fr.flowsqy.stelyclaim.command.struct.CommandTabExecutor;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
@@ -64,8 +64,8 @@ public class ClaimCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        final fr.flowsqy.stelyclaim.command.sender.CommandSender commandSender = getSender(sender);
-        final CommandContext<ClaimContextData> context = new CommandContext<>(commandSender, args, new ClaimContextData(), 0);
+        final Actor actor = getActor(sender);
+        final CommandContext<ClaimContextData> context = new CommandContext<>(actor, args, new ClaimContextData(), 0);
 
         // TODO Check for statistics
         commandTabExecutor.execute(context);
@@ -79,21 +79,21 @@ public class ClaimCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-        final fr.flowsqy.stelyclaim.command.sender.CommandSender commandSender = getSender(sender);
-        final CommandContext<ClaimContextData> context = new CommandContext<>(commandSender, args, new ClaimContextData(), 0);
+        final Actor actor = getActor(sender);
+        final CommandContext<ClaimContextData> context = new CommandContext<>(actor, args, new ClaimContextData(), 0);
         return commandTabExecutor.tabComplete(context);
     }
 
     @NotNull
-    private fr.flowsqy.stelyclaim.command.sender.CommandSender getSender(@NotNull CommandSender sender) {
+    private Actor getActor(@NotNull CommandSender sender) {
         if (sender instanceof Entity entity) {
-            return new EntityCommandSender<>(entity);
+            return new EntityActor<>(entity);
         }
         if (sender instanceof org.bukkit.command.ConsoleCommandSender console) {
-            return new ConsoleCommandSender(console);
+            return new ConsoleActor(console);
         }
         if (sender instanceof org.bukkit.command.BlockCommandSender block) {
-            return new BlockCommandSender(block);
+            return new BlockActor(block);
         }
         throw new UnsupportedOperationException("Unsupported command sender type: " + sender.getClass());
     }

@@ -4,15 +4,14 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionType;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.ClaimHandler;
-import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import fr.flowsqy.stelyclaim.api.FormattedMessages;
-import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
+import fr.flowsqy.stelyclaim.api.*;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.protocol.RegionFinder;
 import fr.flowsqy.stelyclaim.util.WorldName;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 public class InteractProtocol {
 
@@ -26,10 +25,13 @@ public class InteractProtocol {
         return removeProtocolHandler;
     }
 
-    public <T extends ClaimOwner> boolean process(World world, Player sender, ClaimHandler<T> handler, T owner, InteractProtocolHandler interactProtocolHandler) {
+    public <T extends ClaimOwner> boolean process(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> handledOwner, @NotNull InteractProtocolHandler interactProtocolHandler) {
+        final T owner = handledOwner.owner();
+        final ClaimHandler<T> handler = handledOwner.handler();
         final FormattedMessages messages = handler.getMessages();
 
-        final boolean ownRegion = owner.own(sender);
+        final CommandSender sender = actor.getBukkit();
+        final boolean ownRegion = actor.isPlayer() && owner.own(actor.getPlayer());
 
         if (!ownRegion && !sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(interactProtocolHandler.getPermission()))) {
             messages.sendMessage(sender, "help." + interactProtocolHandler.getName());
@@ -42,7 +44,7 @@ public class InteractProtocol {
 
         final String regionName = RegionFinder.getRegionName(handler, owner);
 
-        final ProtectedRegion region = RegionFinder.mustExist(regionManager, regionName, owner.getName(), ownRegion, sender, messages);
+        final ProtectedRegion region = RegionFinder.mustExist(regionManager, regionName, owner.getName(), ownRegion, actor, messages);
         if (region == null)
             return false;
 
@@ -51,7 +53,7 @@ public class InteractProtocol {
             return false;
         }
 
-        return interactProtocolHandler.interactRegion(regionManager, region, ownRegion, handler, owner, sender, messages);
+        return interactProtocolHandler.interactRegion(regionManager, region, ownRegion, handledOwner, actor, messages);
     }
 
 }

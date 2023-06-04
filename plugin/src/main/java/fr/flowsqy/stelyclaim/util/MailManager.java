@@ -2,6 +2,7 @@ package fr.flowsqy.stelyclaim.util;
 
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.FormattedMessages;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.Configuration;
@@ -38,7 +39,7 @@ public class MailManager {
         return essentialsManager.isEnable();
     }
 
-    private void sendMail(Player from, List<OfflinePlayer> to, String command, OfflinePlayer target) {
+    private void sendMail(Actor from, List<OfflinePlayer> to, String command, OfflinePlayer target) {
         if (!isEnabled())
             return;
         final Boolean customFormat = commands.get(command);
@@ -49,13 +50,13 @@ public class MailManager {
             mailMessage = messages.getFormattedMessage(
                     "mail." + command,
                     "%from%", "%target%",
-                    from.getName(), target.getName()
+                    from.getBukkit().getName(), target.getName()
             );
         } else {
             mailMessage = messages.getFormattedMessage(
                     "mail." + command,
                     "%from%",
-                    from.getName()
+                    from.getBukkit().getName()
             );
         }
 
@@ -68,11 +69,11 @@ public class MailManager {
         }
     }
 
-    public void sendInfoToOwner(Player sender, ClaimOwner owner, FormattedMessages messages, String command) {
-        sendInfoToOwner(sender, owner, messages, command, null);
+    public void sendInfoToOwner(Actor actor, ClaimOwner owner, FormattedMessages messages, String command) {
+        sendInfoToOwner(actor, owner, messages, command, null);
     }
 
-    public void sendInfoToOwner(Player sender, ClaimOwner owner, FormattedMessages messages, String command, OfflinePlayer target) {
+    public void sendInfoToOwner(Actor actor, ClaimOwner owner, FormattedMessages messages, String command, OfflinePlayer target) {
         final Set<OfflinePlayer> mailablePlayers = owner.getMailable();
         final List<Player> connectedPlayers = new ArrayList<>();
         final List<OfflinePlayer> disconnectedPlayers = new ArrayList<>();
@@ -89,9 +90,9 @@ public class MailManager {
         if (!connectedPlayers.isEmpty()) {
             final String[] replaces;
             if (target == null) {
-                replaces = new String[]{"%sender%", sender.getName()};
+                replaces = new String[]{"%sender%", actor.getBukkit().getName()};
             } else {
-                replaces = new String[]{"%sender%", "%target%", sender.getName(), target.getName()};
+                replaces = new String[]{"%sender%", "%target%", actor.getBukkit().getName(), target.getName()};
             }
             final String message = messages.getFormattedMessage("claim.target." + command, replaces);
             for (Player player : connectedPlayers) {
@@ -100,7 +101,7 @@ public class MailManager {
         }
         if (!disconnectedPlayers.isEmpty()) {
             sendMail(
-                    sender,
+                    actor,
                     disconnectedPlayers,
                     command,
                     target

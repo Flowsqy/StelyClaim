@@ -1,80 +1,99 @@
 package fr.flowsqy.stelyclaim.command.claim.domain;
 
-import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import fr.flowsqy.stelyclaim.command.claim.ProtocolSubCommand;
-import fr.flowsqy.stelyclaim.internal.PlayerOwner;
+import fr.flowsqy.stelyclaim.api.HandledOwner;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
+import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
+import fr.flowsqy.stelyclaim.command.claim.OwnerRetriever;
+import fr.flowsqy.stelyclaim.command.struct.CommandContext;
+import fr.flowsqy.stelyclaim.command.struct.CommandNode;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public abstract class DomainSubCommand extends ProtocolSubCommand {
+public abstract class DomainSubCommand implements CommandNode<ClaimContextData> {
 
-    public DomainSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
-        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
+    private final String name;
+    private final String[] triggers;
+
+    public DomainSubCommand(@NotNull String name, @NotNull String[] triggers) {
+        this.name = name;
+        this.triggers = triggers;
     }
 
     @Override
-    public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
-        final Player player = (Player) sender;
-
-        if (size == 2) {
-            return interact(
-                    player.getWorld(),
-                    player,
-                    protocolManager.getHandler("player"),
-                    new PlayerOwner(player),
-                    OfflinePlayerRetriever.getOfflinePlayer(args.get(1))
-            );
-        }
-        if (size == 3) {
-            return interact(
-                    player.getWorld(),
-                    player,
-                    protocolManager.getHandler("player"),
-                    new PlayerOwner(OfflinePlayerRetriever.getOfflinePlayer(args.get(1))),
-                    OfflinePlayerRetriever.getOfflinePlayer(args.get(2))
-            );
+    public void execute(@NotNull CommandContext<ClaimContextData> context) {
+        final OwnerRetriever.Result<?> owner;
+        final String target;
+        if (context.getArgsLength() == 1) {
+            if (!context.getSender().isPlayer()) {
+                new HelpMessage().sendMessage(context); // TODO Specify name
+                return;
+            }
+            owner = OwnerRetriever.retrieve(context.getSender(), context.getData().getHandler(), context.getSender().getPlayer());
+            target = context.getArg(0);
+        } else if (context.getArgsLength() == 2) {
+            owner = OwnerRetriever.retrieve(context.getSender(), context.getData().getHandler(), context.getArg(0));
+            target = context.getArg(1);
+        } else {
+            new HelpMessage().sendMessage(context); // TODO Specify name
+            return;
         }
 
+        if (owner.owner().isEmpty()) {
+            return;
+        }
 
-        final boolean hasOtherPerm = player.hasPermission(getPermission() + "-other");
-        messages.sendMessage(player, "help." + getName() + (hasOtherPerm ? "-other" : ""));
-        return false;
+        final OfflinePlayer targetPlayer = OfflinePlayerRetriever.getOfflinePlayer(target);
+        final Actor sender = context.getSender();
+        final boolean success = interact(sender, sender.getPhysic().getWorld(), owner.toHandledOwner(), targetPlayer);
+        if (success) {
+            context.getData().setStatistic(name);
+        }
     }
 
-    protected abstract <T extends ClaimOwner> boolean interact(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer target);
+    @Override
+    public @NotNull String[] getTriggers() {
+        return triggers;
+    }
 
     @Override
-    public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
-        final int size = args.size();
-        if (
-                size == 2 ||
-                        (size == 3 &&
-                                (
-                                        sender.getName().toLowerCase(Locale.ROOT).startsWith(args.get(2).toLowerCase(Locale.ROOT)) ||
-                                                sender.hasPermission(getPermission() + "-other")
-                                )
-                        )
-        ) {
-            final String arg = args.get(size - 1).toLowerCase(Locale.ROOT);
-            final Player player = (Player) sender;
-            return Bukkit.getOnlinePlayers().stream()
-                    .filter(player::canSee)
-                    .map(HumanEntity::getName)
-                    .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(arg))
-                    .collect(Collectors.toList());
-        } else
+    public @NotNull String getTabCompletion() {
+        return name;
+    }
+
+    @Override
+    public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
+        return context.getSender().isPhysic() && context.hasPermission(getBasePerm());
+    }
+
+    @Override
+    public boolean canTabComplete(@NotNull CommandContext<ClaimContextData> context) {
+        return canExecute(context);
+    }
+
+    @Override
+    public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
+        final int size = context.getArgsLength();
+        if (size != 1 && !(size == 2 || context.hasPermission(getOtherPerm()))) {
             return Collections.emptyList();
+        }
+        final String arg = context.getArg(context.getArgsLength() - 1).toLowerCase(Locale.ENGLISH);
+        return Bukkit.getOnlinePlayers().stream()
+                .map(HumanEntity::getName)
+                .filter(name -> name.toLowerCase(Locale.ENGLISH).startsWith(arg))
+                .collect(Collectors.toList());
     }
+
+    protected abstract <T extends ClaimOwner> boolean interact(@NotNull Actor actor, @NotNull World world, @NotNull HandledOwner<T> owner, @NotNull OfflinePlayer target);
+
 }

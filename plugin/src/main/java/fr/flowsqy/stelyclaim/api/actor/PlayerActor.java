@@ -1,11 +1,11 @@
-package fr.flowsqy.stelyclaim.command.sender;
+package fr.flowsqy.stelyclaim.api.actor;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class PlayerCommandSender extends EntityCommandSender<Player> {
+public class PlayerActor extends EntityActor<Player> {
 
-    public PlayerCommandSender(@NotNull Player entity) {
+    public PlayerActor(@NotNull Player entity) {
         super(entity);
     }
 

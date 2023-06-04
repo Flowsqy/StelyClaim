@@ -1,20 +1,22 @@
-package fr.flowsqy.stelyclaim.command.sender;
+package fr.flowsqy.stelyclaim.api.actor;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.BlockCommandSender;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class BlockCommandSender implements CommandSender {
+public class BlockActor implements Actor {
 
-    private final org.bukkit.command.BlockCommandSender block;
+    private final BlockCommandSender block;
 
-    public BlockCommandSender(org.bukkit.command.BlockCommandSender block) {
+    public BlockActor(BlockCommandSender block) {
         this.block = block;
     }
 
     @Override
-    public org.bukkit.command.CommandSender getBukkit() {
+    public CommandSender getBukkit() {
         return block;
     }
 
@@ -24,17 +26,17 @@ public class BlockCommandSender implements CommandSender {
     }
 
     @Override
-    public PhysicCommandSender getPhysic() {
+    public PhysicActor getPhysic() {
         return new PhysicImpl();
     }
 
-    private class PhysicImpl implements PhysicCommandSender {
+    private class PhysicImpl implements PhysicActor {
 
         @NotNull
         private final Block block;
 
         public PhysicImpl() {
-            this.block = BlockCommandSender.this.block.getBlock();
+            this.block = BlockActor.this.block.getBlock();
         }
 
         @Override

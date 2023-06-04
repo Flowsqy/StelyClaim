@@ -3,14 +3,14 @@ package fr.flowsqy.stelyclaim.protocol.domain;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.FormattedMessages;
+import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.util.MailManager;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -40,14 +40,15 @@ public class DomainProtocol implements InteractProtocolHandler {
     }
 
     @Override
-    public <T extends ClaimOwner> boolean interactRegion(RegionManager regionManager, ProtectedRegion region, boolean ownRegion, ClaimHandler<T> handler, T owner, Player sender, FormattedMessages messages) {
+    public <T extends ClaimOwner> boolean interactRegion(RegionManager regionManager, ProtectedRegion region, boolean ownRegion, HandledOwner<T> handledOwner, Actor actor, FormattedMessages messages) {
+        final T owner = handledOwner.owner();
         final DefaultDomain domain = protocol.getDomain().apply(region);
         final UUID uuid = target.getUniqueId();
         final boolean state = protocol.isState();
         final boolean result = protocol.getContains().apply(domain, uuid);
         if ((state && result) || (!state && !result)) {
             messages.sendMessage(
-                    sender,
+                    actor.getBukkit(),
                     "claim.domain." + (protocol.isOwner() ? "owner" : "member") + "." + (state ? "already" : "not") + (ownRegion ? "" : "-other"),
                     "%region%", "%target%",
                     owner.getName(), target.getName()
@@ -56,14 +57,14 @@ public class DomainProtocol implements InteractProtocolHandler {
         }
         protocol.getAction().accept(domain, uuid);
         messages.sendMessage(
-                sender,
+                actor.getBukkit(),
                 "claim.command." + protocol.getName() + (ownRegion ? "" : "-other"),
                 "%region%", "%target%",
                 owner.getName(), target.getName()
         );
 
         if (!ownRegion) {
-            mailManager.sendInfoToOwner(sender, owner, messages, protocol.getName(), target);
+            mailManager.sendInfoToOwner(actor, owner, messages, protocol.getName(), target);
         }
 
         return true;
