@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 
-public class PillarSubCommand implements CommandNode {
+public class PillarSubCommand implements CommandNode<ClaimContextData> {
 
     private final static String NAME = "pillar";
     private final static String[] TRIGGERS = new String[]{NAME};
@@ -24,7 +24,7 @@ public class PillarSubCommand implements CommandNode {
     }
 
     @Override
-    public void execute(@NotNull CommandContext context) {
+    public void execute(@NotNull CommandContext<ClaimContextData> context) {
         final HelpMessage helpMessage = new HelpMessage();
         if (context.getArgsLength() != 1) {
             helpMessage.sendMessage(context);
@@ -69,17 +69,17 @@ public class PillarSubCommand implements CommandNode {
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext context) {
+    public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
         return context.getSender().isMovable();
     }
 
     @Override
-    public boolean canTabComplete(@NotNull CommandContext context) {
+    public boolean canTabComplete(@NotNull CommandContext<ClaimContextData> context) {
         return false;
     }
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext context) {
+    public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
         throw new IllegalStateException();
     }
 

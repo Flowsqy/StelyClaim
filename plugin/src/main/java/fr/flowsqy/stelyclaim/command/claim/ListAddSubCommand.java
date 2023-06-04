@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ListAddSubCommand implements CommandNode {
+public class ListAddSubCommand implements CommandNode<ClaimContextData> {
 
     private final static String NAME = "listadd";
     private final static String[] TRIGGERS = new String[]{NAME, "la"};
@@ -80,7 +80,7 @@ public class ListAddSubCommand implements CommandNode {
     }
 
     @Override
-    public void execute(@NotNull CommandContext context) {
+    public void execute(@NotNull CommandContext<ClaimContextData> context) {
         if (regionMessage == null)
             return; // TODO Update stats ?
 
@@ -293,17 +293,17 @@ public class ListAddSubCommand implements CommandNode {
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext context) {
+    public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
         return context.getSender().isPhysic() && context.hasPermission(getCommandPerm);
     }
 
     @Override
-    public boolean canTabComplete(@NotNull CommandContext context) {
+    public boolean canTabComplete(@NotNull CommandContext<ClaimContextData> context) {
         return canExecute(context);
     }
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext context) {
+    public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
         if (context.getArgsLength() != 1 || !context.hasPermission(getOtherPerm)) {
             return Collections.emptyList();
         }

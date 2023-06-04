@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class HereSubCommand implements CommandNode {
+public class HereSubCommand implements CommandNode<ClaimContextData> {
 
     private final static String NAME = "here";
     private final static String[] TRIGGERS = new String[]{NAME, "hr"};
@@ -43,7 +43,7 @@ public class HereSubCommand implements CommandNode {
     }
 
     @Override
-    public void execute(@NotNull CommandContext context) {
+    public void execute(@NotNull CommandContext<ClaimContextData> context) {
         if (context.getArgsLength() != 0) {
             new HelpMessage().sendMessage(context); // TODO Specify here
             return;
@@ -204,17 +204,17 @@ public class HereSubCommand implements CommandNode {
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext context) {
+    public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
         return context.getSender().isPhysic() && context.hasPermission(getBasePerm());
     }
 
     @Override
-    public boolean canTabComplete(@NotNull CommandContext context) {
+    public boolean canTabComplete(@NotNull CommandContext<ClaimContextData> context) {
         return canExecute(context);
     }
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext context) {
+    public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
         return Collections.emptyList();
     }
 
