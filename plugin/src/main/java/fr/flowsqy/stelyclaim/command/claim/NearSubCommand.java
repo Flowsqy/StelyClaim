@@ -25,6 +25,7 @@ import java.util.*;
 
 public class NearSubCommand implements CommandNode {
 
+    private final static String NAME = "near";
     private final ConfigurationFormattedMessages messages;
     private final ProtocolManager protocolManager;
     private final int DEFAULT_DISTANCE;
@@ -38,12 +39,12 @@ public class NearSubCommand implements CommandNode {
         messages = plugin.getMessages();
         final YamlConfiguration configuration = plugin.getConfiguration();
         // The distances should be >= 1 (0 is /claim here and bellow it does not make any sense)
-        DEFAULT_DISTANCE = Math.max(configuration.getInt("near.default-distance", 200), 1);
-        DEFAULT_MAX_DISTANCE = Math.max(configuration.getInt("near.base-max-distance", 200), 1);
-        COOLDOWN = configuration.getLong("near.cooldown", 1000L);
-        COOLDOWN_SIZE_CLEAR_CHECK = configuration.getInt("near.cooldown-size-clear-check", 4);
+        DEFAULT_DISTANCE = Math.max(configuration.getInt(NAME + ".default-distance", 200), 1);
+        DEFAULT_MAX_DISTANCE = Math.max(configuration.getInt(NAME + ".base-max-distance", 200), 1);
+        COOLDOWN = configuration.getLong(NAME + ".cooldown", 1000L);
+        COOLDOWN_SIZE_CLEAR_CHECK = configuration.getInt(NAME + ".cooldown-size-clear-check", 4);
         // The minimal amount should be one (0 Show nothing and bellow, it does not make any sense)
-        MAXIMAL_REGION_AMOUNT = Math.max(configuration.getInt("near.maximal-region-amount", 10), 1);
+        MAXIMAL_REGION_AMOUNT = Math.max(configuration.getInt(NAME + ".maximal-region-amount", 10), 1);
         lastExecTimeByPlayerId = new HashMap<>();
         protocolManager = plugin.getProtocolManager();
     }
@@ -95,7 +96,7 @@ public class NearSubCommand implements CommandNode {
      * @return The message stored in the configuration
      */
     private String getDirectionMessage(String path) {
-        final String directionMessage = messages.getFormattedMessage("claim.near.direction." + path);
+        final String directionMessage = messages.getFormattedMessage("claim." + NAME + ".direction." + path);
         return directionMessage == null ? "" : directionMessage;
     }
 
@@ -121,7 +122,7 @@ public class NearSubCommand implements CommandNode {
 
     @Override
     public void execute(@NotNull CommandContext context) {
-        // Check if there is more than 'near' and a distance
+        // Check if there is more than a distance
         if (context.getArgsLength() > 1) {
             // Send help message
             new HelpMessage().sendMessage(context); // TODO Specify near
@@ -149,7 +150,7 @@ public class NearSubCommand implements CommandNode {
 
             // Check if the distance is valid (>= 1)
             if (distance < 1) {
-                messages.sendMessage(sender, "claim.near.invalid-distance", "%distance%", String.valueOf(distance));
+                messages.sendMessage(sender, "claim." + NAME + ".invalid-distance", "%distance%", String.valueOf(distance));
                 return;
             }
 
@@ -157,7 +158,7 @@ public class NearSubCommand implements CommandNode {
             if (distance > DEFAULT_MAX_DISTANCE && !hasFullPerm) {
                 messages.sendMessage(
                         sender,
-                        "claim.near.limit",
+                        "claim." + NAME + ".limit",
                         "%distance%", "%max-distance%", String.valueOf(distance), String.valueOf(DEFAULT_MAX_DISTANCE)
                 );
                 return;
@@ -172,7 +173,7 @@ public class NearSubCommand implements CommandNode {
         // Cooldown of the command
         // Check if cooldown is still active
         if (System.currentTimeMillis() - lastExecTimeByPlayerId.getOrDefault(player.getUniqueId(), 0L) < COOLDOWN) {
-            messages.sendMessage(sender, "claim.near.cooldown");
+            messages.sendMessage(sender, "claim." + NAME + ".cooldown");
             return;
         }
 
@@ -255,16 +256,16 @@ public class NearSubCommand implements CommandNode {
 
         // If there is no intersection, it means there is no region
         if (detectedRegions.isEmpty()) {
-            messages.sendMessage(sender, "claim.near.no-region", "%distance%", String.valueOf(distance));
+            messages.sendMessage(sender, "claim." + NAME + ".no-region", "%distance%", String.valueOf(distance));
             // TODO Update stats
             return;
         }
 
         // Send header
-        messages.sendMessage(sender, "claim.near.header", "%region-count%", String.valueOf(detectedRegions.size()));
+        messages.sendMessage(sender, "claim." + NAME + ".header", "%region-count%", String.valueOf(detectedRegions.size()));
 
         // Get the general message
-        final String nearMessage = messages.getFormattedMessage("claim.near.region");
+        final String nearMessage = messages.getFormattedMessage("claim." + NAME + ".region");
         if (nearMessage != null) {
             // Sort it by distances
             detectedRegions.sort(Comparator.comparingDouble(RegionData::getDistance));
@@ -301,19 +302,19 @@ public class NearSubCommand implements CommandNode {
         }
 
         // Send footer
-        messages.sendMessage(sender, "claim.near.footer", "%region-count%", String.valueOf(detectedRegions.size()));
+        messages.sendMessage(sender, "claim." + NAME + ".footer", "%region-count%", String.valueOf(detectedRegions.size()));
 
         // TODO Update stats
     }
 
     @Override
     public @NotNull String[] getTriggers() {
-        return new String[]{"near", "n"};
+        return new String[]{NAME, "n"};
     }
 
     @Override
     public @NotNull String getTabCompletion() {
-        return "near";
+        return NAME;
     }
 
     @Override
