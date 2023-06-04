@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class StatisticManager {
 
@@ -21,7 +23,7 @@ public class StatisticManager {
     private final YamlConfiguration config;
     private final Set<String> commands;
     private final Map<String, Map<String, Integer>> data;
-
+    private final Lock lock;
     private boolean launch = false;
 
     public StatisticManager(Plugin plugin, File dataFolder) {
@@ -30,6 +32,7 @@ public class StatisticManager {
         this.config = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
         this.commands = new HashSet<>();
         this.data = new HashMap<>();
+        lock = new ReentrantLock();
         initData();
     }
 
@@ -55,19 +58,32 @@ public class StatisticManager {
     }
 
     public void saveTask() {
-        if (launch)
-            return;
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-            saveFile();
-            launch = false;
-        }, 20L);
-        launch = true;
+        try {
+            lock.lock();
+            if (launch)
+                return;
+            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+                try {
+                    lock.lock();
+                    saveFile();
+                    launch = false;
+                } finally {
+                    lock.unlock();
+                }
+            }, 20L);
+            launch = true;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public void saveFile() {
         try {
+            lock.lock();
             config.save(file);
         } catch (IOException ignored) {
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -84,41 +100,66 @@ public class StatisticManager {
     }
 
     public int add(CommandSender player, String command) {
-        if (!commands.contains(command))
-            return -1;
-        final Map<String, Integer> playerData = data.computeIfAbsent(player.getName(), key -> new HashMap<>());
-        final int stat = playerData.merge(command, 1, Integer::sum);
-        config.set(getPath(player.getName(), command), stat);
-        return stat;
+        try {
+            lock.lock();
+            if (!commands.contains(command))
+                return -1;
+            final Map<String, Integer> playerData = data.computeIfAbsent(player.getName(), key -> new HashMap<>());
+            final int stat = playerData.merge(command, 1, Integer::sum);
+            config.set(getPath(player.getName(), command), stat);
+            return stat;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public int get(String playerName, String command) {
-        if (!commands.contains(command))
-            return -1;
-        final Map<String, Integer> playerData = data.get(playerName);
-        return playerData == null ? 0 : playerData.getOrDefault(command, 0);
+        try {
+            lock.lock();
+            if (!commands.contains(command))
+                return -1;
+            final Map<String, Integer> playerData = data.get(playerName);
+            return playerData == null ? 0 : playerData.getOrDefault(command, 0);
+        } finally {
+            lock.unlock();
+        }
     }
 
     public int getTotal(String playerName) {
-        final Map<String, Integer> playerData = data.get(playerName);
-        return playerData == null ? 0 : playerData.values().stream().mapToInt(value -> value).sum();
+        try {
+            lock.lock();
+            final Map<String, Integer> playerData = data.get(playerName);
+            return playerData == null ? 0 : playerData.values().stream().mapToInt(value -> value).sum();
+        } finally {
+            lock.unlock();
+        }
     }
 
     public boolean remove(String playerName) {
-        final boolean result = data.remove(playerName) != null;
-        if (result)
-            config.set(playerName, null);
-        return result;
+        try {
+            lock.lock();
+            final boolean result = data.remove(playerName) != null;
+            if (result)
+                config.set(playerName, null);
+            return result;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public boolean removeStat(String playerName, String command) {
         if (!commands.contains(command))
             return false;
-        final Map<String, Integer> playerData = data.get(playerName);
-        final boolean result = playerData != null && playerData.remove(command) != null;
-        if (result)
-            config.set(getPath(playerName, command), null);
-        return result;
+        try {
+            lock.lock();
+            final Map<String, Integer> playerData = data.get(playerName);
+            final boolean result = playerData != null && playerData.remove(command) != null;
+            if (result)
+                config.set(getPath(playerName, command), null);
+            return result;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public boolean allowStats(String command) {
