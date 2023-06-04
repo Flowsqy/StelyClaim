@@ -32,6 +32,7 @@ import java.util.List;
 
 public class HereSubCommand implements CommandNode {
 
+    private final static String NAME = "here";
     private final ConfigurationFormattedMessages messages;
     private final ProtocolManager protocolManager;
 
@@ -74,21 +75,21 @@ public class HereSubCommand implements CommandNode {
                 }
 
                 if (context.getSender().isPlayer() && intersectingHandler.getOwner(part[2]).own(context.getSender().getPlayer())) {
-                    messages.sendMessage(sender, "claim.here.inside");
+                    messages.sendMessage(sender, "claim." + NAME + ".inside");
                     // TODO Update stats
                     return;
                 }
             }
-            messages.sendMessage(sender, "claim.here.not-inside");
+            messages.sendMessage(sender, "claim." + NAME + ".not-inside");
             return; // TODO Update stats
         }
 
-        final String baseMessage = messages.getFormattedMessage("claim.here.message");
-        final String text = messages.getFormattedMessage("claim.here.text");
-        final String separatorMessage = messages.getFormattedMessage("claim.here.separator");
+        final String baseMessage = messages.getFormattedMessage("claim." + NAME + ".message");
+        final String text = messages.getFormattedMessage("claim." + NAME + ".text");
+        final String separatorMessage = messages.getFormattedMessage("claim." + NAME + ".separator");
 
         if (context.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.INFO))) {
-            final String hover = messages.getFormattedMessage("claim.here.hover");
+            final String hover = messages.getFormattedMessage("claim." + NAME + ".hover");
             final List<BaseComponent> separator = new ArrayList<>(
                     Arrays.asList(
                             TextComponent.fromLegacyText(
@@ -148,7 +149,7 @@ public class HereSubCommand implements CommandNode {
                 regions.add(component);
             }
             if (regions.isEmpty()) {
-                messages.sendMessage(sender, "claim.here.nothing");
+                messages.sendMessage(sender, "claim." + NAME + ".nothing");
                 // TODO Update stats
                 return;
             }
@@ -181,24 +182,24 @@ public class HereSubCommand implements CommandNode {
         }
 
         if (builder.length() == 0) {
-            messages.sendMessage(sender, "claim.here.nothing");
+            messages.sendMessage(sender, "claim." + NAME + ".nothing");
             // TODO Update stats
             return;
         }
 
         sender.sendMessage(baseMessage.replace("%regions%", builder.toString()));
 
-        return; // TODO Update stats
+        // TODO Update stats
     }
 
     @Override
     public @NotNull String[] getTriggers() {
-        return new String[]{"here", "hr"};
+        return new String[]{NAME, "hr"};
     }
 
     @Override
     public @NotNull String getTabCompletion() {
-        return "here";
+        return NAME;
     }
 
     @Override
