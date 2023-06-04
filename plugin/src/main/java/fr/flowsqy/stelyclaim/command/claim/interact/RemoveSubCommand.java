@@ -1,21 +1,27 @@
 package fr.flowsqy.stelyclaim.command.claim.interact;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import org.bukkit.entity.Player;
-
-import java.util.List;
+import fr.flowsqy.stelyclaim.api.HandledOwner;
+import fr.flowsqy.stelyclaim.api.ProtocolManager;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
+import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
 public class RemoveSubCommand extends InteractSubCommand {
 
-    public RemoveSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
-        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
+    private final static String NAME = "remove";
+    private final static String[] TRIGGERS = new String[]{NAME, "r"};
+    private final ProtocolManager protocolManager;
+
+    public RemoveSubCommand(@NotNull StelyClaimPlugin plugin) {
+        super(NAME, TRIGGERS);
+        this.protocolManager = plugin.getProtocolManager();
     }
 
     @Override
-    protected <T extends ClaimOwner> boolean interactRegion(Player sender, ClaimHandler<T> handler, T owner) {
-        return protocolManager.remove(sender.getWorld(), sender, handler, owner);
+    protected <T extends ClaimOwner> boolean interactRegion(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
+        return protocolManager.remove(world, actor, owner);
     }
 
 }

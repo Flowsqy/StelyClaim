@@ -81,8 +81,8 @@ public class ProtocolManager {
         return interact(world, actor, owner, new DomainProtocol(DomainProtocol.Protocol.REMOVEOWNER, mailManager, player));
     }
 
-    public <T extends ClaimOwner> boolean remove(World world, Player sender, ClaimHandler<T> handler, T owner) {
-        return interact(world, sender, handler, owner, interactProtocol.getRemoveProtocolHandler());
+    public <T extends ClaimOwner> boolean remove(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
+        return interact(world, actor, owner, interactProtocol.getRemoveProtocolHandler());
     }
 
     public <T extends ClaimOwner> boolean interact(@NotNull World world, @NotNull Actor sender, @NotNull HandledOwner<T> owner, @NotNull InteractProtocolHandler interactHandler) {
