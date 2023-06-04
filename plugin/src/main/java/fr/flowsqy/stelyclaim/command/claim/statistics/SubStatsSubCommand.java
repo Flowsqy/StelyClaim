@@ -1,122 +1,133 @@
 package fr.flowsqy.stelyclaim.command.claim.statistics;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.command.ClaimCommand;
-import fr.flowsqy.stelyclaim.command.claim.SubCommand;
+import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
+import fr.flowsqy.stelyclaim.command.struct.CommandContext;
+import fr.flowsqy.stelyclaim.command.struct.CommandNode;
+import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
-import org.bukkit.Bukkit;
+import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public abstract class SubStatsSubCommand extends SubCommand {
+public abstract class SubStatsSubCommand implements CommandNode<ClaimContextData> {
 
+    private final String name;
+    private final String[] triggers;
+    protected final ConfigurationFormattedMessages messages;
     protected final StatisticManager statisticManager;
-    private final Set<String> commandsName;
+    //private final Set<String> commandsName;
 
-    public SubStatsSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic, StatisticManager statisticManager) {
-        super(plugin.getMessages(), name, alias, permission, console, allowedWorlds, statistic);
-        this.statisticManager = statisticManager;
-        this.commandsName = new HashSet<>();
-    }
-
-    public void initSubCommands(List<SubCommand> subCommands) {
-        this.commandsName.clear();
-        subCommands.stream()
-                .map(SubCommand::getName)
-                .forEach(commandsName::add);
+    public SubStatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin) {
+        this.name = name;
+        this.triggers = triggers;
+        messages = plugin.getMessages();
+        statisticManager = plugin.getStatisticManager();
     }
 
     @Override
-    public String getHelpMessage(CommandSender sender) {
-        final String other = sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(getPermission())) ? "-other" : "";
-        return messages.getFormattedMessage("help.stats_" + getName() + other);
-    }
-
-    @Override
-    public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
-        final boolean own;
+    public void execute(@NotNull CommandContext<ClaimContextData> context) {
+        final OfflinePlayer target;
         final String command;
-        final String target;
-        switch (size) {
-            case 2 -> {
-                own = true;
+        switch (context.getArgsLength()) {
+            case 0 -> {
+                if (!context.getSender().isPlayer()) {
+                    new HelpMessage().sendMessage(context); // TODO Specify stats + name
+                    return;
+                }
+                target = context.getSender().getPlayer();
                 command = null;
-                target = sender.getName();
             }
-            case 3 -> {
-                final String secondArg = args.get(2);
-                if (statisticManager.allowStats(secondArg) || !sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(getPermission()))) {
-                    command = secondArg;
-                    target = sender.getName();
-                    own = true;
-                } else {
+            case 1 -> {
+                if (context.hasPermission(getOtherPerm())) {
+                    target = OfflinePlayerRetriever.getOfflinePlayer(context.getArg(0));
                     command = null;
-                    target = secondArg;
-                    own = target.equals(sender.getName());
+                } else if (!context.getSender().isPlayer()) {
+                    new HelpMessage().sendMessage(context); // TODO Specify stats + name
+                    return;
+                } else {
+                    target = context.getSender().getPlayer();
+                    command = context.getArg(0).toLowerCase(Locale.ENGLISH);
                 }
             }
-            case 4 -> {
-                command = args.get(3);
-                target = args.get(2);
-                own = target.equals(sender.getName());
+            case 2 -> {
+                target = OfflinePlayerRetriever.getOfflinePlayer(context.getArg(0));
+                command = context.getArg(1).toLowerCase(Locale.ENGLISH);
             }
             default -> {
-                final String helpMessage = getHelpMessage(sender);
-                if (messages != null) {
-                    sender.sendMessage(helpMessage);
-                }
-                return false;
+                new HelpMessage().sendMessage(context); // TODO Specify stats + name
+                return;
             }
         }
-        if (!own && !sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(getPermission()))) {
-            messages.sendMessage(sender, "help." + getName());
-            return false;
+        final boolean own = context.getSender().isPlayer() && context.getSender().getPlayer().getUniqueId().equals(target.getUniqueId());
+        if (!own && !context.hasPermission(getOtherPerm())) {
+            new HelpMessage().sendMessage(context); // TODO Specify stats + name
+            return;
         }
         if (command != null) {
+            /*
             if (!commandsName.contains(command)) {
-                messages.sendMessage(sender, "claim.stats.commandnotexist", "%command%", command);
+                //messages.sendMessage(sender, "claim.stats.commandnotexist", "%command%", command);
                 return false;
-            }
+            }*/
             if (!statisticManager.allowStats(command)) {
-                messages.sendMessage(sender, "claim.stats.commandnotstat", "%command%", command);
-                return false;
+                messages.sendMessage(context.getSender().getBukkit(), "claim.stats.commandnotstat", "%command%", command);
+                return;
             }
         }
-        return executeSub(sender, own, command, target);
+        final boolean success = process(context, own, command, target);
+        if (success) {
+            context.getData().setStatistic("stats-" + name);
+        }
     }
-
-    protected abstract boolean executeSub(CommandSender sender, boolean own, String command, String target);
 
     @Override
-    public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
-        switch (args.size()) {
-            case 3 -> {
-                if (!sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(getPermission()))) {
-                    return Collections.emptyList();
-                }
-                final String target = args.get(2).toLowerCase(Locale.ROOT);
-                final List<String> completions = new ArrayList<>();
-                for (OfflinePlayer offlinePlayer : Bukkit.getOnlinePlayers()) {
-                    final String playerName = offlinePlayer.getName();
-                    if (playerName == null)
-                        continue;
-                    if (playerName.toLowerCase(Locale.ROOT).startsWith(target))
-                        completions.add(playerName);
-                }
-                return completions;
+    public @NotNull String[] getTriggers() {
+        return triggers;
+    }
+
+    @Override
+    public @NotNull String getTabCompletion() {
+        return name;
+    }
+
+    @Override
+    public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
+        return context.hasPermission(getBasePerm());
+    }
+
+    @Override
+    public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
+        if (context.getArgsLength() == 1 && context.hasPermission(getOtherPerm)) {
+            return null;
+        }
+        final String cmdArg;
+        if (context.getArgsLength() == 1) {
+            if (context.hasPermission(getOtherPerm())) {
+                return null;
             }
-            case 4 -> {
-                final String command = args.get(3).toLowerCase(Locale.ROOT);
-                return statisticManager.getCommands().stream()
-                        .filter(cmd -> cmd.startsWith(command))
-                        .collect(Collectors.toList());
-            }
-            default -> {
+            cmdArg = context.getArg(0).toLowerCase(Locale.ENGLISH);
+        } else if (context.getArgsLength() == 2) {
+            if (!context.hasPermission(getOtherPerm())) {
                 return Collections.emptyList();
             }
+            cmdArg = context.getArg(1).toLowerCase(Locale.ENGLISH);
+        } else {
+            return Collections.emptyList();
         }
+        return Stream.of(statisticManager.getCommands())
+                .filter(cmd -> cmd.startsWith(cmdArg))
+                .collect(Collectors.toList());
     }
+
+    protected abstract boolean process(@NotNull CommandContext<ClaimContextData> context, boolean own, @Nullable String command, @NotNull OfflinePlayer target);
+
 }
