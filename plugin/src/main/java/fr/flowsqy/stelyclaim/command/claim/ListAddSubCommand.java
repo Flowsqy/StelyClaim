@@ -81,8 +81,10 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
 
     @Override
     public void execute(@NotNull CommandContext<ClaimContextData> context) {
-        if (regionMessage == null)
-            return; // TODO Update stats ?
+        if (regionMessage == null) {
+            context.getData().setStatistic(NAME);
+            return;
+        }
 
         final boolean hasOtherPerm = context.hasPermission(getOtherPermission());
         final OfflinePlayer target;
@@ -219,7 +221,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
                             messages.getFormattedMessage("claim." + NAME + ".no-next")
                     );
                     sender.sendMessage(finalMessage);
-                    // TODO Update stats
+                    context.getData().setStatistic(NAME);
                     return;
                 }
                 // No previous but next
@@ -234,7 +236,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
                                 "%next%", new BaseComponent[]{nextComponent}
                         ).create()
                 );
-                // TODO Update stats
+                context.getData().setStatistic(NAME);
                 return;
             } else if (page == pageCount) {
                 // Previous but no next
@@ -253,7 +255,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
                                 "%previous%", new BaseComponent[]{previousComponent}
                         ).create()
                 );
-                // TODO Update stats
+                context.getData().setStatistic(NAME);
                 return;
             } else {
                 // Previous and next
@@ -279,7 +281,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
                 );
             }
         }
-        // TODO Update stats
+        context.getData().setStatistic(NAME);
     }
 
     @Override

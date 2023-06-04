@@ -258,7 +258,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
         // If there is no intersection, it means there is no region
         if (detectedRegions.isEmpty()) {
             messages.sendMessage(sender, "claim." + NAME + ".no-region", "%distance%", String.valueOf(distance));
-            // TODO Update stats
+            context.getData().setStatistic(NAME);
             return;
         }
 
@@ -305,7 +305,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
         // Send footer
         messages.sendMessage(sender, "claim." + NAME + ".footer", "%region-count%", String.valueOf(detectedRegions.size()));
 
-        // TODO Update stats
+        context.getData().setStatistic(NAME);
     }
 
     @Override

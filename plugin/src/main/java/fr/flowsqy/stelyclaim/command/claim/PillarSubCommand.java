@@ -55,7 +55,7 @@ public class PillarSubCommand implements CommandNode<ClaimContextData> {
             teleportLoc.add(0.5, 1, 0.5);
         }
         context.getSender().getMovable().setLocation(teleportSync, teleportLoc);
-        // TODO Update stats
+        context.getData().setStatistic(NAME);
     }
 
     @Override

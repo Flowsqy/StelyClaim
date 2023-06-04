@@ -69,6 +69,11 @@ public class ClaimCommand implements TabExecutor {
 
         // TODO Check for statistics
         commandTabExecutor.execute(context);
+        final String statistic = context.getData().getStatistic();
+        if (statistic != null && statisticManager.allowStats(statistic)) {
+            statisticManager.add(sender, statistic);
+            statisticManager.saveTask();
+        }
         return true;
     }
 

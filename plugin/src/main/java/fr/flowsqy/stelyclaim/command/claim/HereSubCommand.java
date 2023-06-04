@@ -65,6 +65,7 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
         );
 
         if (!context.hasPermission(getOtherPermission())) {
+            context.getData().setStatistic(NAME);
             for (ProtectedRegion overlapRegion : intersecting) {
                 if (!RegionFinder.isCorrectId(overlapRegion.getId())) {
                     continue;
@@ -77,12 +78,11 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
 
                 if (context.getSender().isPlayer() && intersectingHandler.getOwner(part[2]).own(context.getSender().getPlayer())) {
                     messages.sendMessage(sender, "claim." + NAME + ".inside");
-                    // TODO Update stats
                     return;
                 }
             }
             messages.sendMessage(sender, "claim." + NAME + ".not-inside");
-            return; // TODO Update stats
+            return;
         }
 
         final String baseMessage = messages.getFormattedMessage("claim." + NAME + ".message");
@@ -149,15 +149,14 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
                 }
                 regions.add(component);
             }
+            context.getData().setStatistic(NAME);
             if (regions.isEmpty()) {
                 messages.sendMessage(sender, "claim." + NAME + ".nothing");
-                // TODO Update stats
                 return;
             }
             final ComponentReplacer replacer = new ComponentReplacer(baseMessage);
             replacer.replace("%regions%", regions.toArray(new BaseComponent[0]));
             sender.spigot().sendMessage(replacer.create());
-            // TODO Update stats
             return;
         }
 
@@ -184,13 +183,13 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
 
         if (builder.length() == 0) {
             messages.sendMessage(sender, "claim." + NAME + ".nothing");
-            // TODO Update stats
+            context.getData().setStatistic(NAME);
             return;
         }
 
         sender.sendMessage(baseMessage.replace("%regions%", builder.toString()));
 
-        // TODO Update stats
+        context.getData().setStatistic(NAME);
     }
 
     @Override
