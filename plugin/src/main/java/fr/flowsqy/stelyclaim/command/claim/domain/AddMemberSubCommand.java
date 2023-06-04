@@ -17,7 +17,7 @@ public class AddMemberSubCommand extends DomainSubCommand {
 
     public AddMemberSubCommand(@NotNull StelyClaimPlugin plugin) {
         super(NAME, TRIGGERS);
-        this.protocolManager = plugin.getProtocolManager();
+        protocolManager = plugin.getProtocolManager();
     }
 
     @Override

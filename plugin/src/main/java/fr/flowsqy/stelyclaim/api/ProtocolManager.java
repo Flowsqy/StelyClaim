@@ -69,16 +69,16 @@ public class ProtocolManager {
         return interact(world, actor, owner, new DomainProtocol(DomainProtocol.Protocol.ADDMEMBER, mailManager, target));
     }
 
-    public <T extends ClaimOwner> boolean removeMember(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
-        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.REMOVEMEMBER, mailManager, player));
+    public <T extends ClaimOwner> boolean removeMember(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner, @NotNull OfflinePlayer player) {
+        return interact(world, actor, owner, new DomainProtocol(DomainProtocol.Protocol.REMOVEMEMBER, mailManager, player));
     }
 
-    public <T extends ClaimOwner> boolean addOwner(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
-        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.ADDOWNER, mailManager, player));
+    public <T extends ClaimOwner> boolean addOwner(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner, @NotNull OfflinePlayer player) {
+        return interact(world, actor, owner, new DomainProtocol(DomainProtocol.Protocol.ADDOWNER, mailManager, player));
     }
 
-    public <T extends ClaimOwner> boolean removeOwner(World world, Player sender, ClaimHandler<T> handler, T owner, OfflinePlayer player) {
-        return interact(world, sender, handler, owner, new DomainProtocol(DomainProtocol.Protocol.REMOVEOWNER, mailManager, player));
+    public <T extends ClaimOwner> boolean removeOwner(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner, @NotNull OfflinePlayer player) {
+        return interact(world, actor, owner, new DomainProtocol(DomainProtocol.Protocol.REMOVEOWNER, mailManager, player));
     }
 
     public <T extends ClaimOwner> boolean remove(World world, Player sender, ClaimHandler<T> handler, T owner) {
