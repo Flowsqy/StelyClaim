@@ -1,6 +1,5 @@
 package fr.flowsqy.stelyclaim.io;
 
-import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -118,16 +117,12 @@ public class StatisticManager {
         }
     }
 
-    public int increment(@NotNull Actor actor, @NotNull String command) {
-        if (!actor.isPlayer()) {
-            return -1;
-        }
+    public int increment(@NotNull UUID playerId, @NotNull String command) {
         try {
             lock.lock();
             if (!commands.contains(command)) {
                 return -1;
             }
-            final UUID playerId = actor.getPlayer().getUniqueId();
             final Map<String, Integer> playerData = data.computeIfAbsent(playerId, k -> new HashMap<>());
             final int newStat = playerData.merge(command, 1, Integer::sum);
             config.set(getPath(playerId, command), newStat);
@@ -137,42 +132,32 @@ public class StatisticManager {
         }
     }
 
-    public int get(@NotNull Actor actor, @NotNull String command) {
-        if (!actor.isPlayer()) {
-            return -1;
-        }
+    public int get(@NotNull UUID playerId, @NotNull String command) {
         try {
             lock.lock();
             if (!commands.contains(command)) {
                 return -1;
             }
-            final Map<String, Integer> playerData = data.get(actor.getPlayer().getUniqueId());
+            final Map<String, Integer> playerData = data.get(playerId);
             return playerData == null ? 0 : playerData.getOrDefault(command, 0);
         } finally {
             lock.unlock();
         }
     }
 
-    public int getTotal(@NotNull Actor actor) {
-        if (!actor.isPlayer()) {
-            return -1;
-        }
+    public int getTotal(@NotNull UUID playerId) {
         try {
             lock.lock();
-            final Map<String, Integer> playerData = data.get(actor.getPlayer().getUniqueId());
+            final Map<String, Integer> playerData = data.get(playerId);
             return playerData == null ? 0 : playerData.values().stream().mapToInt(value -> value).sum();
         } finally {
             lock.unlock();
         }
     }
 
-    public boolean remove(@NotNull Actor actor) {
-        if (!actor.isPlayer()) {
-            return false;
-        }
+    public boolean remove(@NotNull UUID playerId) {
         try {
             lock.lock();
-            final UUID playerId = actor.getPlayer().getUniqueId();
             final boolean result = data.remove(playerId) != null;
             if (result) {
                 config.set(playerId.toString(), null);
@@ -183,16 +168,12 @@ public class StatisticManager {
         }
     }
 
-    public boolean removeStat(@NotNull Actor actor, @NotNull String command) {
-        if (!actor.isPlayer()) {
-            return false;
-        }
+    public boolean removeStat(@NotNull UUID playerId, @NotNull String command) {
         try {
             lock.lock();
             if (!commands.contains(command)) {
                 return false;
             }
-            final UUID playerId = actor.getPlayer().getUniqueId();
             final Map<String, Integer> playerData = data.get(playerId);
             final boolean result = playerData != null && playerData.remove(command) != null;
             if (result) {
@@ -204,9 +185,13 @@ public class StatisticManager {
         }
     }
 
-    // TODO Check if needed
-    public boolean allowStats(String command) {
-        return commands.contains(command);
+    public boolean allowStats(@NotNull String command) {
+        try {
+            lock.lock();
+            return commands.contains(command);
+        } finally {
+            lock.unlock();
+        }
     }
 
     public String[] getCommands() {
