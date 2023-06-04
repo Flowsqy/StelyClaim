@@ -1,56 +1,90 @@
 package fr.flowsqy.stelyclaim.command.claim.interact;
 
-import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import fr.flowsqy.stelyclaim.command.claim.ProtocolSubCommand;
-import fr.flowsqy.stelyclaim.internal.PlayerOwner;
-import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
+import fr.flowsqy.stelyclaim.api.HandledOwner;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
+import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
+import fr.flowsqy.stelyclaim.command.claim.OwnerRetriever;
+import fr.flowsqy.stelyclaim.command.struct.CommandContext;
+import fr.flowsqy.stelyclaim.command.struct.CommandNode;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
+import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public abstract class InteractSubCommand extends ProtocolSubCommand {
+public abstract class InteractSubCommand implements CommandNode<ClaimContextData> {
 
-    public InteractSubCommand(StelyClaimPlugin plugin, String name, String alias, String permission, boolean console, List<String> allowedWorlds, boolean statistic) {
-        super(plugin, name, alias, permission, console, allowedWorlds, statistic);
+    private final String name;
+    private final String[] triggers;
+
+    public InteractSubCommand(@NotNull String name, @NotNull String[] triggers) {
+        this.name = name;
+        this.triggers = triggers;
     }
 
     @Override
-    public boolean execute(CommandSender sender, List<String> args, int size, boolean isPlayer) {
-        if (size != 1 && size != 2) {
-            messages.sendMessage(sender,
-                    "help."
-                            + getName()
-                            + (sender.hasPermission(getPermission() + "-other") ? "-other" : "")
-            );
-            return false;
+    public void execute(@NotNull CommandContext<ClaimContextData> context) {
+        final OwnerRetriever.Result<?> retrievedOwner;
+        if (context.getArgsLength() == 0) {
+            if (!context.getSender().isPlayer()) {
+                new HelpMessage().sendMessage(context); // TODO Specify name
+            }
+            final Actor sender = context.getSender();
+            retrievedOwner = OwnerRetriever.retrieve(sender, context.getData().getHandler(), sender.getPlayer());
+        } else if (context.getArgsLength() == 1) {
+            retrievedOwner = OwnerRetriever.retrieve(context.getSender(), context.getData().getHandler(), context.getArg(0));
+        } else {
+            new HelpMessage().sendMessage(context); // TODO Specify name
+            return;
         }
-        final Player player = (Player) sender;
-        final OfflinePlayer targetPlayer = size == 1 ? player : OfflinePlayerRetriever.getOfflinePlayer(args.get(1));
-
-        return interactRegion(player, protocolManager.getHandler("player"), new PlayerOwner(targetPlayer));
+        if (retrievedOwner.isEmpty()) {
+            return;
+        }
+        final Actor sender = context.getSender();
+        final boolean success = interactRegion(sender.getPhysic().getWorld(), sender, retrievedOwner.toHandledOwner());
+        if (success) {
+            context.getData().setStatistic(name);
+        }
     }
-
-    protected abstract <T extends ClaimOwner> boolean interactRegion(Player sender, ClaimHandler<T> handler, T owner);
 
     @Override
-    public List<String> tab(CommandSender sender, List<String> args, boolean isPlayer) {
-        if (sender.hasPermission(getPermission() + "-other") && args.size() == 2) {
-            final String arg = args.get(1).toLowerCase(Locale.ROOT);
-            return Bukkit.getOnlinePlayers().stream()
-                    .filter(((Player) sender)::canSee)
-                    .map(HumanEntity::getName)
-                    .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(arg))
-                    .collect(Collectors.toList());
-        } else
-            return Collections.emptyList();
+    public @NotNull String[] getTriggers() {
+        return triggers;
     }
+
+    @Override
+    public @NotNull String getTabCompletion() {
+        return name;
+    }
+
+    @Override
+    public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
+        return context.getSender().isPhysic() && context.hasPermission(getBasePerm());
+    }
+
+    @Override
+    public boolean canTabComplete(@NotNull CommandContext<ClaimContextData> context) {
+        return canExecute(context);
+    }
+
+    @Override
+    public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
+        if (context.getArgsLength() != 2 || !context.hasPermission(getOtherPermission)) {
+            return Collections.emptyList();
+        }
+        final String arg = context.getArg(0).toLowerCase(Locale.ENGLISH);
+        return Bukkit.getOnlinePlayers().stream()
+                .map(HumanEntity::getName)
+                .filter(name -> name.toLowerCase(Locale.ENGLISH).startsWith(arg))
+                .collect(Collectors.toList());
+    }
+
+    protected abstract <T extends ClaimOwner> boolean interactRegion(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner);
+
 }
