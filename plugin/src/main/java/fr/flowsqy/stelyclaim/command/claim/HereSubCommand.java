@@ -8,8 +8,8 @@ import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
-import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.api.actor.PhysicActor;
+import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.command.struct.CommandContext;
 import fr.flowsqy.stelyclaim.command.struct.CommandNode;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
@@ -24,26 +24,29 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class HereSubCommand implements CommandNode<ClaimContextData> {
 
     private final static String NAME = "here";
     private final static String[] TRIGGERS = new String[]{NAME, "hr"};
     private final ConfigurationFormattedMessages messages;
+    private final WorldChecker worldChecker;
     private final ProtocolManager protocolManager;
 
-    public HereSubCommand(@NotNull StelyClaimPlugin plugin) {
+    public HereSubCommand(@NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds) {
         messages = plugin.getMessages();
+        worldChecker = new WorldChecker(worlds, messages);
         protocolManager = plugin.getProtocolManager();
     }
 
     @Override
     public void execute(@NotNull CommandContext<ClaimContextData> context) {
+        if (worldChecker.checkCancelledWorld(context.getSender())) {
+            return;
+        }
         if (context.getArgsLength() != 0) {
             new HelpMessage().sendMessage(context); // TODO Specify here
             return;
