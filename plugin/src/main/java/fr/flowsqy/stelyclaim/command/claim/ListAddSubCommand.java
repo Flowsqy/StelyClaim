@@ -24,6 +24,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
     private final static String NAME = "listadd";
     private final static String[] TRIGGERS = new String[]{NAME, "la"};
     private final ConfigurationFormattedMessages messages;
+    private final WorldChecker worldChecker;
     private final ProtocolManager protocolManager;
     private final long CACHE_PERIOD;
     private final int CACHE_SIZE_CLEAR_CHECK;
@@ -42,8 +44,9 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
 
     private final String regionMessage;
 
-    public ListAddSubCommand(@NotNull StelyClaimPlugin plugin) {
+    public ListAddSubCommand(@NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds) {
         messages = plugin.getMessages();
+        worldChecker = new WorldChecker(worlds, messages);
         protocolManager = plugin.getProtocolManager();
         final Configuration configuration = plugin.getConfiguration();
         CACHE_PERIOD = configuration.getLong(NAME + ".cache-period", 4000);
@@ -81,6 +84,9 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
 
     @Override
     public void execute(@NotNull CommandContext<ClaimContextData> context) {
+        if (worldChecker.checkCancelledWorld(context.getSender())) {
+            return;
+        }
         if (regionMessage == null) {
             context.getData().setStatistic(NAME);
             return;
