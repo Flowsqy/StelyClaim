@@ -1,18 +1,22 @@
 package fr.flowsqy.stelyclaim.command.claim.interact;
 
+import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.command.claim.OwnerRetriever;
+import fr.flowsqy.stelyclaim.command.claim.WorldChecker;
 import fr.flowsqy.stelyclaim.command.struct.CommandContext;
 import fr.flowsqy.stelyclaim.command.struct.CommandNode;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -22,14 +26,19 @@ public abstract class InteractSubCommand implements CommandNode<ClaimContextData
 
     private final String name;
     private final String[] triggers;
+    private final WorldChecker worldChecker;
 
-    public InteractSubCommand(@NotNull String name, @NotNull String[] triggers) {
+    public InteractSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds) {
         this.name = name;
         this.triggers = triggers;
+        worldChecker = new WorldChecker(worlds, plugin.getMessages());
     }
 
     @Override
     public void execute(@NotNull CommandContext<ClaimContextData> context) {
+        if (worldChecker.checkCancelledWorld(context.getSender())) {
+            return;
+        }
         final OwnerRetriever.Result<?> retrievedOwner;
         if (context.getArgsLength() == 0) {
             if (!context.getSender().isPlayer()) {

@@ -9,6 +9,9 @@ import fr.flowsqy.stelyclaim.protocol.interact.TeleportHandler;
 import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 public class TeleportSubCommand extends InteractSubCommand {
 
@@ -17,8 +20,8 @@ public class TeleportSubCommand extends InteractSubCommand {
     private final ProtocolManager protocolManager;
     private final TeleportSync teleportSync;
 
-    public TeleportSubCommand(@NotNull StelyClaimPlugin plugin) {
-        super(NAME, TRIGGERS);
+    public TeleportSubCommand(@NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds) {
+        super(NAME, TRIGGERS, plugin, worlds);
         protocolManager = plugin.getProtocolManager();
         teleportSync = plugin.getTeleportSync();
     }

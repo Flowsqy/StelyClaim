@@ -7,6 +7,9 @@ import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 public class DefineSubCommand extends SelectionSubCommand {
 
@@ -14,8 +17,8 @@ public class DefineSubCommand extends SelectionSubCommand {
     private final static String[] TRIGGERS = new String[]{NAME, "d"};
     private final ProtocolManager protocolManager;
 
-    public DefineSubCommand(@NotNull StelyClaimPlugin plugin) {
-        super(NAME, TRIGGERS);
+    public DefineSubCommand(@NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds) {
+        super(NAME, TRIGGERS, plugin, worlds);
         protocolManager = plugin.getProtocolManager();
     }
 
