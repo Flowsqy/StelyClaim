@@ -8,6 +8,9 @@ import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 public class AddMemberSubCommand extends DomainSubCommand {
 
@@ -15,8 +18,8 @@ public class AddMemberSubCommand extends DomainSubCommand {
     private final static String[] TRIGGERS = new String[]{NAME, "am"};
     private final ProtocolManager protocolManager;
 
-    public AddMemberSubCommand(@NotNull StelyClaimPlugin plugin) {
-        super(NAME, TRIGGERS);
+    public AddMemberSubCommand(@NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds) {
+        super(NAME, TRIGGERS, plugin, worlds);
         protocolManager = plugin.getProtocolManager();
     }
 

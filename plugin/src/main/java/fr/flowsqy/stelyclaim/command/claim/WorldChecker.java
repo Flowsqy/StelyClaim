@@ -9,17 +9,17 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class WorldChecker {
+public class WorldChecker {
 
     private final Set<String> worlds;
     private final String denyMessage;
 
-    public WorldChecker(@NotNull Collection<String> worlds, @NotNull ConfigurationFormattedMessages messages) {
+    public WorldChecker(@Nullable Collection<String> worlds, @NotNull ConfigurationFormattedMessages messages) {
         this(worlds, messages.getFormattedMessage("claim.world.notallowed"));
     }
 
-    public WorldChecker(@NotNull Collection<String> worlds, @Nullable String denyMessage) {
-        this.worlds = worlds.isEmpty() ? null : new HashSet<>(worlds);
+    public WorldChecker(@Nullable Collection<String> worlds, @Nullable String denyMessage) {
+        this.worlds = worlds == null || worlds.isEmpty() ? null : new HashSet<>(worlds);
         this.denyMessage = denyMessage;
     }
 
