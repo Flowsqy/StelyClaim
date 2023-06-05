@@ -1,6 +1,10 @@
 package fr.flowsqy.stelyclaim.command;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
+import fr.flowsqy.stelyclaim.api.actor.BlockActor;
+import fr.flowsqy.stelyclaim.api.actor.ConsoleActor;
+import fr.flowsqy.stelyclaim.api.actor.EntityActor;
 import fr.flowsqy.stelyclaim.command.claim.*;
 import fr.flowsqy.stelyclaim.command.claim.domain.AddMemberSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.domain.AddOwnerSubCommand;
@@ -12,61 +16,36 @@ import fr.flowsqy.stelyclaim.command.claim.interact.TeleportSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.selection.DefineSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.selection.RedefineSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.statistics.StatsSubCommand;
-import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.api.actor.BlockActor;
-import fr.flowsqy.stelyclaim.api.actor.ConsoleActor;
-import fr.flowsqy.stelyclaim.api.actor.EntityActor;
 import fr.flowsqy.stelyclaim.command.struct.CommandContext;
-import fr.flowsqy.stelyclaim.command.struct.CommandTabExecutor;
-import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
+import org.bukkit.command.*;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
 public class ClaimCommand implements TabExecutor {
 
-    private final ConfigurationFormattedMessages messages;
     private final StatisticManager statisticManager;
-    private final List<SubCommand> subCommands;
-    private final SubCommand helpSubCommand;
-    private int tabLimit;
-    private final CommandTabExecutor<ClaimContextData> commandTabExecutor;
+    private final ClaimRootCommand rootCommand;
 
-    public ClaimCommand(StelyClaimPlugin plugin) {
-        this.messages = plugin.getMessages();
-        this.statisticManager = plugin.getStatisticManager();
-        subCommands = new ArrayList<>();
+    public ClaimCommand(@NotNull StelyClaimPlugin plugin) {
+        statisticManager = plugin.getStatisticManager();
+        rootCommand = new ClaimRootCommand();
+
         initCommands(plugin);
-        this.statisticManager.initSubCommands(subCommands);
-        helpSubCommand = subCommands.get(0);
-        commandTabExecutor = new CommandTabExecutor<>() {
-            @Override
-            public void execute(@NotNull CommandContext<ClaimContextData> context) {
-
-            }
-
-            @Override
-            public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
-                return null;
-            }
-        };
+        // TODO Init statistics manager
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         final Actor actor = getActor(sender);
         final CommandContext<ClaimContextData> context = new CommandContext<>(actor, args, new ClaimContextData(), 0);
-        commandTabExecutor.execute(context);
+        rootCommand.execute(context);
         final String statistic = context.getData().getStatistic();
         if (statistic != null && statisticManager.allowStats(statistic) && actor.isPlayer()) {
             statisticManager.increment(actor.getPlayer().getUniqueId(), statistic);
@@ -79,7 +58,7 @@ public class ClaimCommand implements TabExecutor {
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         final Actor actor = getActor(sender);
         final CommandContext<ClaimContextData> context = new CommandContext<>(actor, args, new ClaimContextData(), 0);
-        return commandTabExecutor.tabComplete(context);
+        return rootCommand.tabComplete(context);
     }
 
     @NotNull
@@ -87,10 +66,10 @@ public class ClaimCommand implements TabExecutor {
         if (sender instanceof Entity entity) {
             return new EntityActor<>(entity);
         }
-        if (sender instanceof org.bukkit.command.ConsoleCommandSender console) {
+        if (sender instanceof ConsoleCommandSender console) {
             return new ConsoleActor(console);
         }
-        if (sender instanceof org.bukkit.command.BlockCommandSender block) {
+        if (sender instanceof BlockCommandSender block) {
             return new BlockActor(block);
         }
         throw new UnsupportedOperationException("Unsupported command sender type: " + sender.getClass());
