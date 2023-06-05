@@ -20,6 +20,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -28,6 +29,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
     private final static String NAME = "near";
     private final static String[] TRIGGERS = new String[]{NAME, "n"};
     private final ConfigurationFormattedMessages messages;
+    private final WorldChecker worldChecker;
     private final ProtocolManager protocolManager;
     private final int DEFAULT_DISTANCE;
     private final int DEFAULT_MAX_DISTANCE;
@@ -36,8 +38,10 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
     private final int MAXIMAL_REGION_AMOUNT;
     private final Map<UUID, Long> lastExecTimeByPlayerId;
 
-    public NearSubCommand(@NotNull StelyClaimPlugin plugin) {
+    public NearSubCommand(@NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds) {
         messages = plugin.getMessages();
+        worldChecker = new WorldChecker(worlds, messages);
+        protocolManager = plugin.getProtocolManager();
         final YamlConfiguration configuration = plugin.getConfiguration();
         // The distances should be >= 1 (0 is /claim here and bellow it does not make any sense)
         DEFAULT_DISTANCE = Math.max(configuration.getInt(NAME + ".default-distance", 200), 1);
@@ -47,7 +51,6 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
         // The minimal amount should be one (0 Show nothing and bellow, it does not make any sense)
         MAXIMAL_REGION_AMOUNT = Math.max(configuration.getInt(NAME + ".maximal-region-amount", 10), 1);
         lastExecTimeByPlayerId = new HashMap<>();
-        protocolManager = plugin.getProtocolManager();
     }
 
     /**
@@ -123,6 +126,9 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
 
     @Override
     public void execute(@NotNull CommandContext<ClaimContextData> context) {
+        if (worldChecker.checkCancelledWorld(context.getSender())) {
+            return;
+        }
         // Check if there is more than a distance
         if (context.getArgsLength() > 1) {
             // Send help message
@@ -320,7 +326,6 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
-        // TODO Check for world and permissions
         return context.getSender().isPhysic() && context.hasPermission(getBasePerm());
     }
 
