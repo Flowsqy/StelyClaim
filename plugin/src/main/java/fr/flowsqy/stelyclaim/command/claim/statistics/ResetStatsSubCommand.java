@@ -2,6 +2,8 @@ package fr.flowsqy.stelyclaim.command.claim.statistics;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.command.claim.ClaimSubCommandData;
+import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.command.struct.CommandContext;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -12,11 +14,8 @@ import java.util.UUID;
 
 public class ResetStatsSubCommand extends SubStatsSubCommand {
 
-    private final static String NAME = "reset";
-    private final static String[] TRIGGERS = new String[]{NAME, "r"};
-
-    public ResetStatsSubCommand(@NotNull StelyClaimPlugin plugin) {
-        super(NAME, TRIGGERS, plugin);
+    public ResetStatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @NotNull ClaimSubCommandData data, @NotNull String helpName, @NotNull HelpMessage helpMessage) {
+        super(name, triggers, plugin, data, helpName, helpMessage);
     }
 
     @Override

@@ -26,11 +26,13 @@ import java.util.*;
 
 public class NearSubCommand implements CommandNode<ClaimContextData> {
 
-    private final static String NAME = "near";
-    private final static String[] TRIGGERS = new String[]{NAME, "n"};
+    private final String name;
+    private final String[] triggers;
     private final ConfigurationFormattedMessages messages;
     private final WorldChecker worldChecker;
     private final ProtocolManager protocolManager;
+    private final ClaimSubCommandData data;
+    private final HelpMessage helpMessage;
     private final int DEFAULT_DISTANCE;
     private final int DEFAULT_MAX_DISTANCE;
     private final long COOLDOWN;
@@ -38,18 +40,22 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
     private final int MAXIMAL_REGION_AMOUNT;
     private final Map<UUID, Long> lastExecTimeByPlayerId;
 
-    public NearSubCommand(@NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds) {
+    public NearSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull ClaimSubCommandData data, @NotNull HelpMessage helpMessage) {
+        this.name = name;
+        this.triggers = triggers;
         messages = plugin.getMessages();
         worldChecker = new WorldChecker(worlds, messages);
         protocolManager = plugin.getProtocolManager();
+        this.data = data;
+        this.helpMessage = helpMessage;
         final YamlConfiguration configuration = plugin.getConfiguration();
         // The distances should be >= 1 (0 is /claim here and bellow it does not make any sense)
-        DEFAULT_DISTANCE = Math.max(configuration.getInt(NAME + ".default-distance", 200), 1);
-        DEFAULT_MAX_DISTANCE = Math.max(configuration.getInt(NAME + ".base-max-distance", 200), 1);
-        COOLDOWN = configuration.getLong(NAME + ".cooldown", 1000L);
-        COOLDOWN_SIZE_CLEAR_CHECK = configuration.getInt(NAME + ".cooldown-size-clear-check", 4);
+        DEFAULT_DISTANCE = Math.max(configuration.getInt(name + ".default-distance", 200), 1);
+        DEFAULT_MAX_DISTANCE = Math.max(configuration.getInt(name + ".base-max-distance", 200), 1);
+        COOLDOWN = configuration.getLong(name + ".cooldown", 1000L);
+        COOLDOWN_SIZE_CLEAR_CHECK = configuration.getInt(name + ".cooldown-size-clear-check", 4);
         // The minimal amount should be one (0 Show nothing and bellow, it does not make any sense)
-        MAXIMAL_REGION_AMOUNT = Math.max(configuration.getInt(NAME + ".maximal-region-amount", 10), 1);
+        MAXIMAL_REGION_AMOUNT = Math.max(configuration.getInt(name + ".maximal-region-amount", 10), 1);
         lastExecTimeByPlayerId = new HashMap<>();
     }
 
@@ -100,7 +106,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
      * @return The message stored in the configuration
      */
     private String getDirectionMessage(String path) {
-        final String directionMessage = messages.getFormattedMessage("claim." + NAME + ".direction." + path);
+        final String directionMessage = messages.getFormattedMessage("claim." + name + ".direction." + path);
         return directionMessage == null ? "" : directionMessage;
     }
 
@@ -132,14 +138,14 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
         // Check if there is more than a distance
         if (context.getArgsLength() > 1) {
             // Send help message
-            new HelpMessage().sendMessage(context); // TODO Specify near
+            helpMessage.sendMessage(context, name);
             return;
         }
 
         final CommandSender sender = context.getSender().getBukkit();
 
         // Check full perm
-        final boolean hasFullPerm = sender.hasPermission(getPermission() + "-full");
+        final boolean hasFullPerm = sender.hasPermission(data.getModifierPerm(context.getData(), "full"));
 
         // Init distance
         final int distance;
@@ -157,7 +163,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
 
             // Check if the distance is valid (>= 1)
             if (distance < 1) {
-                messages.sendMessage(sender, "claim." + NAME + ".invalid-distance", "%distance%", String.valueOf(distance));
+                messages.sendMessage(sender, "claim." + name + ".invalid-distance", "%distance%", String.valueOf(distance));
                 return;
             }
 
@@ -165,7 +171,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
             if (distance > DEFAULT_MAX_DISTANCE && !hasFullPerm) {
                 messages.sendMessage(
                         sender,
-                        "claim." + NAME + ".limit",
+                        "claim." + name + ".limit",
                         "%distance%", "%max-distance%", String.valueOf(distance), String.valueOf(DEFAULT_MAX_DISTANCE)
                 );
                 return;
@@ -180,7 +186,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
         // Cooldown of the command
         // Check if cooldown is still active
         if (System.currentTimeMillis() - lastExecTimeByPlayerId.getOrDefault(player.getUniqueId(), 0L) < COOLDOWN) {
-            messages.sendMessage(sender, "claim." + NAME + ".cooldown");
+            messages.sendMessage(sender, "claim." + name + ".cooldown");
             return;
         }
 
@@ -263,16 +269,16 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
 
         // If there is no intersection, it means there is no region
         if (detectedRegions.isEmpty()) {
-            messages.sendMessage(sender, "claim." + NAME + ".no-region", "%distance%", String.valueOf(distance));
-            context.getData().setStatistic(NAME);
+            messages.sendMessage(sender, "claim." + name + ".no-region", "%distance%", String.valueOf(distance));
+            context.getData().setStatistic(name);
             return;
         }
 
         // Send header
-        messages.sendMessage(sender, "claim." + NAME + ".header", "%region-count%", String.valueOf(detectedRegions.size()));
+        messages.sendMessage(sender, "claim." + name + ".header", "%region-count%", String.valueOf(detectedRegions.size()));
 
         // Get the general message
-        final String nearMessage = messages.getFormattedMessage("claim." + NAME + ".region");
+        final String nearMessage = messages.getFormattedMessage("claim." + name + ".region");
         if (nearMessage != null) {
             // Sort it by distances
             detectedRegions.sort(Comparator.comparingDouble(RegionData::getDistance));
@@ -309,24 +315,24 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
         }
 
         // Send footer
-        messages.sendMessage(sender, "claim." + NAME + ".footer", "%region-count%", String.valueOf(detectedRegions.size()));
+        messages.sendMessage(sender, "claim." + name + ".footer", "%region-count%", String.valueOf(detectedRegions.size()));
 
-        context.getData().setStatistic(NAME);
+        context.getData().setStatistic(name);
     }
 
     @Override
     public @NotNull String[] getTriggers() {
-        return TRIGGERS;
+        return triggers;
     }
 
     @Override
     public @NotNull String getTabCompletion() {
-        return NAME;
+        return name;
     }
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
-        return context.getSender().isPhysic() && context.hasPermission(getBasePerm());
+        return context.getSender().isPhysic() && context.hasPermission(data.getBasePerm(context.getData()));
     }
 
     @Override

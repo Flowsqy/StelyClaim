@@ -31,14 +31,13 @@ import java.util.function.Function;
 public class ClaimCommand implements TabExecutor {
 
     private final StatisticManager statisticManager;
+    private final ClaimSubCommandManager subCommandManager;
     private final ClaimRootCommand rootCommand;
 
-    public ClaimCommand(@NotNull StelyClaimPlugin plugin) {
+    public ClaimCommand(@NotNull StelyClaimPlugin plugin, @NotNull String basePermission) {
         statisticManager = plugin.getStatisticManager();
-        rootCommand = new ClaimRootCommand();
-
-        initCommands(plugin);
-        // TODO Init statistics manager
+        subCommandManager = new ClaimSubCommandManager();
+        rootCommand = new ClaimRootCommand(subCommandManager);
     }
 
     @Override
@@ -76,14 +75,19 @@ public class ClaimCommand implements TabExecutor {
     }
 
     /**
-     * Initialize all internal sub-commands and fill subCommands array
-     * The {@link HelpSubCommand} is the first in the list
-     * Initialize the tab limit property
+     * Initialize all internal sub commands
      *
-     * @param plugin The {@link StelyClaimPlugin} instance to create all sub-commands
+     * @param plugin The {@link StelyClaimPlugin} instance
      */
-    private void initCommands(StelyClaimPlugin plugin) {
+    private void initInternalCommands(StelyClaimPlugin plugin) {
+        // TODO Init statistics manager
         final Configuration config = plugin.getConfiguration();
+
+        registerCommand(
+                new HelpSubCommand("help", new String[]{"help", "h"}, subCommandManager, helpMessage),
+
+        );
+
         final HelpSubCommand helpSubCommand = new HelpSubCommand(
                 plugin,
                 "help",

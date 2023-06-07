@@ -5,6 +5,8 @@ import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
+import fr.flowsqy.stelyclaim.command.claim.ClaimSubCommandData;
+import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
@@ -14,12 +16,10 @@ import java.util.Collection;
 
 public class RemoveMemberSubCommand extends DomainSubCommand {
 
-    private final static String NAME = "removemember";
-    private final static String[] TRIGGERS = new String[]{NAME, "rm"};
     private final ProtocolManager protocolManager;
 
-    public RemoveMemberSubCommand(@NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds) {
-        super(NAME, TRIGGERS, plugin, worlds);
+    public RemoveMemberSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull ClaimSubCommandData data, @NotNull HelpMessage helpMessage) {
+        super(name, triggers, plugin, worlds, data, helpMessage);
         protocolManager = plugin.getProtocolManager();
     }
 

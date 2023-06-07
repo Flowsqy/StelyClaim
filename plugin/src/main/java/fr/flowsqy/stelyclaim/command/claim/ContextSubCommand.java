@@ -13,11 +13,15 @@ public class ContextSubCommand extends DispatchCommandTabExecutor<ClaimContextDa
     private final String name;
     private final String[] triggers;
     private final ClaimHandler<?> claimHandler;
+    private final ClaimSubCommandManager subCommandManager;
+    private final ClaimSubCommandData data;
 
-    public ContextSubCommand(String name, String[] triggers, ClaimHandler<?> claimHandler) {
+    public ContextSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull ClaimHandler<?> claimHandler, @NotNull ClaimSubCommandManager subCommandManager, @NotNull ClaimSubCommandData data) {
         this.name = name;
         this.triggers = triggers;
         this.claimHandler = claimHandler;
+        this.subCommandManager = subCommandManager;
+        this.data = data;
     }
 
     @Override
@@ -44,17 +48,17 @@ public class ContextSubCommand extends DispatchCommandTabExecutor<ClaimContextDa
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
-        return context.hasPermission(getBasePerm());
+        return context.hasPermission(data.getBasePerm(context.getData()));
     }
 
     @Override
     public @NotNull List<CommandNode<ClaimContextData>> getChildren() {
-        return null; // TODO Get specific sub commands
+        return subCommandManager.getSpecifics();
     }
 
     @Override
     public void fallBackExecute(@NotNull CommandContext<ClaimContextData> context) {
-        new HelpMessage().sendMessage(context); // TODO Specify context
+        new HelpMessage().sendMessage(context);
     }
 
 }

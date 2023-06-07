@@ -9,14 +9,22 @@ import java.util.List;
 
 public class ClaimRootCommand extends DispatchCommandTabExecutor<ClaimContextData> {
 
+    private final ClaimSubCommandManager subCommandManager;
+    private final HelpMessage helpMessage;
+
+    public ClaimRootCommand(@NotNull ClaimSubCommandManager subCommandManager, @NotNull HelpMessage helpMessage) {
+        this.subCommandManager = subCommandManager;
+        this.helpMessage = helpMessage;
+    }
+
     @Override
     public @NotNull List<CommandNode<ClaimContextData>> getChildren() {
-        return null;
+        return subCommandManager.getCommands();
     }
 
     @Override
     public void fallBackExecute(@NotNull CommandContext<ClaimContextData> context) {
-        // TODO Send help message
+        helpMessage.sendMessage(context);
     }
 
 }

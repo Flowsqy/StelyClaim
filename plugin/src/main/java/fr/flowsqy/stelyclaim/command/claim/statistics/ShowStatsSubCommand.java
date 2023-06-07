@@ -2,6 +2,8 @@ package fr.flowsqy.stelyclaim.command.claim.statistics;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.command.claim.ClaimSubCommandData;
+import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.command.struct.CommandContext;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -12,11 +14,8 @@ import java.util.UUID;
 
 public class ShowStatsSubCommand extends SubStatsSubCommand {
 
-    private final static String NAME = "show";
-    private final static String[] TRIGGERS = new String[]{NAME, "s"};
-
-    public ShowStatsSubCommand(@NotNull StelyClaimPlugin plugin) {
-        super(NAME, TRIGGERS, plugin);
+    public ShowStatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @NotNull ClaimSubCommandData data, @NotNull String helpName, @NotNull HelpMessage helpMessage) {
+        super(name, triggers, plugin, data, helpName, helpMessage);
     }
 
     @Override

@@ -2,6 +2,7 @@ package fr.flowsqy.stelyclaim.command.claim.statistics;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.command.claim.ClaimSubCommandData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.command.struct.CommandContext;
 import fr.flowsqy.stelyclaim.command.struct.CommandNode;
@@ -22,13 +23,18 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContextData
 
     private final String name;
     private final String[] triggers;
+    private final ClaimSubCommandData data;
+    private final String helpName;
+    private final HelpMessage helpMessage;
     protected final ConfigurationFormattedMessages messages;
     protected final StatisticManager statisticManager;
-    //private final Set<String> commandsName;
 
-    public SubStatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin) {
+    public SubStatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @NotNull ClaimSubCommandData data, @NotNull String helpName, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
+        this.data = data;
+        this.helpName = helpName;
+        this.helpMessage = helpMessage;
         messages = plugin.getMessages();
         statisticManager = plugin.getStatisticManager();
     }
@@ -40,18 +46,18 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContextData
         switch (context.getArgsLength()) {
             case 0 -> {
                 if (!context.getSender().isPlayer()) {
-                    new HelpMessage().sendMessage(context); // TODO Specify stats + name
+                    helpMessage.sendMessage(context, helpName);
                     return;
                 }
                 target = context.getSender().getPlayer();
                 command = null;
             }
             case 1 -> {
-                if (context.hasPermission(getOtherPerm())) {
+                if (context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
                     target = OfflinePlayerRetriever.getOfflinePlayer(context.getArg(0));
                     command = null;
                 } else if (!context.getSender().isPlayer()) {
-                    new HelpMessage().sendMessage(context); // TODO Specify stats + name
+                    helpMessage.sendMessage(context, helpName);
                     return;
                 } else {
                     target = context.getSender().getPlayer();
@@ -63,13 +69,13 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContextData
                 command = context.getArg(1).toLowerCase(Locale.ENGLISH);
             }
             default -> {
-                new HelpMessage().sendMessage(context); // TODO Specify stats + name
+                helpMessage.sendMessage(context, helpName);
                 return;
             }
         }
         final boolean own = context.getSender().isPlayer() && context.getSender().getPlayer().getUniqueId().equals(target.getUniqueId());
-        if (!own && !context.hasPermission(getOtherPerm())) {
-            new HelpMessage().sendMessage(context); // TODO Specify stats + name
+        if (!own && !context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
+            helpMessage.sendMessage(context, helpName);
             return;
         }
         if (command != null) {
@@ -85,6 +91,7 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContextData
         }
         final boolean success = process(context, own, command, target);
         if (success) {
+            // TODO Handle stats
             context.getData().setStatistic("stats-" + name);
         }
     }
@@ -101,22 +108,22 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContextData
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
-        return context.hasPermission(getBasePerm());
+        return context.hasPermission(data.getBasePerm(context.getData()));
     }
 
     @Override
     public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
-        if (context.getArgsLength() == 1 && context.hasPermission(getOtherPerm)) {
+        if (context.getArgsLength() == 1 && context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
             return null;
         }
         final String cmdArg;
         if (context.getArgsLength() == 1) {
-            if (context.hasPermission(getOtherPerm())) {
+            if (context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
                 return null;
             }
             cmdArg = context.getArg(0).toLowerCase(Locale.ENGLISH);
         } else if (context.getArgsLength() == 2) {
-            if (!context.hasPermission(getOtherPerm())) {
+            if (!context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
                 return Collections.emptyList();
             }
             cmdArg = context.getArg(1).toLowerCase(Locale.ENGLISH);

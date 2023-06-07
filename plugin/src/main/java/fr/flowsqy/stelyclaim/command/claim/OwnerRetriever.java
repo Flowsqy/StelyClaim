@@ -26,11 +26,11 @@ public class OwnerRetriever {
     }
 
     public static <T extends ClaimOwner> Result<T> retrieve(@NotNull Actor actor, @NotNull ClaimHandler<T> handler, @NotNull String arg) {
-        return new Result<>(handler, Objects.requireNonNull(handler.getClaimCommandHandler()).getOwner(actor, arg));
+        return new Result<>(handler, Objects.requireNonNull(handler.getClaimInteractHandler()).getOwner(actor, arg));
     }
 
     public static <T extends ClaimOwner> Result<T> retrieve(@NotNull Actor actor, @NotNull ClaimHandler<T> handler, @NotNull Player arg) {
-        return new Result<>(handler, Objects.requireNonNull(handler.getClaimCommandHandler()).getOwner(actor, arg));
+        return new Result<>(handler, Objects.requireNonNull(handler.getClaimInteractHandler()).getOwner(actor, arg));
     }
 
 }

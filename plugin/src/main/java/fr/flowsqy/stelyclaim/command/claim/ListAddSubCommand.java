@@ -31,11 +31,13 @@ import java.util.stream.Collectors;
 
 public class ListAddSubCommand implements CommandNode<ClaimContextData> {
 
-    private final static String NAME = "listadd";
-    private final static String[] TRIGGERS = new String[]{NAME, "la"};
+    private final String name;
+    private final String[] triggers;
     private final ConfigurationFormattedMessages messages;
     private final WorldChecker worldChecker;
     private final ProtocolManager protocolManager;
+    private final ClaimSubCommandData data;
+    private final HelpMessage helpMessage;
     private final long CACHE_PERIOD;
     private final int CACHE_SIZE_CLEAR_CHECK;
     private final int REGION_BY_PAGE;
@@ -44,16 +46,20 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
 
     private final String regionMessage;
 
-    public ListAddSubCommand(@NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds) {
+    public ListAddSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull ClaimSubCommandData data, @NotNull HelpMessage helpMessage) {
+        this.name = name;
+        this.triggers = triggers;
         messages = plugin.getMessages();
         worldChecker = new WorldChecker(worlds, messages);
         protocolManager = plugin.getProtocolManager();
+        this.data = data;
+        this.helpMessage = helpMessage;
         final Configuration configuration = plugin.getConfiguration();
-        CACHE_PERIOD = configuration.getLong(NAME + ".cache-period", 4000);
-        CACHE_SIZE_CLEAR_CHECK = configuration.getInt(NAME + ".cache-size-clear-check", 4);
-        REGION_BY_PAGE = Math.max(configuration.getInt(NAME + ".region-by-page", 5), 1);
+        CACHE_PERIOD = configuration.getLong(name + ".cache-period", 4000);
+        CACHE_SIZE_CLEAR_CHECK = configuration.getInt(name + ".cache-size-clear-check", 4);
+        REGION_BY_PAGE = Math.max(configuration.getInt(name + ".region-by-page", 5), 1);
         cache = new HashMap<>();
-        regionMessage = messages.getFormattedMessage("claim." + NAME + ".region-message");
+        regionMessage = messages.getFormattedMessage("claim." + name + ".region-message");
     }
 
     private TextComponent getTextComponent(String category, int page, String player) {
@@ -61,7 +67,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
         component.setExtra(
                 Arrays.asList(
                         TextComponent.fromLegacyText(
-                                messages.getFormattedMessage("claim." + NAME + "." + category + "-text")
+                                messages.getFormattedMessage("claim." + name + "." + category + "-text")
                         )
                 )
         );
@@ -69,14 +75,14 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
                 new HoverEvent(
                         HoverEvent.Action.SHOW_TEXT,
                         new Text(
-                                messages.getFormattedMessage("claim." + NAME + "." + category + "-hover")
+                                messages.getFormattedMessage("claim." + name + "." + category + "-hover")
                         )
                 )
         );
         component.setClickEvent(
                 new ClickEvent(
                         ClickEvent.Action.RUN_COMMAND,
-                        "/claim " + NAME + " " + player + page
+                        "/claim " + name + " " + player + page
                 )
         );
         return component;
@@ -88,17 +94,17 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
             return;
         }
         if (regionMessage == null) {
-            context.getData().setStatistic(NAME);
+            context.getData().setStatistic(name);
             return;
         }
 
-        final boolean hasOtherPerm = context.hasPermission(getOtherPermission());
+        final boolean hasOtherPerm = context.hasPermission(data.getModifierPerm(context.getData(), "other"));
         final OfflinePlayer target;
         String pageArg = null;
         int page = 1;
         if (context.getArgsLength() == 0) {
             if (!context.getSender().isPlayer()) {
-                new HelpMessage().sendMessage(context); // TODO Specify listadd
+                helpMessage.sendMessage(context, name);
                 return;
             }
             target = context.getSender().getPlayer();
@@ -113,7 +119,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
             target = OfflinePlayerRetriever.getOfflinePlayer(context.getArg(0));
             pageArg = context.getArg(1);
         } else {
-            new HelpMessage().sendMessage(context); // TODO Specify listadd
+            helpMessage.sendMessage(context, name);
             return;
         }
         final CommandSender sender = context.getSender().getBukkit();
@@ -127,7 +133,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
                 return;
             }
             if (page < 1) {
-                messages.sendMessage(sender, "claim." + NAME + ".invalid-page", "%page%", String.valueOf(page));
+                messages.sendMessage(sender, "claim." + name + ".invalid-page", "%page%", String.valueOf(page));
                 return;
             }
         }
@@ -173,7 +179,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
         if (result.isEmpty()) {
             messages.sendMessage(
                     sender,
-                    "claim." + NAME + ".no-region" + (targetedIsSender ? "" : "-other"),
+                    "claim." + name + ".no-region" + (targetedIsSender ? "" : "-other"),
                     "%player%",
                     targetName
             );
@@ -186,7 +192,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
         if (page > pageCount) {
             messages.sendMessage(
                     sender,
-                    "claim." + NAME + ".not-enough-page",
+                    "claim." + name + ".not-enough-page",
                     "%page%", "%arg%",
                     String.valueOf(pageCount), String.valueOf(page)
             );
@@ -212,22 +218,22 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
         }
 
         // Send page navigation message
-        final String pageMessage = messages.getFormattedMessage("claim." + NAME + ".page-message");
+        final String pageMessage = messages.getFormattedMessage("claim." + name + ".page-message");
         if (pageMessage != null) {
             String finalMessage = pageMessage.replace("%page%", String.valueOf(page));
             if (page == 1) {
                 finalMessage = finalMessage.replace(
                         "%previous%",
-                        messages.getFormattedMessage("claim." + NAME + ".no-previous")
+                        messages.getFormattedMessage("claim." + name + ".no-previous")
                 );
                 if (page == pageCount) {
                     // No previous and no next
                     finalMessage = finalMessage.replace(
                             "%next%",
-                            messages.getFormattedMessage("claim." + NAME + ".no-next")
+                            messages.getFormattedMessage("claim." + name + ".no-next")
                     );
                     sender.sendMessage(finalMessage);
-                    context.getData().setStatistic(NAME);
+                    context.getData().setStatistic(name);
                     return;
                 }
                 // No previous but next
@@ -242,13 +248,13 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
                                 "%next%", new BaseComponent[]{nextComponent}
                         ).create()
                 );
-                context.getData().setStatistic(NAME);
+                context.getData().setStatistic(name);
                 return;
             } else if (page == pageCount) {
                 // Previous but no next
                 finalMessage = finalMessage.replace(
                         "%next%",
-                        messages.getFormattedMessage("claim." + NAME + ".no-next")
+                        messages.getFormattedMessage("claim." + name + ".no-next")
                 );
                 final TextComponent previousComponent = getTextComponent(
                         "previous",
@@ -261,7 +267,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
                                 "%previous%", new BaseComponent[]{previousComponent}
                         ).create()
                 );
-                context.getData().setStatistic(NAME);
+                context.getData().setStatistic(name);
                 return;
             } else {
                 // Previous and next
@@ -287,27 +293,27 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
                 );
             }
         }
-        context.getData().setStatistic(NAME);
+        context.getData().setStatistic(name);
     }
 
     @Override
     public @NotNull String[] getTriggers() {
-        return TRIGGERS;
+        return triggers;
     }
 
     @Override
     public @NotNull String getTabCompletion() {
-        return NAME;
+        return name;
     }
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
-        return context.getSender().isPhysic() && context.hasPermission(getCommandPerm);
+        return context.getSender().isPhysic() && context.hasPermission(data.getBasePerm(context.getData()));
     }
 
     @Override
     public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
-        if (context.getArgsLength() != 1 || !context.hasPermission(getOtherPerm)) {
+        if (context.getArgsLength() != 1 || !context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
             return Collections.emptyList();
         }
         final String arg = context.getArg(0).toLowerCase(Locale.ROOT);

@@ -13,19 +13,22 @@ import java.util.Map;
 
 public class PillarSubCommand implements CommandNode<ClaimContextData> {
 
-    private final static String NAME = "pillar";
-    private final static String[] TRIGGERS = new String[]{NAME};
+    private final String name;
+    private final String[] triggers;
+    private final HelpMessage helpMessage;
     private final Map<String, PillarData> pillarData;
     private final TeleportSync teleportSync;
 
-    public PillarSubCommand(@NotNull StelyClaimPlugin plugin) {
-        this.pillarData = plugin.getPillarData();
-        this.teleportSync = plugin.getTeleportSync();
+    public PillarSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull HelpMessage helpMessage, @NotNull StelyClaimPlugin plugin) {
+        this.name = name;
+        this.triggers = triggers;
+        this.helpMessage = helpMessage;
+        pillarData = plugin.getPillarData();
+        teleportSync = plugin.getTeleportSync();
     }
 
     @Override
     public void execute(@NotNull CommandContext<ClaimContextData> context) {
-        final HelpMessage helpMessage = new HelpMessage();
         if (context.getArgsLength() != 1) {
             helpMessage.sendMessage(context);
             return;
@@ -55,12 +58,12 @@ public class PillarSubCommand implements CommandNode<ClaimContextData> {
             teleportLoc.add(0.5, 1, 0.5);
         }
         context.getSender().getMovable().setLocation(teleportSync, teleportLoc);
-        context.getData().setStatistic(NAME);
+        context.getData().setStatistic(name);
     }
 
     @Override
     public @NotNull String[] getTriggers() {
-        return TRIGGERS;
+        return triggers;
     }
 
     @Override

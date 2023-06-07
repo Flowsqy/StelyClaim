@@ -3,6 +3,8 @@ package fr.flowsqy.stelyclaim.command;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import org.bukkit.command.PluginCommand;
 
+import java.util.Objects;
+
 public class CommandManager {
 
     private final ClaimCommand claimCommand;
@@ -21,7 +23,7 @@ public class CommandManager {
         claimCmd.setPermissionMessage(configNoPerm);
         bedrockCmd.setPermissionMessage(configNoPerm);
 
-        claimCommand = new ClaimCommand(plugin);
+        claimCommand = new ClaimCommand(plugin, claimCmd.getPermission());
         claimCmd.setExecutor(claimCommand);
         claimCmd.setTabCompleter(claimCommand);
 

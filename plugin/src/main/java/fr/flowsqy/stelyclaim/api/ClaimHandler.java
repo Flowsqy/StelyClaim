@@ -11,7 +11,7 @@ public interface ClaimHandler<T extends ClaimOwner> {
      */
     String getId();
 
-    @Nullable ClaimInteractHandler<T> getClaimCommandHandler();
+    @Nullable ClaimInteractHandler<T> getClaimInteractHandler();
 
     /**
      * The owner of the claim

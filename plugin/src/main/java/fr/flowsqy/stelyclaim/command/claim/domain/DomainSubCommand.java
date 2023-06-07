@@ -4,10 +4,7 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
-import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.OwnerRetriever;
-import fr.flowsqy.stelyclaim.command.claim.WorldChecker;
+import fr.flowsqy.stelyclaim.command.claim.*;
 import fr.flowsqy.stelyclaim.command.struct.CommandContext;
 import fr.flowsqy.stelyclaim.command.struct.CommandNode;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
@@ -29,11 +26,15 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContextData> 
     private final String name;
     private final String[] triggers;
     private final WorldChecker worldChecker;
+    private final ClaimSubCommandData data;
+    private final HelpMessage helpMessage;
 
-    public DomainSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds) {
+    public DomainSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull ClaimSubCommandData data, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         worldChecker = new WorldChecker(worlds, plugin.getMessages());
+        this.data = data;
+        this.helpMessage = helpMessage;
     }
 
     @Override
@@ -45,7 +46,7 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContextData> 
         final String target;
         if (context.getArgsLength() == 1) {
             if (!context.getSender().isPlayer()) {
-                new HelpMessage().sendMessage(context); // TODO Specify name
+                helpMessage.sendMessage(context, name);
                 return;
             }
             owner = OwnerRetriever.retrieve(context.getSender(), context.getData().getHandler(), context.getSender().getPlayer());
@@ -54,7 +55,7 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContextData> 
             owner = OwnerRetriever.retrieve(context.getSender(), context.getData().getHandler(), context.getArg(0));
             target = context.getArg(1);
         } else {
-            new HelpMessage().sendMessage(context); // TODO Specify name
+            new HelpMessage().sendMessage(context, name);
             return;
         }
 
@@ -82,13 +83,13 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContextData> 
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
-        return context.getSender().isPhysic() && context.hasPermission(getBasePerm());
+        return context.getSender().isPhysic() && context.hasPermission(data.getBasePerm(context.getData()));
     }
 
     @Override
     public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
         final int size = context.getArgsLength();
-        if (size != 1 && !(size == 2 || context.hasPermission(getOtherPerm()))) {
+        if (size != 1 && !(size == 2 || context.hasPermission(data.getModifierPerm(context.getData(), "other")))) {
             return Collections.emptyList();
         }
         final String arg = context.getArg(context.getArgsLength() - 1).toLowerCase(Locale.ENGLISH);

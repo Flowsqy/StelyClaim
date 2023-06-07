@@ -4,10 +4,7 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
-import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.OwnerRetriever;
-import fr.flowsqy.stelyclaim.command.claim.WorldChecker;
+import fr.flowsqy.stelyclaim.command.claim.*;
 import fr.flowsqy.stelyclaim.command.struct.CommandContext;
 import fr.flowsqy.stelyclaim.command.struct.CommandNode;
 import org.bukkit.Bukkit;
@@ -27,11 +24,15 @@ public abstract class InteractSubCommand implements CommandNode<ClaimContextData
     private final String name;
     private final String[] triggers;
     private final WorldChecker worldChecker;
+    private final ClaimSubCommandData data;
+    private final HelpMessage helpMessage;
 
-    public InteractSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds) {
+    public InteractSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull ClaimSubCommandData data, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         worldChecker = new WorldChecker(worlds, plugin.getMessages());
+        this.data = data;
+        this.helpMessage = helpMessage;
     }
 
     @Override
@@ -42,14 +43,14 @@ public abstract class InteractSubCommand implements CommandNode<ClaimContextData
         final OwnerRetriever.Result<?> retrievedOwner;
         if (context.getArgsLength() == 0) {
             if (!context.getSender().isPlayer()) {
-                new HelpMessage().sendMessage(context); // TODO Specify name
+                helpMessage.sendMessage(context, name);
             }
             final Actor sender = context.getSender();
             retrievedOwner = OwnerRetriever.retrieve(sender, context.getData().getHandler(), sender.getPlayer());
         } else if (context.getArgsLength() == 1) {
             retrievedOwner = OwnerRetriever.retrieve(context.getSender(), context.getData().getHandler(), context.getArg(0));
         } else {
-            new HelpMessage().sendMessage(context); // TODO Specify name
+            helpMessage.sendMessage(context, name);
             return;
         }
         if (retrievedOwner.isEmpty()) {
@@ -74,12 +75,12 @@ public abstract class InteractSubCommand implements CommandNode<ClaimContextData
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
-        return context.getSender().isPhysic() && context.hasPermission(getBasePerm());
+        return context.getSender().isPhysic() && context.hasPermission(data.getBasePerm(context.getData()));
     }
 
     @Override
     public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
-        if (context.getArgsLength() != 1 || !context.hasPermission(getOtherPermission)) {
+        if (context.getArgsLength() != 1 || !context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
             return Collections.emptyList();
         }
         final String arg = context.getArg(0).toLowerCase(Locale.ENGLISH);

@@ -30,16 +30,22 @@ import java.util.*;
 
 public class HereSubCommand implements CommandNode<ClaimContextData> {
 
-    private final static String NAME = "here";
-    private final static String[] TRIGGERS = new String[]{NAME, "hr"};
+    private final String name;
+    private final String[] triggers;
     private final ConfigurationFormattedMessages messages;
     private final WorldChecker worldChecker;
     private final ProtocolManager protocolManager;
+    private final ClaimSubCommandData data;
+    private final HelpMessage helpMessage;
 
-    public HereSubCommand(@NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds) {
+    public HereSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull ClaimSubCommandData data, @NotNull HelpMessage helpMessage) {
+        this.name = name;
+        this.triggers = triggers;
         messages = plugin.getMessages();
         worldChecker = new WorldChecker(worlds, messages);
         protocolManager = plugin.getProtocolManager();
+        this.data = data;
+        this.helpMessage = helpMessage;
     }
 
     @Override
@@ -48,12 +54,10 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
             return;
         }
         if (context.getArgsLength() != 0) {
-            new HelpMessage().sendMessage(context); // TODO Specify here
+            helpMessage.sendMessage(context, name);
             return;
         }
-        //final PlayerHandler handler = protocolManager.getHandler("player");
 
-        //final Player player = (Player) sender;
         final CommandSender sender = context.getSender().getBukkit();
         final PhysicActor physicActor = context.getSender().getPhysic();
         final Location senderLoc = physicActor.getLocation();
@@ -67,8 +71,8 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
                 )
         );
 
-        if (!context.hasPermission(getOtherPermission())) {
-            context.getData().setStatistic(NAME);
+        if (!context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
+            context.getData().setStatistic(name);
             for (ProtectedRegion overlapRegion : intersecting) {
                 if (!RegionFinder.isCorrectId(overlapRegion.getId())) {
                     continue;
@@ -80,20 +84,20 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
                 }
 
                 if (context.getSender().isPlayer() && intersectingHandler.getOwner(part[2]).own(context.getSender().getPlayer())) {
-                    messages.sendMessage(sender, "claim." + NAME + ".inside");
+                    messages.sendMessage(sender, "claim." + name + ".inside");
                     return;
                 }
             }
-            messages.sendMessage(sender, "claim." + NAME + ".not-inside");
+            messages.sendMessage(sender, "claim." + name + ".not-inside");
             return;
         }
 
-        final String baseMessage = messages.getFormattedMessage("claim." + NAME + ".message");
-        final String text = messages.getFormattedMessage("claim." + NAME + ".text");
-        final String separatorMessage = messages.getFormattedMessage("claim." + NAME + ".separator");
+        final String baseMessage = messages.getFormattedMessage("claim." + name + ".message");
+        final String text = messages.getFormattedMessage("claim." + name + ".text");
+        final String separatorMessage = messages.getFormattedMessage("claim." + name + ".separator");
 
         if (context.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.INFO))) {
-            final String hover = messages.getFormattedMessage("claim." + NAME + ".hover");
+            final String hover = messages.getFormattedMessage("claim." + name + ".hover");
             final List<BaseComponent> separator = new ArrayList<>(
                     Arrays.asList(
                             TextComponent.fromLegacyText(
@@ -152,9 +156,9 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
                 }
                 regions.add(component);
             }
-            context.getData().setStatistic(NAME);
+            context.getData().setStatistic(name);
             if (regions.isEmpty()) {
-                messages.sendMessage(sender, "claim." + NAME + ".nothing");
+                messages.sendMessage(sender, "claim." + name + ".nothing");
                 return;
             }
             final ComponentReplacer replacer = new ComponentReplacer(baseMessage);
@@ -185,29 +189,29 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
         }
 
         if (builder.length() == 0) {
-            messages.sendMessage(sender, "claim." + NAME + ".nothing");
-            context.getData().setStatistic(NAME);
+            messages.sendMessage(sender, "claim." + name + ".nothing");
+            context.getData().setStatistic(name);
             return;
         }
 
         sender.sendMessage(baseMessage.replace("%regions%", builder.toString()));
 
-        context.getData().setStatistic(NAME);
+        context.getData().setStatistic(name);
     }
 
     @Override
     public @NotNull String[] getTriggers() {
-        return TRIGGERS;
+        return triggers;
     }
 
     @Override
     public @NotNull String getTabCompletion() {
-        return NAME;
+        return name;
     }
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
-        return context.getSender().isPhysic() && context.hasPermission(getBasePerm());
+        return context.getSender().isPhysic() && context.hasPermission(data.getBasePerm(context.getData()));
     }
 
     @Override

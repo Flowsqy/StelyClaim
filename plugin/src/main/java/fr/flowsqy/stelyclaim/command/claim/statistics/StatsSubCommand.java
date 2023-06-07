@@ -1,24 +1,30 @@
 package fr.flowsqy.stelyclaim.command.claim.statistics;
 
-import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.command.claim.ClaimSubCommandData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.command.struct.CommandContext;
 import fr.flowsqy.stelyclaim.command.struct.CommandNode;
 import fr.flowsqy.stelyclaim.command.struct.DispatchCommandTabExecutor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StatsSubCommand extends DispatchCommandTabExecutor<ClaimContextData> implements CommandNode<ClaimContextData> {
 
-    private final static String NAME = "stats";
-    private final static String[] TRIGGERS = new String[]{NAME, "s"};
+    private final String name;
+    private final String[] triggers;
+    private final ClaimSubCommandData data;
+    private final HelpMessage helpMessage;
     private final List<CommandNode<ClaimContextData>> children;
 
-    public StatsSubCommand(@NotNull StelyClaimPlugin plugin) {
-        children = Arrays.asList(new ShowStatsSubCommand(plugin), new ResetStatsSubCommand(plugin));
+    public StatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull ClaimSubCommandData data, @NotNull HelpMessage helpMessage, @NotNull List<CommandNode<ClaimContextData>> children) {
+        this.name = name;
+        this.triggers = triggers;
+        this.data = data;
+        this.helpMessage = helpMessage;
+        this.children = new ArrayList<>(children);
     }
 
     /*
@@ -50,23 +56,22 @@ public class StatsSubCommand extends DispatchCommandTabExecutor<ClaimContextData
 
     @Override
     public void fallBackExecute(@NotNull CommandContext<ClaimContextData> context) {
-        // Send help
-        new HelpMessage().sendMessage(context); // TODO Specify stats
+        helpMessage.sendMessage(context, name);
     }
 
     @Override
     public @NotNull String[] getTriggers() {
-        return TRIGGERS;
+        return triggers;
     }
 
     @Override
     public @NotNull String getTabCompletion() {
-        return NAME;
+        return name;
     }
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
-        return context.hasPermission(getBasePerm());
+        return context.hasPermission(data.getBasePerm(context.getData()));
     }
 
 }
