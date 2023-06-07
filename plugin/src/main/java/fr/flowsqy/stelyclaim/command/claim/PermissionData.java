@@ -5,13 +5,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class ClaimSubCommandData {
+public class PermissionData {
 
-    private String basePerm;
-    private String parentPerm;
-    private boolean contextSpecific;
+    private final String basePerm;
+    private final String parentPerm;
+    private final boolean contextSpecific;
 
-    public ClaimSubCommandData() {
+    public PermissionData(String basePerm, String parentPerm, boolean contextSpecific) {
+        this.basePerm = basePerm;
+        this.parentPerm = parentPerm;
+        this.contextSpecific = contextSpecific;
     }
 
     public String getBasePerm(@Nullable ClaimContextData data) {
@@ -28,12 +31,6 @@ public class ClaimSubCommandData {
 
     public boolean isContextSpecific() {
         return contextSpecific;
-    }
-
-    public void init(@Nullable String basePerm, @Nullable String parentPerm, boolean contextSpecific) {
-        this.basePerm = basePerm;
-        this.parentPerm = parentPerm;
-        this.contextSpecific = contextSpecific;
     }
 
 }

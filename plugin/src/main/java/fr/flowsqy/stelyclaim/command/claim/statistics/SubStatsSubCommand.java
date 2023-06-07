@@ -2,7 +2,7 @@ package fr.flowsqy.stelyclaim.command.claim.statistics;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
-import fr.flowsqy.stelyclaim.command.claim.ClaimSubCommandData;
+import fr.flowsqy.stelyclaim.command.claim.PermissionData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.command.struct.CommandContext;
 import fr.flowsqy.stelyclaim.command.struct.CommandNode;
@@ -23,13 +23,13 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContextData
 
     private final String name;
     private final String[] triggers;
-    private final ClaimSubCommandData data;
+    private final PermissionData data;
     private final String helpName;
     private final HelpMessage helpMessage;
     protected final ConfigurationFormattedMessages messages;
     protected final StatisticManager statisticManager;
 
-    public SubStatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @NotNull ClaimSubCommandData data, @NotNull String helpName, @NotNull HelpMessage helpMessage) {
+    public SubStatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @NotNull PermissionData data, @NotNull String helpName, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         this.data = data;

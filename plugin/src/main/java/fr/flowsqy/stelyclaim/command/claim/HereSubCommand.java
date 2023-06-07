@@ -35,10 +35,10 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
     private final ConfigurationFormattedMessages messages;
     private final WorldChecker worldChecker;
     private final ProtocolManager protocolManager;
-    private final ClaimSubCommandData data;
+    private final PermissionData data;
     private final HelpMessage helpMessage;
 
-    public HereSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull ClaimSubCommandData data, @NotNull HelpMessage helpMessage) {
+    public HereSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull PermissionData data, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         messages = plugin.getMessages();
@@ -96,7 +96,8 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
         final String text = messages.getFormattedMessage("claim." + name + ".text");
         final String separatorMessage = messages.getFormattedMessage("claim." + name + ".separator");
 
-        if (context.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.INFO))) {
+        // TODO Fix that . . . .
+        if (false /*context.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.INFO))*/) {
             final String hover = messages.getFormattedMessage("claim." + name + ".hover");
             final List<BaseComponent> separator = new ArrayList<>(
                     Arrays.asList(

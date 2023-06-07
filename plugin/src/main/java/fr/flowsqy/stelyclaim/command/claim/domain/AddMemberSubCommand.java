@@ -5,7 +5,7 @@ import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.command.claim.ClaimSubCommandData;
+import fr.flowsqy.stelyclaim.command.claim.PermissionData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -18,7 +18,7 @@ public class AddMemberSubCommand extends DomainSubCommand {
 
     private final ProtocolManager protocolManager;
 
-    public AddMemberSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull ClaimSubCommandData data, @NotNull HelpMessage helpMessage) {
+    public AddMemberSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull PermissionData data, @NotNull HelpMessage helpMessage) {
         super(name, triggers, plugin, worlds, data, helpMessage);
         protocolManager = plugin.getProtocolManager();
     }

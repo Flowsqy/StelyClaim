@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 public class HelpMessage {
 
-    public record HelpData(@NotNull String command, @NotNull ClaimSubCommandData data,
+    public record HelpData(@NotNull String command, @NotNull PermissionData data,
                            @NotNull Function<String, String> helpMessage) {
     }
 

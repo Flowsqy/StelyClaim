@@ -14,9 +14,9 @@ public class ContextSubCommand extends DispatchCommandTabExecutor<ClaimContextDa
     private final String[] triggers;
     private final ClaimHandler<?> claimHandler;
     private final ClaimSubCommandManager subCommandManager;
-    private final ClaimSubCommandData data;
+    private final PermissionData data;
 
-    public ContextSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull ClaimHandler<?> claimHandler, @NotNull ClaimSubCommandManager subCommandManager, @NotNull ClaimSubCommandData data) {
+    public ContextSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull ClaimHandler<?> claimHandler, @NotNull ClaimSubCommandManager subCommandManager, @NotNull PermissionData data) {
         this.name = name;
         this.triggers = triggers;
         this.claimHandler = claimHandler;

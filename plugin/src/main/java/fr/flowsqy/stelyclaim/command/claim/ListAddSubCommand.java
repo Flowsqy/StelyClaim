@@ -36,7 +36,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
     private final ConfigurationFormattedMessages messages;
     private final WorldChecker worldChecker;
     private final ProtocolManager protocolManager;
-    private final ClaimSubCommandData data;
+    private final PermissionData data;
     private final HelpMessage helpMessage;
     private final long CACHE_PERIOD;
     private final int CACHE_SIZE_CLEAR_CHECK;
@@ -46,7 +46,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
 
     private final String regionMessage;
 
-    public ListAddSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull ClaimSubCommandData data, @NotNull HelpMessage helpMessage) {
+    public ListAddSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull PermissionData data, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         messages = plugin.getMessages();

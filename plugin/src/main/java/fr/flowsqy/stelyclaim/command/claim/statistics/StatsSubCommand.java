@@ -1,7 +1,7 @@
 package fr.flowsqy.stelyclaim.command.claim.statistics;
 
 import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
-import fr.flowsqy.stelyclaim.command.claim.ClaimSubCommandData;
+import fr.flowsqy.stelyclaim.command.claim.PermissionData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.command.struct.CommandContext;
 import fr.flowsqy.stelyclaim.command.struct.CommandNode;
@@ -15,11 +15,11 @@ public class StatsSubCommand extends DispatchCommandTabExecutor<ClaimContextData
 
     private final String name;
     private final String[] triggers;
-    private final ClaimSubCommandData data;
+    private final PermissionData data;
     private final HelpMessage helpMessage;
     private final List<CommandNode<ClaimContextData>> children;
 
-    public StatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull ClaimSubCommandData data, @NotNull HelpMessage helpMessage, @NotNull List<CommandNode<ClaimContextData>> children) {
+    public StatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull PermissionData data, @NotNull HelpMessage helpMessage, @NotNull List<CommandNode<ClaimContextData>> children) {
         this.name = name;
         this.triggers = triggers;
         this.data = data;

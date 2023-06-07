@@ -31,7 +31,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
     private final ConfigurationFormattedMessages messages;
     private final WorldChecker worldChecker;
     private final ProtocolManager protocolManager;
-    private final ClaimSubCommandData data;
+    private final PermissionData data;
     private final HelpMessage helpMessage;
     private final int DEFAULT_DISTANCE;
     private final int DEFAULT_MAX_DISTANCE;
@@ -40,7 +40,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
     private final int MAXIMAL_REGION_AMOUNT;
     private final Map<UUID, Long> lastExecTimeByPlayerId;
 
-    public NearSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull ClaimSubCommandData data, @NotNull HelpMessage helpMessage) {
+    public NearSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull PermissionData data, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         messages = plugin.getMessages();

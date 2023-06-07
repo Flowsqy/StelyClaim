@@ -24,10 +24,10 @@ public abstract class InteractSubCommand implements CommandNode<ClaimContextData
     private final String name;
     private final String[] triggers;
     private final WorldChecker worldChecker;
-    private final ClaimSubCommandData data;
+    private final PermissionData data;
     private final HelpMessage helpMessage;
 
-    public InteractSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull ClaimSubCommandData data, @NotNull HelpMessage helpMessage) {
+    public InteractSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull PermissionData data, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         worldChecker = new WorldChecker(worlds, plugin.getMessages());

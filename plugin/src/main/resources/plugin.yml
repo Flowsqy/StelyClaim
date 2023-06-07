@@ -20,3 +20,10 @@ commands:
     permission: stelyclaim.command.bedrock
     description: Provide instant bedrock break for survival players
     usage: /bedrock
+permissions:
+  stelyclaim.command.claim:
+    default: op
+    description: "Claim command permission"
+  stelyclaim.command.claim.*:
+    default: op
+    description: "All claim commands permission"

@@ -19,7 +19,7 @@ public class PillarSubCommand implements CommandNode<ClaimContextData> {
     private final Map<String, PillarData> pillarData;
     private final TeleportSync teleportSync;
 
-    public PillarSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull HelpMessage helpMessage, @NotNull StelyClaimPlugin plugin) {
+    public PillarSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         this.helpMessage = helpMessage;

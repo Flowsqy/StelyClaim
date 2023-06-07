@@ -13,11 +13,11 @@ public class HelpSubCommand implements CommandNode<ClaimContextData> {
 
     private final String name;
     private final String[] triggers;
-    private final ClaimSubCommandData data;
+    private final PermissionData data;
     private final ClaimSubCommandManager claimSubCommandManager;
     private final HelpMessage helpMessage;
 
-    public HelpSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull ClaimSubCommandData data, @NotNull ClaimSubCommandManager claimSubCommandManager, @NotNull HelpMessage helpMessage) {
+    public HelpSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull PermissionData data, @NotNull ClaimSubCommandManager claimSubCommandManager, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         this.data = data;
