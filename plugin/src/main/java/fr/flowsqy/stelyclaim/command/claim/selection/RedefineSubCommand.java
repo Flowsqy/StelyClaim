@@ -24,7 +24,7 @@ public class RedefineSubCommand extends SelectionSubCommand {
 
     @Override
     protected <T extends ClaimOwner> boolean interactRegion(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
-        return protocolManager.define(world, actor, owner);
+        return protocolManager.redefine(world, actor, owner);
     }
 
 }
