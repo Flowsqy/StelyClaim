@@ -1,6 +1,7 @@
 package fr.flowsqy.stelyclaim;
 
 import com.earth2me.essentials.Essentials;
+import fr.flowsqy.stelyclaim.api.HandlerRegistry;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.command.CommandManager;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
@@ -34,6 +35,7 @@ public class StelyClaimPlugin extends JavaPlugin {
     private TeleportSync teleportSync;
     private EssentialsManager essentialsManager;
     private MailManager mailManager;
+    private HandlerRegistry handlerRegistry;
     private ProtocolManager protocolManager;
     private CommandManager commandManager;
 
@@ -64,10 +66,12 @@ public class StelyClaimPlugin extends JavaPlugin {
 
         new DisconnectListener(this);
 
-        this.protocolManager = new ProtocolManager(this);
+        handlerRegistry = new HandlerRegistry();
 
         // Register internal ClaimHandler
-        protocolManager.registerHandler(new PlayerHandler(this));
+        handlerRegistry.registerHandler(new PlayerHandler(this));
+
+        this.protocolManager = new ProtocolManager(this);
 
         this.commandManager = new CommandManager(this);
 
@@ -123,6 +127,10 @@ public class StelyClaimPlugin extends JavaPlugin {
 
     public Map<String, PillarData> getPillarData() {
         return pillarData;
+    }
+
+    public HandlerRegistry getHandlerRegistry() {
+        return handlerRegistry;
     }
 
     public ProtocolManager getProtocolManager() {
