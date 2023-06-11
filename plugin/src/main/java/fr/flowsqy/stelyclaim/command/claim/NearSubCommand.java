@@ -204,7 +204,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
 
         // Get the region manager of the world
         final World world = player.getWorld();
-        final RegionManager regionManager = RegionFinder.getRegionManager(new WorldName(world.getName()), player, messages);
+        final RegionManager regionManager = RegionFinder.getRegionManager(new WorldName(world.getName()), player);
         if (regionManager == null) {
             return;
         }

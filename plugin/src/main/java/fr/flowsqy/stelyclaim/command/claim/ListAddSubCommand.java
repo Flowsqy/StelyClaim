@@ -146,7 +146,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
 
         // Get from cache or register
         if (cacheData == null || System.currentTimeMillis() - cacheData.initialInput > CACHE_PERIOD) {
-            final RegionManager manager = RegionFinder.getRegionManager(new WorldName(world.getName()), sender, messages);
+            final RegionManager manager = RegionFinder.getRegionManager(new WorldName(world.getName()), sender);
             if (manager == null)
                 return;
             final List<String> result = manager.getRegions().entrySet().stream()

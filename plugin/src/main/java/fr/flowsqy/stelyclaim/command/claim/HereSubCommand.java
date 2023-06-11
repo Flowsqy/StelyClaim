@@ -61,7 +61,7 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
         final CommandSender sender = context.getSender().getBukkit();
         final PhysicActor physicActor = context.getSender().getPhysic();
         final Location senderLoc = physicActor.getLocation();
-        final RegionManager regionManager = RegionFinder.getRegionManager(new WorldName(physicActor.getWorld().getName()), sender, messages);
+        final RegionManager regionManager = RegionFinder.getRegionManager(new WorldName(physicActor.getWorld().getName()), sender);
 
         final ApplicableRegionSet intersecting = regionManager.getApplicableRegions(
                 BlockVector3.at(

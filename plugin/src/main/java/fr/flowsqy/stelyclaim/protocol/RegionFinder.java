@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
 
 public class RegionFinder {
 
+    //TODO Refactor this class
+
     private final static String PREFIX = "stelyclaim";
     private final static Pattern GLOBAL_PATTERN = Pattern.compile("^" + PREFIX + "_[a-z0-9]+_[A-Za-z0-9_,'\\-+/]+$");
 
@@ -23,14 +25,23 @@ public class RegionFinder {
         return PREFIX + "_" + handler.getId() + "_" + handler.getIdentifier(owner);
     }
 
+    private static FormattedMessages internalMessages;
+
+    public static void setInternalMessages(@NotNull FormattedMessages messages) {
+        if (internalMessages != null) {
+            throw new IllegalStateException();
+        }
+        internalMessages = messages;
+    }
+
     public static boolean isCorrectId(String id) {
         return id != null && GLOBAL_PATTERN.matcher(id).matches();
     }
 
-    public static RegionManager getRegionManager(World world, CommandSender sender, FormattedMessages messages) {
+    public static RegionManager getRegionManager(@NotNull World world, @NotNull CommandSender sender) {
         final RegionManager regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
         if (regionManager == null) {
-            messages.sendMessage(sender,
+            internalMessages.sendMessage(sender,
                     "claim.world.nothandle",
                     "%world%", world.getName());
         }
@@ -42,12 +53,11 @@ public class RegionFinder {
             String regionName,
             String ownerName,
             boolean ownRegion,
-            Actor sender,
-            FormattedMessages messages
+            Actor sender
     ) {
         final ProtectedRegion region = manager.getRegion(regionName);
         if (region == null) {
-            messages.sendMessage(sender.getBukkit(), "claim.exist.not" + (ownRegion ? "" : "-other"), "%region%", ownerName);
+            internalMessages.sendMessage(sender.getBukkit(), "claim.exist.not" + (ownRegion ? "" : "-other"), "%region%", ownerName);
         }
         return region;
     }
@@ -57,12 +67,11 @@ public class RegionFinder {
             String regionName,
             String ownerName,
             boolean ownRegion,
-            Player sender,
-            FormattedMessages messages
+            Player sender
     ) {
         final boolean exist = manager.getRegion(regionName) != null;
         if (exist) {
-            messages.sendMessage(sender, "claim.exist.already" + (ownRegion ? "" : "-other"), "%region%", ownerName);
+            internalMessages.sendMessage(sender, "claim.exist.already" + (ownRegion ? "" : "-other"), "%region%", ownerName);
         }
         return exist;
     }
