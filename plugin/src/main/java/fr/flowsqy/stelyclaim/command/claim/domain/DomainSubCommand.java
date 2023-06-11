@@ -55,7 +55,7 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContextData> 
             owner = OwnerRetriever.retrieve(context.getSender(), context.getData().getHandler(), context.getArg(0));
             target = context.getArg(1);
         } else {
-            new HelpMessage().sendMessage(context, name);
+            helpMessage.sendMessage(context, name);
             return;
         }
 
