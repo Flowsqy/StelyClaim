@@ -5,9 +5,9 @@ import fr.flowsqy.stelyclaim.command.struct.CommandNode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 public class HelpSubCommand implements CommandNode<ClaimContextData> {
 
@@ -59,11 +59,18 @@ public class HelpSubCommand implements CommandNode<ClaimContextData> {
             return Collections.emptyList();
         }
         final String arg = context.getArg(0).toLowerCase(Locale.ENGLISH);
-        return claimSubCommandManager.getCommands().stream()
-                .filter(cmd -> cmd.canTabComplete(context))
-                .map(CommandNode::getTabCompletion)
-                .filter(cmd -> cmd.startsWith(arg))
-                .collect(Collectors.toList());
+        final List<String> completions = new LinkedList<>();
+        for (CommandNode<ClaimContextData> command : claimSubCommandManager.getCommands()) {
+            if (!command.canTabComplete(context)) {
+                continue;
+            }
+            final String completion = command.getTabCompletion();
+            if (!completion.startsWith(arg)) {
+                continue;
+            }
+            completions.add(completion);
+        }
+        return completions;
     }
 
 }

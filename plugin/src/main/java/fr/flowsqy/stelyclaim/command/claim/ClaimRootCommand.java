@@ -5,8 +5,6 @@ import fr.flowsqy.stelyclaim.command.struct.CommandNode;
 import fr.flowsqy.stelyclaim.command.struct.DispatchCommandTabExecutor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 public class ClaimRootCommand extends DispatchCommandTabExecutor<ClaimContextData> {
 
     private final ClaimSubCommandManager subCommandManager;
@@ -18,7 +16,7 @@ public class ClaimRootCommand extends DispatchCommandTabExecutor<ClaimContextDat
     }
 
     @Override
-    public @NotNull List<CommandNode<ClaimContextData>> getChildren() {
+    public @NotNull Iterable<CommandNode<ClaimContextData>> getChildren() {
         return subCommandManager.getCommands();
     }
 

@@ -50,7 +50,7 @@ public class StatsSubCommand extends DispatchCommandTabExecutor<ClaimContextData
         );*/
 
     @Override
-    public @NotNull List<CommandNode<ClaimContextData>> getChildren() {
+    public @NotNull Iterable<CommandNode<ClaimContextData>> getChildren() {
         return children;
     }
 

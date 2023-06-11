@@ -30,11 +30,11 @@ public class ClaimSubCommandManager {
         specifics.remove(command);
     }
 
-    public List<CommandNode<ClaimContextData>> getCommands() {
+    public Iterable<CommandNode<ClaimContextData>> getCommands() {
         return commands;
     }
 
-    public List<CommandNode<ClaimContextData>> getSpecifics() {
+    public Iterable<CommandNode<ClaimContextData>> getSpecifics() {
         return specifics;
     }
 

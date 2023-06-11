@@ -10,7 +10,7 @@ import java.util.Locale;
 public abstract class DispatchCommandTabExecutor<T> implements CommandTabExecutor<T> {
 
     @NotNull
-    public abstract List<CommandNode<T>> getChildren();
+    public abstract Iterable<CommandNode<T>> getChildren();
 
     @Override
     public void execute(@NotNull CommandContext<T> context) {
