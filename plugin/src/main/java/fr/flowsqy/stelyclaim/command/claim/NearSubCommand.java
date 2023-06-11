@@ -245,7 +245,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
                     // Retrieve the ClaimOwner
                     final ClaimOwner claimOwner = regionHandler.getOwner(parts[2]);
                     // Check if the player own the region
-                    if (claimOwner.own(player)) {
+                    if (claimOwner.own(context.getSender())) {
                         // Does not display the region that a player own
                         continue;
                     }

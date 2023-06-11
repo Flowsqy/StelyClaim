@@ -82,7 +82,7 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
                     continue;
                 }
 
-                if (context.getSender().isPlayer() && intersectingHandler.getOwner(part[2]).own(context.getSender().getPlayer())) {
+                if (context.getSender().isPlayer() && intersectingHandler.getOwner(part[2]).own(context.getSender())) {
                     messages.sendMessage(sender, "claim." + name + ".inside");
                     return;
                 }
