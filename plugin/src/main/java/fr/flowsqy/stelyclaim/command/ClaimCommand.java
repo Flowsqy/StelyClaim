@@ -375,7 +375,8 @@ public class ClaimCommand implements TabExecutor {
                         new String[]{playerName, "p"},
                         playerHandler,
                         subCommandManager,
-                        playerData
+                        playerData,
+                        helpMessage
                 ),
                 playerData
         );

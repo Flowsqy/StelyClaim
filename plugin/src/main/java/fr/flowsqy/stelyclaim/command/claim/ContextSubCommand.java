@@ -15,13 +15,15 @@ public class ContextSubCommand extends DispatchCommandTabExecutor<ClaimContextDa
     private final ClaimHandler<?> claimHandler;
     private final ClaimSubCommandManager subCommandManager;
     private final PermissionData data;
+    private final HelpMessage helpMessage;
 
-    public ContextSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull ClaimHandler<?> claimHandler, @NotNull ClaimSubCommandManager subCommandManager, @NotNull PermissionData data) {
+    public ContextSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull ClaimHandler<?> claimHandler, @NotNull ClaimSubCommandManager subCommandManager, @NotNull PermissionData data, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         this.claimHandler = claimHandler;
         this.subCommandManager = subCommandManager;
         this.data = data;
+        this.helpMessage = helpMessage;
     }
 
     @Override
@@ -52,13 +54,13 @@ public class ContextSubCommand extends DispatchCommandTabExecutor<ClaimContextDa
     }
 
     @Override
-    public @NotNull List<CommandNode<ClaimContextData>> getChildren() {
+    public @NotNull Iterable<CommandNode<ClaimContextData>> getChildren() {
         return subCommandManager.getSpecifics();
     }
 
     @Override
     public void fallBackExecute(@NotNull CommandContext<ClaimContextData> context) {
-        new HelpMessage().sendMessage(context);
+        helpMessage.sendMessage(context);
     }
 
 }
