@@ -3,14 +3,13 @@ package fr.flowsqy.stelyclaim.protocol.domain;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import fr.flowsqy.stelyclaim.api.ActionResult;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.command.ClaimCommand;
-import fr.flowsqy.stelyclaim.util.MailManager;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -19,43 +18,40 @@ import java.util.function.Function;
 
 public class DomainProtocol implements InteractProtocolHandler {
 
+    public static final int CANT_MODIFY = ActionResult.registerResultCode();
+    public static final int MODIFY = ActionResult.registerResultCode();
+
     private final Protocol protocol;
-    private final MailManager mailManager;
+    //private final MailManager mailManager;
     private final OfflinePlayer target;
 
-    public DomainProtocol(Protocol protocol, MailManager mailManager, OfflinePlayer target) {
+    public DomainProtocol(@NotNull Protocol protocol, /*MailManager mailManager,*/ @NotNull OfflinePlayer target) {
         this.protocol = protocol;
-        this.mailManager = mailManager;
+        //this.mailManager = mailManager;
         this.target = target;
     }
 
     @Override
-    public String getPermission() {
-        return protocol.getPermission();
-    }
-
-    @Override
-    public String getName() {
-        return protocol.getName();
-    }
-
-    @Override
-    public <T extends ClaimOwner> boolean interactRegion(RegionManager regionManager, ProtectedRegion region, boolean ownRegion, HandledOwner<T> handledOwner, Actor actor, FormattedMessages messages) {
+    public @NotNull <T extends ClaimOwner> ActionResult interactRegion(@NotNull RegionManager regionManager, @NotNull ProtectedRegion region, @NotNull HandledOwner<T> handledOwner, @NotNull Actor actor, boolean ownRegion) {
         final T owner = handledOwner.owner();
         final DefaultDomain domain = protocol.getDomain().apply(region);
         final UUID uuid = target.getUniqueId();
-        final boolean state = protocol.isState();
-        final boolean result = protocol.getContains().apply(domain, uuid);
-        if ((state && result) || (!state && !result)) {
+        final boolean add = protocol.isAdd();
+        final boolean containsTarget = protocol.getContains().apply(domain, uuid);
+        if ((add && containsTarget) || (!add && !containsTarget)) {
+            return new ActionResult(CANT_MODIFY, false, ActionResult.getModifier());
+            /*
             messages.sendMessage(
                     actor.getBukkit(),
-                    "claim.domain." + (protocol.isOwner() ? "owner" : "member") + "." + (state ? "already" : "not") + (ownRegion ? "" : "-other"),
+                    "claim.domain." + (protocol.isOwner() ? "owner" : "member") + "." + (add ? "already" : "not") + (ownRegion ? "" : "-other"),
                     "%region%", "%target%",
                     owner.getName(), target.getName()
             );
-            return false;
+            return false;*/
         }
         protocol.getAction().accept(domain, uuid);
+        return new ActionResult(MODIFY, true);
+        /*
         messages.sendMessage(
                 actor.getBukkit(),
                 "claim.command." + protocol.getName() + (ownRegion ? "" : "-other"),
@@ -65,53 +61,42 @@ public class DomainProtocol implements InteractProtocolHandler {
 
         if (!ownRegion) {
             mailManager.sendInfoToOwner(actor, owner, messages, protocol.getName(), target);
-        }
-
-        return true;
+        }*/
     }
 
     public enum Protocol {
 
-        ADDMEMBER(
+        ADD_MEMBER(
                 ProtectedRegion::getMembers, DefaultDomain::contains, DefaultDomain::addPlayer,
-                ClaimCommand.Permissions.ADDMEMBER, "addmember",
                 true, false
         ),
-        REMOVEMEMBER(
+        REMOVE_MEMBER(
                 ProtectedRegion::getMembers, DefaultDomain::contains, DefaultDomain::removePlayer,
-                ClaimCommand.Permissions.REMOVEMEMBER, "removemember",
                 false, false
         ),
-        ADDOWNER(
+        ADD_OWNER(
                 ProtectedRegion::getOwners, DefaultDomain::contains, DefaultDomain::addPlayer,
-                ClaimCommand.Permissions.ADDOWNER, "addowner",
                 true, true
         ),
-        REMOVEOWNER(
+        REMOVE_OWNER(
                 ProtectedRegion::getOwners, DefaultDomain::contains, DefaultDomain::removePlayer,
-                ClaimCommand.Permissions.REMOVEOWNER, "removeowner",
                 false, true
         );
 
         private final Function<ProtectedRegion, DefaultDomain> domain;
         private final BiFunction<DefaultDomain, UUID, Boolean> contains;
         private final BiConsumer<DefaultDomain, UUID> action;
-        private final String permission;
-        private final String name;
-        private final boolean state;
+        private final boolean add;
         private final boolean owner;
 
         Protocol(
                 Function<ProtectedRegion, DefaultDomain> domain, BiFunction<DefaultDomain, UUID, Boolean> contains, BiConsumer<DefaultDomain, UUID> action,
-                String permission, String name,
-                boolean state, boolean owner
+                boolean add, boolean owner
         ) {
             this.domain = domain;
             this.contains = contains;
             this.action = action;
-            this.permission = permission;
-            this.name = name;
-            this.state = state;
+            this.add = add;
             this.owner = owner;
         }
 
@@ -127,16 +112,8 @@ public class DomainProtocol implements InteractProtocolHandler {
             return action;
         }
 
-        public String getPermission() {
-            return permission;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public boolean isState() {
-            return state;
+        public boolean isAdd() {
+            return add;
         }
 
         public boolean isOwner() {
