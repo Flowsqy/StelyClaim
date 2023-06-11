@@ -1,5 +1,6 @@
 package fr.flowsqy.stelyclaim.api;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface ClaimHandler<T extends ClaimOwner> {
@@ -9,17 +10,20 @@ public interface ClaimHandler<T extends ClaimOwner> {
      *
      * @return The handler identifier
      */
+    @NotNull
     String getId();
 
     @Nullable ClaimInteractHandler<T> getClaimInteractHandler();
 
+    // TODO Throws an error if the owner can't be retrieved
     /**
      * The owner of the claim
      *
      * @param claimIdentifier The {@link String} that identifies the owner of the claim
      * @return The {@link ClaimOwner} of the claim
      */
-    T getOwner(String claimIdentifier);
+    @NotNull
+    T getOwner(@NotNull String claimIdentifier);
 
     /**
      * Get the {@link String} that identifies the owner of the claim
@@ -27,7 +31,8 @@ public interface ClaimHandler<T extends ClaimOwner> {
      * @param owner The {@link ClaimOwner} of the claim
      * @return The {@link String} that identifies the owner of the claim
      */
-    String getIdentifier(T owner);
+    @NotNull
+    String getIdentifier(@NotNull T owner);
 
     /**
      * Get the {@link RegionModifier} for the Define operation
@@ -42,12 +47,5 @@ public interface ClaimHandler<T extends ClaimOwner> {
      * @return The Redefine {@link RegionModifier}
      */
     RegionModifier<T> getRedefineModifier();
-
-    /**
-     * The messages that is used by this type of handler
-     *
-     * @return The {@link FormattedMessages} used by this handler
-     */
-    FormattedMessages getMessages();
 
 }
