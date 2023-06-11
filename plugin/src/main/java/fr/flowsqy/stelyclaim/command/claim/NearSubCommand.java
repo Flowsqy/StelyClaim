@@ -8,7 +8,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import fr.flowsqy.stelyclaim.api.ProtocolManager;
+import fr.flowsqy.stelyclaim.api.HandlerRegistry;
 import fr.flowsqy.stelyclaim.command.struct.CommandContext;
 import fr.flowsqy.stelyclaim.command.struct.CommandNode;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
@@ -30,7 +30,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
     private final String[] triggers;
     private final ConfigurationFormattedMessages messages;
     private final WorldChecker worldChecker;
-    private final ProtocolManager protocolManager;
+    private final HandlerRegistry handlerRegistry;
     private final PermissionData data;
     private final HelpMessage helpMessage;
     private final int DEFAULT_DISTANCE;
@@ -45,7 +45,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
         this.triggers = triggers;
         messages = plugin.getMessages();
         worldChecker = new WorldChecker(worlds, messages);
-        protocolManager = plugin.getProtocolManager();
+        handlerRegistry = plugin.getHandlerRegistry();
         this.data = data;
         this.helpMessage = helpMessage;
         final YamlConfiguration configuration = plugin.getConfiguration();
@@ -238,7 +238,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
             // Try to get the ClaimOwner if it's a StelyClaim region
             if (RegionFinder.isCorrectId(regionId)) {
                 final String[] parts = regionId.split("_", 3);
-                final ClaimHandler<?> regionHandler = protocolManager.getHandler(parts[1]);
+                final ClaimHandler<?> regionHandler = handlerRegistry.getHandler(parts[1]);
                 if (regionHandler == null) {
                     regionName = regionId;
                 } else {

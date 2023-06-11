@@ -42,7 +42,7 @@ public class ClaimCommand implements TabExecutor {
 
     public ClaimCommand(@NotNull StelyClaimPlugin plugin, @NotNull String basePermission) {
         statisticManager = plugin.getStatisticManager();
-        playerHandler = plugin.getProtocolManager().getHandler("player");
+        playerHandler = plugin.getHandlerRegistry().getHandler("player");
         helpMessage = new HelpMessage();
         this.basePermission = basePermission;
         subCommandManager = new ClaimSubCommandManager();
