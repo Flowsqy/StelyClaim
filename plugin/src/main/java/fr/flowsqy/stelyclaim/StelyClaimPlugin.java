@@ -9,7 +9,7 @@ import fr.flowsqy.stelyclaim.common.PrefixedConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.internal.PlayerHandler;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
-import fr.flowsqy.stelyclaim.protocol.RegionFinder;
+import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
 import fr.flowsqy.stelyclaim.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -59,7 +59,7 @@ public class StelyClaimPlugin extends JavaPlugin {
                 ChatColor.GRAY + "[" + ChatColor.DARK_PURPLE + "StelyClaim" + ChatColor.GRAY + "]" + ChatColor.WHITE
         );
 
-        RegionFinder.setInternalMessages(messages);
+        RegionNameManager.setInternalMessages(messages);
 
         this.breakManager = new BedrockManager(dataFolder);
         this.statisticManager = new StatisticManager(this, dataFolder);

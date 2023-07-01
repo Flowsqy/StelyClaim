@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.api;
+package fr.flowsqy.stelyclaim.api.action;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

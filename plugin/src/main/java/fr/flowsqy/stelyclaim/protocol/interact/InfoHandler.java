@@ -17,15 +17,6 @@ import java.util.UUID;
 
 public class InfoHandler implements InteractProtocolHandler {
 
-    @Override
-    public String getPermission() {
-        return ClaimCommand.Permissions.INFO;
-    }
-
-    @Override
-    public String getName() {
-        return "info";
-    }
 
     @Override
     public <T extends ClaimOwner> boolean interactRegion(RegionManager regionManager, ProtectedRegion region, boolean ownRegion, HandledOwner<T> owner, Actor actor, FormattedMessages messages) {

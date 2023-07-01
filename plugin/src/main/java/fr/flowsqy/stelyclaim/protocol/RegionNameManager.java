@@ -7,6 +7,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.FormattedMessages;
+import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,16 +15,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
 
-public class RegionFinder {
-
-    //TODO Refactor this class
+public class RegionNameManager {
 
     private final static String PREFIX = "stelyclaim";
     private final static Pattern GLOBAL_PATTERN = Pattern.compile("^" + PREFIX + "_[a-z0-9]+_[A-Za-z0-9_,'\\-+/]+$");
 
-    public static <T extends ClaimOwner> String getRegionName(@NotNull ClaimHandler<T> handler, @NotNull T owner) {
-        return PREFIX + "_" + handler.getId() + "_" + handler.getIdentifier(owner);
+    public static <T extends ClaimOwner> String getRegionName(@NotNull HandledOwner<T> handledOwner) {
+        return PREFIX + "_" + handledOwner.handler().getId() + "_" + handledOwner.handler().getIdentifier(handledOwner.owner());
     }
+
+    public static boolean isCorrectId(String id) {
+        return id != null && GLOBAL_PATTERN.matcher(id).matches();
+    }
+
+
+    //TODO Remove this section
+
 
     private static FormattedMessages internalMessages;
 
@@ -32,10 +39,6 @@ public class RegionFinder {
             throw new IllegalStateException();
         }
         internalMessages = messages;
-    }
-
-    public static boolean isCorrectId(String id) {
-        return id != null && GLOBAL_PATTERN.matcher(id).matches();
     }
 
     public static RegionManager getRegionManager(@NotNull World world, @NotNull CommandSender sender) {

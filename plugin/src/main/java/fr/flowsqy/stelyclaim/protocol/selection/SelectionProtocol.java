@@ -20,7 +20,7 @@ import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
-import fr.flowsqy.stelyclaim.protocol.RegionFinder;
+import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
 import fr.flowsqy.stelyclaim.util.PillarTextSender;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -83,21 +83,21 @@ public class SelectionProtocol {
             }
         }
 
-        final RegionManager regionManager = RegionFinder.getRegionManager(weWorld, player, messages);
+        final RegionManager regionManager = RegionNameManager.getRegionManager(weWorld, player, messages);
 
         if (regionManager == null)
             return false;
 
-        final String regionName = RegionFinder.getRegionName(handler, owner);
+        final String regionName = RegionNameManager.getRegionName(handler, owner);
 
         final ProtectedRegion region;
         if (protocol == Protocol.DEFINE) {
-            if (RegionFinder.mustNotExist(regionManager, regionName, owner.getName(), ownRegion, player, messages)) {
+            if (RegionNameManager.mustNotExist(regionManager, regionName, owner.getName(), ownRegion, player, messages)) {
                 return false;
             }
             region = null;
         } else {
-            region = RegionFinder.mustExist(regionManager, regionName, owner.getName(), ownRegion, actor, messages);
+            region = RegionNameManager.mustExist(regionManager, regionName, owner.getName(), ownRegion, actor, messages);
             if (region == null) {
                 return false;
             }
@@ -135,7 +135,7 @@ public class SelectionProtocol {
 
             final String id = overlapRegion.getId();
             final String overlappingRegionName;
-            if (RegionFinder.isCorrectId(id)) {
+            if (RegionNameManager.isCorrectId(id)) {
                 final String[] partId = id.split("_", 3);
                 final ClaimHandler<?> overlappingHandler = plugin.getProtocolManager().getHandler(partId[1]);
                 if (overlappingHandler != null) {

@@ -4,12 +4,14 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionType;
 import fr.flowsqy.stelyclaim.api.*;
-import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.protocol.RegionFinder;
-import fr.flowsqy.stelyclaim.util.WorldName;
-import org.bukkit.World;
-import org.bukkit.command.CommandSender;
+import fr.flowsqy.stelyclaim.api.action.ActionContext;
+import fr.flowsqy.stelyclaim.api.action.ActionResult;
+import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
+import fr.flowsqy.stelyclaim.protocol.RegionManagerRetriever;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class InteractProtocol {
 
@@ -18,9 +20,6 @@ public class InteractProtocol {
     public static final int WORLD_NOT_HANDLED = ActionResult.registerResultCode();
     public static final int REGION_NOT_EXIST = ActionResult.registerResultCode();
     public static final int TRY_INTERACT_GLOBAL = ActionResult.registerResultCode();
-
-    // Modifiers
-    public static final int MOD_OWN = 0b1;
 
 
     /*
@@ -34,44 +33,46 @@ public class InteractProtocol {
         return removeProtocolHandler;
     }*/
 
-    @NotNull
-    public <T extends ClaimOwner> ActionResult process(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> handledOwner, @NotNull InteractProtocolHandler interactProtocolHandler) {
-        final T owner = handledOwner.owner();
-        final ClaimHandler<T> handler = handledOwner.handler();
+    public <T extends ClaimOwner> void process(@NotNull ActionContext<ClaimContextData> context, @NotNull InteractProtocolHandler interactProtocolHandler) {
+        //final T owner = handledOwner.owner();
+        //final ClaimHandler<T> handler = handledOwner.handler();
         //final HandlerMessages messages = handler.getClaimInteractHandler().getMessages();
 
-        final CommandSender sender = actor.getBukkit();
-        final boolean ownRegion = owner.own(actor);
+        //final CommandSender sender = actor.getBukkit();
+        //final boolean ownRegion = owner.own(actor);
 
-        // TODO Handle OtherPerm check
-        if (!ownRegion && interactProtocolHandler.canInteractOther(handler.getClaimInteractHandler().getInteractChecker()).canInteractOther() // TODO Specify protocol
+        if (!Objects.requireNonNull(context.getCustomData()).own() && interactProtocolHandler.canInteractNotOwned(context)
             /*!sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(interactProtocolHandler.getPermission())) */
         ) {
-            return new ActionResult(CANT_OTHER, false);
+            context.setResult(new ActionResult(CANT_OTHER, false));
+            return;
             //messages.sendMessage(sender, "help." + interactProtocolHandler.getName());
             //return false;
         }
 
-        // TODO Handle this better
-        final RegionManager regionManager = RegionFinder.getRegionManager(new WorldName(world.getName()), sender);
+        final RegionManager regionManager = RegionManagerRetriever.retrieve(world.getName());
         if (regionManager == null) {
-            return new ActionResult(WORLD_NOT_HANDLED, false);
+            context.setResult(new ActionResult(WORLD_NOT_HANDLED, false));
+            return;
         }
 
-        final String regionName = RegionFinder.getRegionName(handler, owner);
+        final String regionName = RegionNameManager.getRegionName(handledOwner);
 
-        final ProtectedRegion region = RegionFinder.mustExist(regionManager, regionName, owner.getName(), ownRegion, actor);
+        final ProtectedRegion region = regionManager.getRegion(regionName);
+        //RegionNameManager.mustExist(regionManager, regionName, owner.getName(), ownRegion, actor);
         if (region == null) {
-            return new ActionResult(REGION_NOT_EXIST, false, ownRegion ? MOD_OWN : 0);
+            context.setResult(new ActionResult(REGION_NOT_EXIST, false));
+            return;
         }
 
-        if (region.getType() == RegionType.GLOBAL) {
-            //TODO Maybe general instead of specific
+        if (region.getType() == RegionType.GLOBAL && !interactProtocolHandler.canInteractGlobal(context)) {
+            //TODO Maybe general instead of specific message
             //messages.sendMessage(sender, "claim.interactglobal");
-            return new ActionResult(TRY_INTERACT_GLOBAL, false);
+            context.setResult(new ActionResult(TRY_INTERACT_GLOBAL, false));
+            return;
         }
 
-        return interactProtocolHandler.interactRegion(regionManager, region, handledOwner, actor, ownRegion);
+        interactProtocolHandler.interactRegion(regionManager, region, context);
     }
 
 }

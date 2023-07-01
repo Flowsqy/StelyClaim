@@ -9,7 +9,7 @@ import fr.flowsqy.stelyclaim.api.HandlerRegistry;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
-import fr.flowsqy.stelyclaim.protocol.RegionFinder;
+import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
 import fr.flowsqy.stelyclaim.util.WorldName;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -146,7 +146,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
 
         // Get from cache or register
         if (cacheData == null || System.currentTimeMillis() - cacheData.initialInput > CACHE_PERIOD) {
-            final RegionManager manager = RegionFinder.getRegionManager(new WorldName(world.getName()), sender);
+            final RegionManager manager = RegionNameManager.getRegionManager(new WorldName(world.getName()), sender);
             if (manager == null)
                 return;
             final List<String> result = manager.getRegions().entrySet().stream()
@@ -203,7 +203,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContextData> {
         for (int index = (page - 1) * REGION_BY_PAGE, i = 0; index < result.size() && i < REGION_BY_PAGE; index++, i++) {
             final String regionId = result.get(index);
             final String regionName;
-            if (RegionFinder.isCorrectId(regionId)) {
+            if (RegionNameManager.isCorrectId(regionId)) {
                 final String[] parts = regionId.split("_", 3);
                 final ClaimHandler<?> regionHandler = handlerRegistry.getHandler(parts[1]);
                 if (regionHandler == null) {

@@ -1,39 +1,27 @@
 package fr.flowsqy.stelyclaim.api.command;
 
+import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommandContext<T> {
+public class CommandContext<T> extends ActionContext<T> {
 
-    private final Actor sender;
     private final Map<String, Boolean> permissions;
-    private final T data;
     private final String[] args;
     private int argPos;
 
     public CommandContext(@NotNull Actor sender, @NotNull String[] args, @NotNull T data, int argPos) {
-        this.sender = sender;
+        super(sender, data);
         permissions = new HashMap<>();
-        this.data = data;
         this.args = args;
         this.argPos = argPos;
     }
 
-    @NotNull
-    public Actor getSender() {
-        return sender;
-    }
-
     public boolean hasPermission(@NotNull String permission) {
-        return permissions.computeIfAbsent(permission, perm -> sender.getBukkit().hasPermission(perm));
-    }
-
-    @NotNull
-    public T getData() {
-        return data;
+        return permissions.computeIfAbsent(permission, perm -> getActor().getBukkit().hasPermission(perm));
     }
 
     public int getArgsLength() {

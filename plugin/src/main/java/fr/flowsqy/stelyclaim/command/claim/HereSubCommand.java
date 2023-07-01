@@ -13,7 +13,7 @@ import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.internal.PlayerHandler;
-import fr.flowsqy.stelyclaim.protocol.RegionFinder;
+import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
 import fr.flowsqy.stelyclaim.util.WorldName;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -60,7 +60,7 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
         final CommandSender sender = context.getSender().getBukkit();
         final PhysicActor physicActor = context.getSender().getPhysic();
         final Location senderLoc = physicActor.getLocation();
-        final RegionManager regionManager = RegionFinder.getRegionManager(new WorldName(physicActor.getWorld().getName()), sender);
+        final RegionManager regionManager = RegionNameManager.getRegionManager(new WorldName(physicActor.getWorld().getName()), sender);
 
         final ApplicableRegionSet intersecting = regionManager.getApplicableRegions(
                 BlockVector3.at(
@@ -73,7 +73,7 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
         if (!context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
             context.getData().setStatistic(name);
             for (ProtectedRegion overlapRegion : intersecting) {
-                if (!RegionFinder.isCorrectId(overlapRegion.getId())) {
+                if (!RegionNameManager.isCorrectId(overlapRegion.getId())) {
                     continue;
                 }
                 final String[] part = overlapRegion.getId().split("_", 3);
@@ -116,7 +116,7 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
                 final String regionId = overlapRegion.getId();
                 final String regionName;
                 boolean playerClaim;
-                if (RegionFinder.isCorrectId(regionId)) {
+                if (RegionNameManager.isCorrectId(regionId)) {
                     final String[] parts = regionId.split("_", 3);
                     final ClaimHandler<?> regionHandler = handlerRegistry.getHandler(parts[1]);
                     if (regionHandler == null) {
@@ -174,7 +174,7 @@ public class HereSubCommand implements CommandNode<ClaimContextData> {
             }
             final String regionId = overlapRegion.getId();
             final String regionName;
-            if (RegionFinder.isCorrectId(regionId)) {
+            if (RegionNameManager.isCorrectId(regionId)) {
                 final String[] parts = regionId.split("_", 3);
                 final ClaimHandler<?> regionHandler = handlerRegistry.getHandler(parts[1]);
                 if (regionHandler == null) {

@@ -28,4 +28,6 @@ public class ClaimContextData {
         this.statistic = statistic;
     }
 
+    public boolean own() {
+    }
 }

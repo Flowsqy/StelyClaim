@@ -12,7 +12,7 @@ import fr.flowsqy.stelyclaim.api.HandlerRegistry;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
-import fr.flowsqy.stelyclaim.protocol.RegionFinder;
+import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
 import fr.flowsqy.stelyclaim.util.WorldName;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -204,7 +204,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
 
         // Get the region manager of the world
         final World world = player.getWorld();
-        final RegionManager regionManager = RegionFinder.getRegionManager(new WorldName(world.getName()), player);
+        final RegionManager regionManager = RegionNameManager.getRegionManager(new WorldName(world.getName()), player);
         if (regionManager == null) {
             return;
         }
@@ -236,7 +236,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
             final String regionId = protectedRegion.getId();
             final String regionName;
             // Try to get the ClaimOwner if it's a StelyClaim region
-            if (RegionFinder.isCorrectId(regionId)) {
+            if (RegionNameManager.isCorrectId(regionId)) {
                 final String[] parts = regionId.split("_", 3);
                 final ClaimHandler<?> regionHandler = handlerRegistry.getHandler(parts[1]);
                 if (regionHandler == null) {
