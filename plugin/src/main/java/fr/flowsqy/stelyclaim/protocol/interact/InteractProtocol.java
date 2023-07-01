@@ -33,7 +33,7 @@ public class InteractProtocol {
         return removeProtocolHandler;
     }*/
 
-    public <T extends ClaimOwner> void process(@NotNull ActionContext<ClaimContextData> context, @NotNull InteractProtocolHandler interactProtocolHandler) {
+    public void process(@NotNull ActionContext<ClaimContextData> context, @NotNull InteractProtocolHandler interactProtocolHandler) {
         //final T owner = handledOwner.owner();
         //final ClaimHandler<T> handler = handledOwner.handler();
         //final HandlerMessages messages = handler.getClaimInteractHandler().getMessages();
