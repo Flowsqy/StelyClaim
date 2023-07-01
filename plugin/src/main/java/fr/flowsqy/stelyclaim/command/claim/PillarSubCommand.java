@@ -1,8 +1,8 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.command.struct.CommandContext;
-import fr.flowsqy.stelyclaim.command.struct.CommandNode;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.util.PillarData;
 import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.Location;

@@ -5,7 +5,7 @@ import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
 import fr.flowsqy.stelyclaim.command.claim.PermissionData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.command.claim.interact.InteractSubCommand;
-import fr.flowsqy.stelyclaim.command.struct.CommandContext;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

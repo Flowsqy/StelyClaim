@@ -4,7 +4,7 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
 import fr.flowsqy.stelyclaim.command.claim.PermissionData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
-import fr.flowsqy.stelyclaim.command.struct.CommandContext;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;

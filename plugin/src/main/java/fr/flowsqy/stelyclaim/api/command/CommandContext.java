@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.command.struct;
+package fr.flowsqy.stelyclaim.api.command;
 
 import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.jetbrains.annotations.NotNull;

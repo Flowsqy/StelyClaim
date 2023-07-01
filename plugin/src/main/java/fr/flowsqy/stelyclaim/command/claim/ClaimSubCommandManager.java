@@ -1,6 +1,6 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
-import fr.flowsqy.stelyclaim.command.struct.CommandNode;
+import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;

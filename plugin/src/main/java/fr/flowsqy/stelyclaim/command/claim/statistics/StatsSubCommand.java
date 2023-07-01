@@ -3,9 +3,9 @@ package fr.flowsqy.stelyclaim.command.claim.statistics;
 import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
 import fr.flowsqy.stelyclaim.command.claim.PermissionData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
-import fr.flowsqy.stelyclaim.command.struct.CommandContext;
-import fr.flowsqy.stelyclaim.command.struct.CommandNode;
-import fr.flowsqy.stelyclaim.command.struct.DispatchCommandTabExecutor;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.api.command.CommandNode;
+import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
