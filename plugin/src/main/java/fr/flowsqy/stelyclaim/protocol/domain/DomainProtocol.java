@@ -3,11 +3,11 @@ package fr.flowsqy.stelyclaim.protocol.domain;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.stelyclaim.api.action.ActionResult;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
-import fr.flowsqy.stelyclaim.api.actor.Actor;
+import fr.flowsqy.stelyclaim.api.action.ActionContext;
+import fr.flowsqy.stelyclaim.api.action.ActionResult;
+import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,14 +32,14 @@ public class DomainProtocol implements InteractProtocolHandler {
     }
 
     @Override
-    public @NotNull <T extends ClaimOwner> ActionResult interactRegion(@NotNull RegionManager regionManager, @NotNull ProtectedRegion region, @NotNull HandledOwner<T> handledOwner, @NotNull Actor actor, boolean ownRegion) {
-        final T owner = handledOwner.owner();
+    public <T extends ClaimOwner> void interactRegion(@NotNull RegionManager regionManager, @NotNull ProtectedRegion region, @NotNull ActionContext<ClaimContextData> context) {
         final DefaultDomain domain = protocol.getDomain().apply(region);
         final UUID uuid = target.getUniqueId();
         final boolean add = protocol.isAdd();
         final boolean containsTarget = protocol.getContains().apply(domain, uuid);
-        if ((add && containsTarget) || (!add && !containsTarget)) {
-            return new ActionResult(CANT_MODIFY, false, ActionResult.getModifier());
+        if (add == containsTarget) {
+            context.setResult(new ActionResult(CANT_MODIFY, false, ActionResult.getModifier()));
+            return;
             /*
             messages.sendMessage(
                     actor.getBukkit(),
@@ -50,7 +50,7 @@ public class DomainProtocol implements InteractProtocolHandler {
             return false;*/
         }
         protocol.getAction().accept(domain, uuid);
-        return new ActionResult(MODIFY, true);
+        context.setResult(new ActionResult(MODIFY, true));
         /*
         messages.sendMessage(
                 actor.getBukkit(),
@@ -62,6 +62,16 @@ public class DomainProtocol implements InteractProtocolHandler {
         if (!ownRegion) {
             mailManager.sendInfoToOwner(actor, owner, messages, protocol.getName(), target);
         }*/
+    }
+
+    @Override
+    public boolean canInteractNotOwned(@NotNull ActionContext<ClaimContextData> context) {
+        return false;
+    }
+
+    @Override
+    public boolean canInteractGlobal(@NotNull ActionContext<ClaimContextData> context) {
+        return false;
     }
 
     public enum Protocol {

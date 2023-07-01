@@ -1,11 +1,12 @@
 package fr.flowsqy.stelyclaim.api;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
+import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
 import fr.flowsqy.stelyclaim.protocol.domain.DomainProtocol;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import fr.flowsqy.stelyclaim.protocol.selection.SelectionProtocol;
-import fr.flowsqy.stelyclaim.util.MailManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
@@ -13,13 +14,13 @@ import org.jetbrains.annotations.NotNull;
 public class ProtocolManager {
 
     private final SelectionProtocol selectionProtocol;
-    private final MailManager mailManager;
+    //private final MailManager mailManager;
     private final InteractProtocol interactProtocol;
 
     public ProtocolManager(@NotNull StelyClaimPlugin plugin) {
         selectionProtocol = new SelectionProtocol(plugin);
-        mailManager = plugin.getMailManager();
-        interactProtocol = new InteractProtocol(plugin);
+        //mailManager = plugin.getMailManager();
+        interactProtocol = new InteractProtocol(/*plugin*/);
     }
 
     public <T extends ClaimOwner> boolean define(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
@@ -30,28 +31,28 @@ public class ProtocolManager {
         return selectionProtocol.process(world, actor, owner, SelectionProtocol.Protocol.REDEFINE);
     }
 
-    public <T extends ClaimOwner> boolean addMember(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner, @NotNull OfflinePlayer target) {
-        return interact(world, actor, owner, new DomainProtocol(DomainProtocol.Protocol.ADDMEMBER, mailManager, target));
+    public void addMember(@NotNull ActionContext<ClaimContextData> context, @NotNull OfflinePlayer target) {
+        interact(context, new DomainProtocol(DomainProtocol.Protocol.ADD_MEMBER, target));
     }
 
-    public <T extends ClaimOwner> boolean removeMember(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner, @NotNull OfflinePlayer player) {
-        return interact(world, actor, owner, new DomainProtocol(DomainProtocol.Protocol.REMOVEMEMBER, mailManager, player));
+    public void removeMember(@NotNull ActionContext<ClaimContextData> context, @NotNull OfflinePlayer player) {
+        interact(context, new DomainProtocol(DomainProtocol.Protocol.REMOVE_MEMBER, player));
     }
 
-    public <T extends ClaimOwner> boolean addOwner(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner, @NotNull OfflinePlayer player) {
-        return interact(world, actor, owner, new DomainProtocol(DomainProtocol.Protocol.ADDOWNER, mailManager, player));
+    public void addOwner(@NotNull ActionContext<ClaimContextData> context, @NotNull OfflinePlayer player) {
+        interact(context, new DomainProtocol(DomainProtocol.Protocol.ADD_OWNER, player));
     }
 
-    public <T extends ClaimOwner> boolean removeOwner(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner, @NotNull OfflinePlayer player) {
-        return interact(world, actor, owner, new DomainProtocol(DomainProtocol.Protocol.REMOVEOWNER, mailManager, player));
+    public void removeOwner(@NotNull ActionContext<ClaimContextData> context, @NotNull OfflinePlayer player) {
+        interact(context, new DomainProtocol(DomainProtocol.Protocol.REMOVE_OWNER, player));
     }
 
-    public <T extends ClaimOwner> boolean remove(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
+    public void remove(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
         return interact(world, actor, owner, interactProtocol.getRemoveProtocolHandler());
     }
 
-    public <T extends ClaimOwner> boolean interact(@NotNull World world, @NotNull Actor sender, @NotNull HandledOwner<T> owner, @NotNull InteractProtocolHandler interactHandler) {
-        return interactProtocol.process(world, sender, owner, interactHandler);
+    public void interact(@NotNull ActionContext<ClaimContextData> context, @NotNull InteractProtocolHandler interactHandler) {
+        interactProtocol.process(context, interactHandler);
     }
 
 }
