@@ -26,7 +26,7 @@ public class WorldChecker {
     public boolean checkCancelledWorld(@NotNull Actor actor) {
         if (worlds != null && actor.isPhysic() && !worlds.contains(actor.getPhysic().getWorld().getName())) {
             if (denyMessage != null) {
-                actor.getBukkit().sendMessage();
+                actor.getBukkit().sendMessage(denyMessage);
             }
             return true;
         }
