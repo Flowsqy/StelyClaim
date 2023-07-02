@@ -1,6 +1,7 @@
 package fr.flowsqy.stelyclaim.api;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +37,7 @@ public class HandlerRegistry {
         return handlers.remove(handler.getId()) != null;
     }
 
+    @Nullable
     @SuppressWarnings("unchecked")
     public <T extends ClaimOwner, S extends ClaimHandler<T>> S getHandler(@NotNull String id) {
         return id == null ? null : (S) handlers.get(id);

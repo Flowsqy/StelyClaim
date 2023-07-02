@@ -4,7 +4,6 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
@@ -12,6 +11,7 @@ import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Pattern;
 
@@ -24,8 +24,20 @@ public class RegionNameManager {
         return PREFIX + "_" + handledOwner.handler().getId() + "_" + handledOwner.handler().getIdentifier(handledOwner.owner());
     }
 
-    public static boolean isCorrectId(String id) {
+    public static boolean isCorrectId(@Nullable String id) {
         return id != null && GLOBAL_PATTERN.matcher(id).matches();
+    }
+
+    /**
+     * Get the parts stored in a region name
+     *
+     * @param regionName The region name
+     * @return A String array containing the handler type and the owner identifier
+     */
+    @NotNull
+    public static String[] getParts(@NotNull String regionName) {
+        final String[] parts = regionName.split("_", 3);
+        return new String[]{parts[1], parts[2]};
     }
 
 
