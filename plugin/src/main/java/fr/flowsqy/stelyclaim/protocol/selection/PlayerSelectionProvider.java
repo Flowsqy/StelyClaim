@@ -7,7 +7,6 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.regions.Region;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
-import fr.flowsqy.stelyclaim.api.action.ActionResult;
 import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -34,4 +33,5 @@ public class PlayerSelectionProvider implements SelectionProvider {
             throw new RuntimeException(e);
         }
     }
+
 }

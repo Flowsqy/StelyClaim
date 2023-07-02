@@ -64,7 +64,7 @@ public class SelectionProtocol {
         final String regionName = handledOwner.getRegionName();
         final ProtectedRegion selectedRegion = new ProtectedCuboidRegion(regionName, selection.getMaximumPoint(), selection.getMinimumPoint());
 
-        selectionProtocolHandler.handle(context, regionManager, currentRegion, selectedRegion);
+        selectionProtocolHandler.handle(context, regionManager, selectedRegion);
     }
 
 }
