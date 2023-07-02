@@ -23,7 +23,7 @@ public interface ClaimHandler<T extends ClaimOwner> {
      * @return The {@link ClaimOwner} of the claim
      */
     @NotNull
-    T getOwner(@NotNull String claimIdentifier);
+    HandledOwner<T> getOwner(@NotNull String claimIdentifier);
 
     /**
      * Get the {@link String} that identifies the owner of the claim

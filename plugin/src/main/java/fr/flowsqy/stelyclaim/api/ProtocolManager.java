@@ -6,29 +6,29 @@ import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
 import fr.flowsqy.stelyclaim.protocol.domain.DomainProtocol;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
-import fr.flowsqy.stelyclaim.protocol.selection.SelectionProtocol;
+import fr.flowsqy.stelyclaim.protocol.selection.SelectionProtocolOLD;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
 public class ProtocolManager {
 
-    private final SelectionProtocol selectionProtocol;
+    private final SelectionProtocolOLD selectionProtocol;
     //private final MailManager mailManager;
     private final InteractProtocol interactProtocol;
 
     public ProtocolManager(@NotNull StelyClaimPlugin plugin) {
-        selectionProtocol = new SelectionProtocol(plugin);
+        selectionProtocol = new SelectionProtocolOLD(plugin);
         //mailManager = plugin.getMailManager();
         interactProtocol = new InteractProtocol(/*plugin*/);
     }
 
     public <T extends ClaimOwner> boolean define(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
-        return selectionProtocol.process(world, actor, owner, SelectionProtocol.Protocol.DEFINE);
+        return selectionProtocol.process(world, actor, owner, SelectionProtocolOLD.Protocol.DEFINE);
     }
 
     public <T extends ClaimOwner> boolean redefine(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
-        return selectionProtocol.process(world, actor, owner, SelectionProtocol.Protocol.REDEFINE);
+        return selectionProtocol.process(world, actor, owner, SelectionProtocolOLD.Protocol.REDEFINE);
     }
 
     public void addMember(@NotNull ActionContext<ClaimContextData> context, @NotNull OfflinePlayer target) {

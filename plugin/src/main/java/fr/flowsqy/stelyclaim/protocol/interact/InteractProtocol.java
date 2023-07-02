@@ -56,7 +56,7 @@ public class InteractProtocol {
             return;
         }
 
-        final String regionName = RegionNameManager.getRegionName(handledOwner);
+        final String regionName = handledOwner.getRegionName();
 
         final ProtectedRegion region = regionManager.getRegion(regionName);
         //RegionNameManager.mustExist(regionManager, regionName, owner.getName(), ownRegion, actor);
