@@ -19,7 +19,7 @@ public class SelectionProtocol {
     public static final int REGION_ALREADY_EXIST = ActionResult.registerResultCode();
     public static final int SELECTION_NOT_CUBOID = ActionResult.registerResultCode();
 
-    public void process(@NotNull ActionContext<ClaimContextData> context, @NotNull SelectionProvider selectionProvider, @Nullable SelectionModifier selectionModifier, @NotNull SelectionProtocolHandler selectionProtocolHandler) {
+    public void process(@NotNull ActionContext<ClaimContextData> context, @NotNull SelectionProvider selectionProvider, @Nullable SelectionModifier selectionModifier, @Nullable RegionValidator regionValidator, @NotNull SelectionProtocolHandler selectionProtocolHandler) {
         final Region selection = selectionProvider.getSelection(context);
         if (selection == null) {
             //messages.sendMessage(player, "claim.selection.empty");
@@ -63,6 +63,10 @@ public class SelectionProtocol {
 
         final String regionName = handledOwner.getRegionName();
         final ProtectedRegion selectedRegion = new ProtectedCuboidRegion(regionName, selection.getMaximumPoint(), selection.getMinimumPoint());
+
+        if (regionValidator != null && !regionValidator.validate(context, regionManager, selectedRegion)) {
+            return;
+        }
 
         selectionProtocolHandler.handle(context, regionManager, selectedRegion);
     }
