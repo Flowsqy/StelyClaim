@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 public class SelectionProtocol {
 
     public static final int SELECTION_NOT_DEFINED = ActionResult.registerResultCode();
-    public static final int REGION_ALREADY_EXIST = ActionResult.registerResultCode();
     public static final int SELECTION_NOT_CUBOID = ActionResult.registerResultCode();
 
     public void process(@NotNull ActionContext<ClaimContextData> context, @NotNull SelectionProvider selectionProvider, @Nullable SelectionModifier selectionModifier, @Nullable RegionValidator regionValidator, @NotNull SelectionProtocolHandler selectionProtocolHandler) {
@@ -37,16 +36,6 @@ public class SelectionProtocol {
             context.setResult(new ActionResult(InteractProtocol.WORLD_NOT_HANDLED, false));
             return;
         }
-
-
-        /*
-        // TODO Move this in SelectionProtocolHandler implementation
-        final ProtectedRegion currentRegion = regionManager.getRegion(regionName);
-        //RegionNameManager.mustNotExist(regionManager, regionName, owner.getName(), ownRegion, actor);
-        if (currentRegion != null) {
-            context.setResult(new ActionResult(REGION_ALREADY_EXIST, false));
-            return;
-        }*/
 
         if (selectionModifier != null) {
             selectionModifier.modify(selection, context);

@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class DefineHandler implements SelectionProtocolHandler {
 
+    public static final int REGION_ALREADY_EXIST = ActionResult.registerResultCode();
     public static final int DEFINE = ActionResult.registerResultCode();
 
     private final RegionModifier regionModifier;
@@ -20,9 +21,17 @@ public class DefineHandler implements SelectionProtocolHandler {
 
     @Override
     public void handle(@NotNull ActionContext<ClaimContextData> context, @NotNull RegionManager regionManager, @NotNull ProtectedRegion selectedRegion) {
+        final ProtectedRegion currentRegion = regionManager.getRegion(selectedRegion.getId());
+        //RegionNameManager.mustNotExist(regionManager, regionName, owner.getName(), ownRegion, actor);
+        if (currentRegion != null) {
+            context.setResult(new ActionResult(REGION_ALREADY_EXIST, false));
+            return;
+        }
+
         if (regionModifier != null) {
             regionModifier.modify(context, regionManager, selectedRegion);
         }
+
         regionManager.addRegion(selectedRegion);
         context.setResult(new ActionResult(DEFINE, true));
     }
