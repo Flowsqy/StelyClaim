@@ -1,35 +1,39 @@
 package fr.flowsqy.stelyclaim.protocol;
 
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
-import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class ClaimContextData {
 
-    // TODO Work on a lazy owner implementation
+    private final LazyOwner<?> lazyOwner;
+    private String world;
+    private boolean actorOwnTheClaim;
 
-    private ClaimHandler<?> handler;
-    private String statistic;
+    public ClaimContextData(@NotNull ClaimHandler<?> claimHandler) {
+        lazyOwner = new LazyOwner<>(claimHandler);
+    }
+
+    public Optional<String> getWorld() {
+        return Optional.of(world);
+    }
+
+    public void setWorld(@NotNull String world) {
+        this.world = world;
+    }
 
     @NotNull
-    public ClaimHandler<?> getHandler() {
-        return handler;
+    public LazyOwner<?> getLazyOwner() {
+        return lazyOwner;
     }
 
-    @Nullable
-    public String getStatistic() {
-        return statistic;
+    public boolean isActorOwnTheClaim() {
+        return actorOwnTheClaim;
     }
 
-    public void setHandler(@NotNull ClaimHandler<?> handler) {
-        this.handler = handler;
+    public void setActorOwnTheClaim(boolean actorOwnTheClaim) {
+        this.actorOwnTheClaim = actorOwnTheClaim;
     }
 
-    public void setStatistic(@Nullable String statistic) {
-        this.statistic = statistic;
-    }
-
-    public boolean own() {
-    }
 }
