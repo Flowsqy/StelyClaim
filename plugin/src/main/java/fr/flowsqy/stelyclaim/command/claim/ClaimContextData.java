@@ -7,6 +7,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class ClaimContextData {
 
+    // TODO Work on a lazy owner implementation
+
     private ClaimHandler<?> handler;
     private String statistic;
 
