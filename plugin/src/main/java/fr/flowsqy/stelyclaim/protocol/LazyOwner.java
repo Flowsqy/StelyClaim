@@ -47,4 +47,11 @@ public class LazyOwner<T extends ClaimOwner> {
         return handledOwner;
     }
 
+    public void setHandledOwner(@NotNull HandledOwner<T> handledOwner) {
+        this.handledOwner = handledOwner;
+        dirty = false;
+        handler = handledOwner.handler();
+        identifier = handledOwner.handler().getIdentifier(handledOwner.owner());
+    }
+
 }
