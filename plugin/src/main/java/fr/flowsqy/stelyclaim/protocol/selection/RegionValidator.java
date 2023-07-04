@@ -3,7 +3,7 @@ package fr.flowsqy.stelyclaim.protocol.selection;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
-import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
 import org.jetbrains.annotations.NotNull;
 
 public interface RegionValidator {

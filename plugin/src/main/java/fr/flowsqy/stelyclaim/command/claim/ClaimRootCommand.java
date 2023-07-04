@@ -3,6 +3,7 @@ package fr.flowsqy.stelyclaim.command.claim;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
+import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
 import org.jetbrains.annotations.NotNull;
 
 public class ClaimRootCommand extends DispatchCommandTabExecutor<ClaimContextData> {

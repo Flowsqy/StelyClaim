@@ -1,5 +1,6 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
+import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

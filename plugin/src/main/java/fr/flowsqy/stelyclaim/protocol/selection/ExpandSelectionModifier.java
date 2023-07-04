@@ -4,7 +4,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionOperationException;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
-import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
 import org.jetbrains.annotations.NotNull;
 
 public class ExpandSelectionModifier implements SelectionModifier {

@@ -23,6 +23,7 @@ import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
+import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
 import org.bukkit.command.*;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Entity;

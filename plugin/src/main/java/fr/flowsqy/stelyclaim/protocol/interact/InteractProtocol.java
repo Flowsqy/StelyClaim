@@ -6,7 +6,7 @@ import com.sk89q.worldguard.protection.regions.RegionType;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
-import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
 import fr.flowsqy.stelyclaim.protocol.ProtocolInteractChecker;
 import fr.flowsqy.stelyclaim.protocol.RegionManagerRetriever;
 import org.jetbrains.annotations.NotNull;

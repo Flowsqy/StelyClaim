@@ -3,7 +3,7 @@ package fr.flowsqy.stelyclaim.api;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
 import fr.flowsqy.stelyclaim.protocol.domain.DomainProtocol;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import fr.flowsqy.stelyclaim.protocol.selection.SelectionProtocolOLD;

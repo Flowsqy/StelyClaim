@@ -2,6 +2,7 @@ package fr.flowsqy.stelyclaim.command.claim;
 
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
+import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;

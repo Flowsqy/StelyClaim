@@ -7,7 +7,7 @@ import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
-import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 

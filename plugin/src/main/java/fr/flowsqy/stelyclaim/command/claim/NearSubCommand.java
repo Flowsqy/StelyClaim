@@ -12,6 +12,7 @@ import fr.flowsqy.stelyclaim.api.HandlerRegistry;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
+import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
 import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
 import fr.flowsqy.stelyclaim.util.WorldName;
 import org.bukkit.Location;

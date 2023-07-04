@@ -1,7 +1,7 @@
 package fr.flowsqy.stelyclaim.command.claim.selection;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
 import fr.flowsqy.stelyclaim.command.claim.PermissionData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.command.claim.interact.InteractSubCommand;
