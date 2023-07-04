@@ -17,8 +17,4 @@ public interface InteractProtocolHandler {
             @NotNull ActionContext<ClaimContextData> context
     );
 
-    boolean canInteractNotOwned(@NotNull ActionContext<ClaimContextData> context);
-
-    boolean canInteractGlobal(@NotNull ActionContext<ClaimContextData> context);
-
 }

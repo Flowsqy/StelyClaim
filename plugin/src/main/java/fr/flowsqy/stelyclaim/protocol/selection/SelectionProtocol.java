@@ -8,6 +8,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
 import fr.flowsqy.stelyclaim.command.claim.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ProtocolInteractChecker;
 import fr.flowsqy.stelyclaim.protocol.RegionManagerRetriever;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,7 @@ public class SelectionProtocol {
     public static final int SELECTION_NOT_DEFINED = ActionResult.registerResultCode();
     public static final int SELECTION_NOT_CUBOID = ActionResult.registerResultCode();
 
-    public void process(@NotNull ActionContext<ClaimContextData> context, @NotNull SelectionProvider selectionProvider, @Nullable SelectionModifier selectionModifier, @Nullable RegionValidator regionValidator, @NotNull SelectionProtocolHandler selectionProtocolHandler) {
+    public void process(@NotNull ActionContext<ClaimContextData> context, @NotNull SelectionProvider selectionProvider, @Nullable SelectionModifier selectionModifier, @Nullable RegionValidator regionValidator, @NotNull SelectionProtocolHandler selectionProtocolHandler, @NotNull ProtocolInteractChecker protocolInteractChecker) {
         final Region selection = selectionProvider.getSelection(context);
         if (selection == null) {
             //messages.sendMessage(player, "claim.selection.empty");
@@ -26,7 +27,7 @@ public class SelectionProtocol {
             return;
         }
 
-        if (!context.getCustomData().own() && false /* TODO Check for modify ability */) {
+        if (!context.getCustomData().own() && !protocolInteractChecker.canInteractNotOwned(context)) {
             context.setResult(new ActionResult(InteractProtocol.CANT_OTHER, false));
             return;
         }
