@@ -20,7 +20,21 @@ public class SelectionProtocol {
     public static final int SELECTION_NOT_DEFINED = ActionResult.registerResultCode();
     public static final int SELECTION_NOT_CUBOID = ActionResult.registerResultCode();
 
-    public void process(@NotNull ActionContext<ClaimContext> context, @NotNull SelectionProvider selectionProvider, @Nullable SelectionModifier selectionModifier, @Nullable RegionValidator regionValidator, @NotNull SelectionProtocolHandler selectionProtocolHandler, @NotNull ProtocolInteractChecker protocolInteractChecker) {
+    private final @NotNull SelectionProvider selectionProvider;
+    private final @Nullable SelectionModifier selectionModifier;
+    private final @Nullable RegionValidator regionValidator;
+    private final @NotNull SelectionProtocolHandler selectionProtocolHandler;
+    private final @NotNull ProtocolInteractChecker protocolInteractChecker;
+
+    public SelectionProtocol(@NotNull SelectionProvider selectionProvider, @Nullable SelectionModifier selectionModifier, @Nullable RegionValidator regionValidator, @NotNull SelectionProtocolHandler selectionProtocolHandler, @NotNull ProtocolInteractChecker protocolInteractChecker) {
+        this.selectionProvider = selectionProvider;
+        this.selectionModifier = selectionModifier;
+        this.regionValidator = regionValidator;
+        this.selectionProtocolHandler = selectionProtocolHandler;
+        this.protocolInteractChecker = protocolInteractChecker;
+    }
+
+    public void process(@NotNull ActionContext<ClaimContext> context) {
         final Region selection = selectionProvider.getSelection(context);
         if (selection == null) {
             //messages.sendMessage(player, "claim.selection.empty");
@@ -47,7 +61,7 @@ public class SelectionProtocol {
         }
 
         if (!(selection instanceof CuboidRegion)) {
-            // We could check for instanceof Polygonal2DRegion
+            // We could checkFull for instanceof Polygonal2DRegion
             // But that currently does not match with the plugin pillar feature
             // Force cuboid
             //messages.sendMessage(player, "claim.selection.cuboid");
