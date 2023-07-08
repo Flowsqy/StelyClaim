@@ -3,16 +3,15 @@ package fr.flowsqy.stelyclaim.protocol.interact;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionType;
+import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import fr.flowsqy.stelyclaim.protocol.LazyOwner;
+import fr.flowsqy.stelyclaim.protocol.OwnerContext;
 import fr.flowsqy.stelyclaim.protocol.ProtocolInteractChecker;
 import fr.flowsqy.stelyclaim.protocol.RegionManagerRetriever;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class InteractProtocol {
 
@@ -41,8 +40,11 @@ public class InteractProtocol {
 
         //final CommandSender sender = actor.getBukkit();
         //final boolean ownRegion = owner.own(actor);
-        final ClaimContext claimContext = Objects.requireNonNull(context.getCustomData());
-        if (!claimContext.isActorOwnTheClaim() && protocolInteractChecker.canInteractNotOwned(context)
+        final ClaimContext claimContext = context.getCustomData().orElseThrow();
+        final OwnerContext ownerContext = claimContext.getOwnerContext();
+        final HandledOwner<?> handledOwner = ownerContext.getLazyHandledOwner().toHandledOwner();
+        ownerContext.setActorOwnTheClaim(() -> handledOwner.owner().own(context.getActor()), false);
+        if (!ownerContext.isActorOwnTheClaim() && protocolInteractChecker.canInteractNotOwned(context)
             /*!sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(interactProtocolHandler.getPermission())) */
         ) {
             context.setResult(new ActionResult(CANT_OTHER, false));
@@ -51,14 +53,13 @@ public class InteractProtocol {
             //return false;
         }
 
-
-        final RegionManager regionManager = RegionManagerRetriever.retrieve(context.getCustomData().getWorld().orElseThrow());
+        final RegionManager regionManager = RegionManagerRetriever.retrieve(claimContext.getWorld().orElseThrow().getName());
         if (regionManager == null) {
             context.setResult(new ActionResult(WORLD_NOT_HANDLED, false));
             return;
         }
 
-        final String regionName = context.getCustomData().getLazyOwner().getHandledOwner().getRegionName();
+        final String regionName = handledOwner.getRegionName();
 
         final ProtectedRegion region = regionManager.getRegion(regionName);
         //RegionNameManager.mustExist(regionManager, regionName, owner.getName(), ownRegion, actor);

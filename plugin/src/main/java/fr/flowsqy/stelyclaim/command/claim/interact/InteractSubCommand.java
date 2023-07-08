@@ -60,7 +60,7 @@ public abstract class InteractSubCommand implements CommandNode<ClaimContext> {
             // TODO Send a message to say that this owner can't be retrieved
             return;
         }
-        claimContext.setWorld(() -> context.getActor().getPhysic().getWorld().getName(), false);
+        claimContext.setWorld(() -> context.getActor().getPhysic().getWorld(), false);
         interactRegion(context);
     }
 

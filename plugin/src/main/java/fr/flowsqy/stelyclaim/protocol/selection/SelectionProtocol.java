@@ -5,6 +5,7 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
@@ -14,8 +15,6 @@ import fr.flowsqy.stelyclaim.protocol.RegionManagerRetriever;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 public class SelectionProtocol {
 
@@ -30,10 +29,11 @@ public class SelectionProtocol {
             return;
         }
 
-        final ClaimContext claimContext = Objects.requireNonNull(context.getCustomData());
-        final OwnerContext<?> ownerContext = claimContext.getOwnerContext();
-        ownerContext.setActorOwnTheRegion(() -> ownerContext.getHandledOwner().owner().own(context.getActor()), false);
-        if (!claimContext.getOwnerContext().isActorOwnTheRegion() && !protocolInteractChecker.canInteractNotOwned(context)) {
+        final ClaimContext claimContext = context.getCustomData().orElseThrow();
+        final OwnerContext ownerContext = claimContext.getOwnerContext();
+        final HandledOwner<?> handledOwner = ownerContext.getLazyHandledOwner().toHandledOwner();
+        ownerContext.setActorOwnTheClaim(() -> handledOwner.owner().own(context.getActor()), false);
+        if (!claimContext.getOwnerContext().isActorOwnTheClaim() && !protocolInteractChecker.canInteractNotOwned(context)) {
             context.setResult(new ActionResult(InteractProtocol.CANT_OTHER, false));
             return;
         }
@@ -57,7 +57,7 @@ public class SelectionProtocol {
             return;
         }
 
-        final String regionName = ownerContext.getHandledOwner().getRegionName();
+        final String regionName = handledOwner.getRegionName();
         final ProtectedRegion selectedRegion = new ProtectedCuboidRegion(regionName, selection.getMaximumPoint(), selection.getMinimumPoint());
 
         if (regionValidator != null && !regionValidator.validate(context, regionManager, selectedRegion)) {

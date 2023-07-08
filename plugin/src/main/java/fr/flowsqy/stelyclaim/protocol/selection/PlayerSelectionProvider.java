@@ -22,7 +22,7 @@ public class PlayerSelectionProvider implements SelectionProvider {
         }
         final Player player = context.getActor().getPlayer();
         final LocalSession session = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player));
-        final com.sk89q.worldedit.world.World weWorld = new BukkitWorld(world);
+        final com.sk89q.worldedit.world.World weWorld = new BukkitWorld(context.);
 
         if (!session.isSelectionDefined(weWorld)) {
             return null;

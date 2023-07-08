@@ -70,7 +70,7 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContext> {
 
         final OfflinePlayer targetPlayer = OfflinePlayerRetriever.getOfflinePlayer(target);
         final Actor sender = context.getActor();
-        claimContext.setWorld(() -> sender.getPhysic().getWorld().getName(), false);
+        claimContext.setWorld(() -> sender.getPhysic().getWorld(), false);
 
         interact(context, targetPlayer);
         /* Stats stuff.

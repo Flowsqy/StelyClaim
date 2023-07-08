@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 public class OwnerContext {
 
     private LazyHandledOwner<?> lazyHandledOwner;
-    private boolean actorOwnTheRegion;
+    private boolean actorOwnTheClaim;
     private boolean ownInit;
 
     public OwnerContext(@NotNull ClaimHandler<?> handler) {
@@ -30,18 +30,18 @@ public class OwnerContext {
         return lazyHandledOwner;
     }
 
-    public boolean isActorOwnTheRegion() {
+    public boolean isActorOwnTheClaim() {
         if (!ownInit) {
             throw new IllegalStateException();
         }
-        return actorOwnTheRegion;
+        return actorOwnTheClaim;
     }
 
-    public void setActorOwnTheRegion(Supplier<Boolean> ownProvider, boolean force) {
+    public void setActorOwnTheClaim(Supplier<Boolean> ownProvider, boolean force) {
         if (ownInit && !force) {
             return;
         }
-        this.actorOwnTheRegion = ownProvider.get();
+        this.actorOwnTheClaim = ownProvider.get();
         ownInit = false;
     }
 
