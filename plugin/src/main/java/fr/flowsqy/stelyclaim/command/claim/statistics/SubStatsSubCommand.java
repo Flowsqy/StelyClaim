@@ -1,13 +1,14 @@
 package fr.flowsqy.stelyclaim.command.claim.statistics;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import fr.flowsqy.stelyclaim.command.claim.CommandPermissionChecker;
-import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
+import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
+import fr.flowsqy.stelyclaim.command.claim.OtherCommandPermissionChecker;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -23,16 +24,16 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContext> {
 
     private final String name;
     private final String[] triggers;
-    private final CommandPermissionChecker data;
+    private final OtherCommandPermissionChecker permChecker;
     private final String helpName;
     private final HelpMessage helpMessage;
     protected final ConfigurationFormattedMessages messages;
     protected final StatisticManager statisticManager;
 
-    public SubStatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @NotNull CommandPermissionChecker data, @NotNull String helpName, @NotNull HelpMessage helpMessage) {
+    public SubStatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @NotNull OtherCommandPermissionChecker permChecker, @NotNull String helpName, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
-        this.data = data;
+        this.permChecker = permChecker;
         this.helpName = helpName;
         this.helpMessage = helpMessage;
         messages = plugin.getMessages();
@@ -41,26 +42,27 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContext> {
 
     @Override
     public void execute(@NotNull CommandContext<ClaimContext> context) {
+        final Actor actor = context.getActor();
         final OfflinePlayer target;
         final String command;
         switch (context.getArgsLength()) {
             case 0 -> {
-                if (!context.getSender().isPlayer()) {
+                if (!actor.isPlayer()) {
                     helpMessage.sendMessage(context, helpName);
                     return;
                 }
-                target = context.getSender().getPlayer();
+                target = actor.getPlayer();
                 command = null;
             }
             case 1 -> {
-                if (context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
+                if (permChecker.checkOther(context)) {
                     target = OfflinePlayerRetriever.getOfflinePlayer(context.getArg(0));
                     command = null;
-                } else if (!context.getSender().isPlayer()) {
+                } else if (!actor.isPlayer()) {
                     helpMessage.sendMessage(context, helpName);
                     return;
                 } else {
-                    target = context.getSender().getPlayer();
+                    target = actor.getPlayer();
                     command = context.getArg(0).toLowerCase(Locale.ENGLISH);
                 }
             }
@@ -73,8 +75,8 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContext> {
                 return;
             }
         }
-        final boolean own = context.getSender().isPlayer() && context.getSender().getPlayer().getUniqueId().equals(target.getUniqueId());
-        if (!own && !context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
+        final boolean own = actor.isPlayer() && actor.getPlayer().getUniqueId().equals(target.getUniqueId());
+        if (!own && !permChecker.checkOther(context)) {
             helpMessage.sendMessage(context, helpName);
             return;
         }
@@ -85,14 +87,14 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContext> {
                 return false;
             }*/
             if (!statisticManager.allowStats(command)) {
-                messages.sendMessage(context.getSender().getBukkit(), "claim.stats.commandnotstat", "%command%", command);
+                messages.sendMessage(actor.getBukkit(), "claim.stats.commandnotstat", "%command%", command);
                 return;
             }
         }
         final boolean success = process(context, own, command, target);
         if (success) {
             // TODO Handle stats
-            context.getData().setStatistic("stats-" + name);
+            //context.getData().setStatistic("stats-" + name);
         }
     }
 
@@ -108,22 +110,19 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContext> {
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
-        return context.hasPermission(data.getBasePerm(context.getData()));
+        return permChecker.checkBase(context);
     }
 
     @Override
     public List<String> tabComplete(@NotNull CommandContext<ClaimContext> context) {
-        if (context.getArgsLength() == 1 && context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
-            return null;
-        }
         final String cmdArg;
         if (context.getArgsLength() == 1) {
-            if (context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
+            if (permChecker.checkOther(context)) {
                 return null;
             }
             cmdArg = context.getArg(0).toLowerCase(Locale.ENGLISH);
         } else if (context.getArgsLength() == 2) {
-            if (!context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
+            if (!permChecker.checkOther(context)) {
                 return Collections.emptyList();
             }
             cmdArg = context.getArg(1).toLowerCase(Locale.ENGLISH);

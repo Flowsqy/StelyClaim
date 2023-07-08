@@ -6,6 +6,8 @@ import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.api.actor.BlockActor;
 import fr.flowsqy.stelyclaim.api.actor.ConsoleActor;
 import fr.flowsqy.stelyclaim.api.actor.EntityActor;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.command.claim.*;
 import fr.flowsqy.stelyclaim.command.claim.domain.AddMemberSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.domain.AddOwnerSubCommand;
@@ -19,8 +21,6 @@ import fr.flowsqy.stelyclaim.command.claim.selection.RedefineSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.statistics.ResetStatsSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.statistics.ShowStatsSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.statistics.StatsSubCommand;
-import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
@@ -35,7 +35,7 @@ import java.util.List;
 public class ClaimCommand implements TabExecutor {
 
     private final StatisticManager statisticManager;
-    private final ClaimHandler<?> playerHandler;
+    private final ClaimHandler<?> defaultHandler;
     private final HelpMessage helpMessage;
     private final String basePermission;
     private final ClaimSubCommandManager subCommandManager;
@@ -43,7 +43,7 @@ public class ClaimCommand implements TabExecutor {
 
     public ClaimCommand(@NotNull StelyClaimPlugin plugin, @NotNull String basePermission) {
         statisticManager = plugin.getStatisticManager();
-        playerHandler = plugin.getHandlerRegistry().getHandler("player");
+        defaultHandler = plugin.getHandlerRegistry().getHandler("player");
         helpMessage = new HelpMessage();
         this.basePermission = basePermission;
         subCommandManager = new ClaimSubCommandManager();
@@ -55,21 +55,21 @@ public class ClaimCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         final Actor actor = getActor(sender);
-        final CommandContext<ClaimContext> context = new CommandContext<>(actor, args, new ClaimContext(), 0);
-        context.getData().setHandler(playerHandler);
+        final CommandContext<ClaimContext> context = new CommandContext<>(actor, args, new ClaimContext(defaultHandler), 0);
         rootCommand.execute(context);
+        /* TODO Implement stats again, but well do we really need it ? :D
         final String statistic = context.getData().getStatistic();
         if (statistic != null && statisticManager.allowStats(statistic) && actor.isPlayer()) {
             statisticManager.increment(actor.getPlayer().getUniqueId(), statistic);
             statisticManager.saveTask();
-        }
+        }*/
         return true;
     }
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         final Actor actor = getActor(sender);
-        final CommandContext<ClaimContext> context = new CommandContext<>(actor, args, new ClaimContext(), 0);
+        final CommandContext<ClaimContext> context = new CommandContext<>(actor, args, new ClaimContext(defaultHandler), 0);
         return rootCommand.tabComplete(context);
     }
 
@@ -98,260 +98,260 @@ public class ClaimCommand implements TabExecutor {
 
         // Help
         final String helpName = "help";
-        final CommandPermissionChecker helpData = new CommandPermissionChecker(helpName, basePermission, false);
+        final CommandPermissionChecker helpPermChecker = new BasicCPC(basePermission + "." + helpName);
         registerCommand(
-                new HelpSubCommand(helpName, new String[]{helpName, "h"}, helpData, subCommandManager, helpMessage),
-                helpData
+                new HelpSubCommand(helpName, new String[]{helpName, "h"}, helpPermChecker, subCommandManager, helpMessage),
+                helpPermChecker
         );
         if (config.getBoolean("statistic.help")) {
             statisticManager.allowStats(helpName);
         }
         final String helpHelpMessage = messages.getFormattedMessage("help." + helpName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(helpName, helpData, id -> helpHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(helpName, helpPermChecker, id -> helpHelpMessage));
 
         // Define
         final String defineName = "define";
-        final CommandPermissionChecker defineData = new CommandPermissionChecker(defineName, basePermission, true);
+        final OtherCommandPermissionChecker definePermChecker = new OtherContextCPC(basePermission + ".", "." + defineName);
         registerCommand(
                 new DefineSubCommand(
                         defineName,
                         new String[]{defineName, "d"},
                         plugin,
                         config.getStringList("worlds.define"),
-                        defineData,
+                        definePermChecker,
                         helpMessage
                 ),
-                defineData
+                definePermChecker
         );
         if (config.getBoolean("statistic.define")) {
             statisticManager.addCommand(defineName);
         }
         final String defineHelpMessage = messages.getFormattedMessage("help." + defineName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(defineName, defineData, id -> defineHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(defineName, definePermChecker, id -> defineHelpMessage));
 
         // Redefine
         final String redefineName = "redefine";
-        final CommandPermissionChecker redefineData = new CommandPermissionChecker(redefineName, basePermission, true);
+        final OtherCommandPermissionChecker redefinePermChecker = new OtherContextCPC(basePermission + ".", "." + redefineName);
         registerCommand(
                 new RedefineSubCommand(
                         redefineName,
                         new String[]{redefineName, "rd"},
                         plugin,
                         config.getStringList("worlds.redefine"),
-                        redefineData,
+                        redefinePermChecker,
                         helpMessage
                 ),
-                redefineData
+                redefinePermChecker
         );
         if (config.getBoolean("statistic.redefine")) {
             statisticManager.addCommand(redefineName);
         }
         final String redefineHelpMessage = messages.getFormattedMessage("help." + redefineName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(redefineName, redefineData, id -> redefineHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(redefineName, redefinePermChecker, id -> redefineHelpMessage));
 
         // AddMember
         final String addmemberName = "addmember";
-        final CommandPermissionChecker addmemberData = new CommandPermissionChecker(addmemberName, basePermission, true);
+        final OtherCommandPermissionChecker addmemberPermChecker = new OtherContextCPC(basePermission + ".", "." + addmemberName);
         registerCommand(
                 new AddMemberSubCommand(
                         addmemberName,
                         new String[]{addmemberName, "am"},
                         plugin,
                         config.getStringList("worlds.addmember"),
-                        addmemberData,
+                        addmemberPermChecker,
                         helpMessage
                 ),
-                addmemberData
+                addmemberPermChecker
         );
         if (config.getBoolean("statistic.addmember")) {
             statisticManager.addCommand(addmemberName);
         }
         final String addmemberHelpMessage = messages.getFormattedMessage("help." + addmemberName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(addmemberName, addmemberData, id -> addmemberHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(addmemberName, addmemberPermChecker, id -> addmemberHelpMessage));
 
         // RemoveMember
         final String removememberName = "removemember";
-        final CommandPermissionChecker removememberData = new CommandPermissionChecker(removememberName, basePermission, true);
+        final OtherCommandPermissionChecker removememberPermChecker = new OtherContextCPC(basePermission + ".", "." + removememberName);
         registerCommand(
                 new RemoveMemberSubCommand(
                         removememberName,
                         new String[]{removememberName, "rm"},
                         plugin,
                         config.getStringList("worlds.removemember"),
-                        removememberData,
+                        removememberPermChecker,
                         helpMessage
                 ),
-                removememberData
+                removememberPermChecker
         );
         if (config.getBoolean("statistic.removemember")) {
             statisticManager.addCommand(removememberName);
         }
         final String removememberHelpMessage = messages.getFormattedMessage("help." + removememberName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(removememberName, removememberData, id -> removememberHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(removememberName, removememberPermChecker, id -> removememberHelpMessage));
 
         // AddOwner
         final String addownerName = "addowner";
-        final CommandPermissionChecker addownerData = new CommandPermissionChecker(addownerName, basePermission, true);
+        final OtherCommandPermissionChecker addownerPermChecker = new OtherContextCPC(basePermission + ".", "." + addownerName);
         registerCommand(
                 new AddOwnerSubCommand(
                         addownerName,
                         new String[]{addownerName, "ao"},
                         plugin,
                         config.getStringList("worlds.addowner"),
-                        addownerData,
+                        addownerPermChecker,
                         helpMessage
                 ),
-                addownerData
+                addownerPermChecker
         );
         if (config.getBoolean("statistic.addowner")) {
             statisticManager.addCommand(addownerName);
         }
         final String addownerHelpMessage = messages.getFormattedMessage("help." + addownerName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(addownerName, addownerData, id -> addownerHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(addownerName, addownerPermChecker, id -> addownerHelpMessage));
 
         // RemoveOwner
         final String removeownerName = "removeowner";
-        final CommandPermissionChecker removeownerData = new CommandPermissionChecker(removeownerName, basePermission, true);
+        final OtherCommandPermissionChecker removeownerPermChecker = new OtherContextCPC(basePermission + ".", "." + removeownerName);
         registerCommand(
                 new RemoveOwnerSubCommand(
                         removeownerName,
                         new String[]{removeownerName, "ro"},
                         plugin,
                         config.getStringList("worlds.removeowner"),
-                        removeownerData,
+                        removeownerPermChecker,
                         helpMessage
                 ),
-                removeownerData
+                removeownerPermChecker
         );
         if (config.getBoolean("statistic.removeowner")) {
             statisticManager.addCommand(removeownerName);
         }
         final String removeownerHelpMessage = messages.getFormattedMessage("help." + removeownerName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(removeownerName, removeownerData, id -> removeownerHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(removeownerName, removeownerPermChecker, id -> removeownerHelpMessage));
 
         // Remove
         final String removeName = "remove";
-        final CommandPermissionChecker removeData = new CommandPermissionChecker(removeName, basePermission, true);
+        final OtherCommandPermissionChecker removePermChecker = new OtherContextCPC(basePermission + ".", "." + removeName);
         registerCommand(
                 new RemoveSubCommand(
                         removeName,
                         new String[]{removeName, "r"},
                         plugin,
                         config.getStringList("worlds.remove"),
-                        removeData,
+                        removePermChecker,
                         helpMessage
                 ),
-                removeData
+                removePermChecker
         );
         if (config.getBoolean("statistic.remove")) {
             statisticManager.addCommand(removeName);
         }
         final String removeHelpMessage = messages.getFormattedMessage("help." + removeName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(removeName, removeData, id -> removeHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(removeName, removePermChecker, id -> removeHelpMessage));
 
         // Info
         final String infoName = "info";
-        final CommandPermissionChecker infoData = new CommandPermissionChecker(infoName, basePermission, true);
+        final OtherCommandPermissionChecker infoPermChecker = new OtherContextCPC(basePermission + ".", "." + infoName);
         registerCommand(
                 new InfoSubCommand(
                         infoName,
                         new String[]{infoName, "i"},
                         plugin,
                         config.getStringList("worlds.info"),
-                        infoData,
+                        infoPermChecker,
                         helpMessage
                 ),
-                infoData
+                infoPermChecker
         );
         if (config.getBoolean("statistic.info")) {
             statisticManager.addCommand(infoName);
         }
         final String infoHelpMessage = messages.getFormattedMessage("help." + infoName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(infoName, infoData, id -> infoHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(infoName, infoPermChecker, id -> infoHelpMessage));
 
         // Teleport
         final String teleportName = "teleport";
-        final CommandPermissionChecker teleportData = new CommandPermissionChecker(teleportName, basePermission, true);
+        final OtherCommandPermissionChecker teleportPermChecker = new OtherContextCPC(basePermission + ".", "." + teleportName);
         registerCommand(
                 new TeleportSubCommand(
                         teleportName,
                         new String[]{teleportName, "tp"},
                         plugin,
                         config.getStringList("worlds.teleport"),
-                        teleportData,
+                        teleportPermChecker,
                         helpMessage
                 ),
-                teleportData
+                teleportPermChecker
         );
         if (config.getBoolean("statistic.teleport")) {
             statisticManager.addCommand(teleportName);
         }
         final String teleportHelpMessage = messages.getFormattedMessage("help." + teleportName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(teleportName, teleportData, id -> teleportHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(teleportName, teleportPermChecker, id -> teleportHelpMessage));
 
         // Here
         final String hereName = "here";
-        final CommandPermissionChecker hereData = new CommandPermissionChecker(hereName, basePermission, false);
+        final OtherCommandPermissionChecker herePermChecker = new OtherBasicCPC(basePermission + "." + hereName);
         registerCommand(
                 new HereSubCommand(
                         hereName,
                         new String[]{hereName, "hr"},
                         plugin,
                         config.getStringList("worlds.here"),
-                        hereData,
+                        herePermChecker,
                         helpMessage
                 ),
-                hereData
+                herePermChecker
         );
         if (config.getBoolean("statistic.here")) {
             statisticManager.addCommand(hereName);
         }
         final String hereHelpMessage = messages.getFormattedMessage("help." + hereName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(hereName, hereData, id -> hereHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(hereName, herePermChecker, id -> hereHelpMessage));
 
         // Near
         final String nearName = "near";
-        final CommandPermissionChecker nearData = new CommandPermissionChecker(nearName, basePermission, false);
+        final NearCommandPermissionChecker nearPermChecker = new NearCommandPermissionChecker(basePermission + "." + nearName);
         registerCommand(
                 new NearSubCommand(
                         nearName,
                         new String[]{nearName, "n"},
                         plugin,
                         config.getStringList("worlds.near"),
-                        nearData,
+                        nearPermChecker,
                         helpMessage
                 ),
-                nearData
+                nearPermChecker
         );
         if (config.getBoolean("statistic.near")) {
             statisticManager.addCommand(nearName);
         }
         final String nearHelpMessage = messages.getFormattedMessage("help." + nearName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(nearName, nearData, id -> nearHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(nearName, nearPermChecker, id -> nearHelpMessage));
 
         // ListAdd
         final String listaddName = "listadd";
-        final CommandPermissionChecker listaddData = new CommandPermissionChecker(listaddName, basePermission, false);
+        final OtherCommandPermissionChecker listaddPermChecker = new OtherBasicCPC(basePermission + "." + listaddName);
         registerCommand(
                 new ListAddSubCommand(
                         listaddName,
                         new String[]{listaddName, "la"},
                         plugin,
                         config.getStringList("worlds.listadd"),
-                        listaddData,
+                        listaddPermChecker,
                         helpMessage
                 ),
-                listaddData
+                listaddPermChecker
         );
         if (config.getBoolean("statistic.listadd")) {
             statisticManager.addCommand(listaddName);
         }
         final String listaddHelpMessage = messages.getFormattedMessage("help." + listaddName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(listaddName, listaddData, id -> listaddHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(listaddName, listaddPermChecker, id -> listaddHelpMessage));
 
         // Pillar
         final String pillarName = "pillar";
-        final CommandPermissionChecker pillarData = new CommandPermissionChecker(pillarName, basePermission, false);
+        //final CommandPermissionChecker pillarData = new CommandPermissionChecker(pillarName, basePermission, false);
         registerCommand(
                 new PillarSubCommand(
                         pillarName,
@@ -369,40 +369,40 @@ public class ClaimCommand implements TabExecutor {
 
         // Player
         final String playerName = "player";
-        final CommandPermissionChecker playerData = new CommandPermissionChecker(null, basePermission, false);
+        final CommandPermissionChecker playerPermChecker = new ContextCPC(basePermission + ".context.", "");
         registerCommand(
                 new ContextSubCommand(
                         playerName,
                         new String[]{playerName, "p"},
-                        playerHandler,
+                        defaultHandler,
                         subCommandManager,
-                        playerData,
+                        playerPermChecker,
                         helpMessage
                 ),
-                playerData
+                playerPermChecker
         );
         if (config.getBoolean("statistic.player")) {
             statisticManager.addCommand(playerName);
         }
         final String playerHelpMessage = messages.getFormattedMessage("help." + playerName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(playerName, playerData, id -> playerHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(playerName, playerPermChecker, id -> playerHelpMessage));
 
         // Stats
         final String statsName = "stats";
 
         final String showStatsName = "show";
-        final CommandPermissionChecker showStatsData = new CommandPermissionChecker(statsName + "." + showStatsName, basePermission, false);
+        final CommandPermissionChecker showStatsPermChecker = new OtherBasicCPC(basePermission + "." + statsName + "." + showStatsName);
         final String showStatsHelpName = statsName + "_" + showStatsName;
         final ShowStatsSubCommand showStatsSubCommand = new ShowStatsSubCommand(
                 showStatsName,
                 new String[]{showStatsName, "s"},
                 plugin,
-                showStatsData,
+                showStatsPermChecker,
                 showStatsHelpName,
                 helpMessage
         );
         final String showStatsHelpMessage = messages.getFormattedMessage("help." + showStatsHelpName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(showStatsHelpName, showStatsData, id -> showStatsHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(showStatsHelpName, showStatsPermChecker, id -> showStatsHelpMessage));
 
         final String resetStatsName = "reset";
         final CommandPermissionChecker resetStatsData = new CommandPermissionChecker(statsName + "." + resetStatsName, basePermission, false);
@@ -419,7 +419,7 @@ public class ClaimCommand implements TabExecutor {
         helpMessage.registerCommand(new HelpMessage.HelpData(resetStatsHelpName, resetStatsData, id -> resetStatsHelpMessage));
 
 
-        final CommandPermissionChecker statsData = new CommandPermissionChecker(statsName, basePermission, true);
+        final CommandPermissionChecker statsData = new BasicCPC(basePermission + "." + statsName);
         registerCommand(
                 new StatsSubCommand(
                         statsName,

@@ -41,7 +41,7 @@ public class HelpMessage {
             }
             final String message = data.helpMessage().apply(handlerId);
             if (message != null) {
-                context.getSender().getBukkit().sendMessage(message);
+                context.getActor().getBukkit().sendMessage(message);
             }
         }
     }

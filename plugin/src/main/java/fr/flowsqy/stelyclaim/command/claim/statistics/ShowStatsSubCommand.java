@@ -1,10 +1,10 @@
 package fr.flowsqy.stelyclaim.command.claim.statistics;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import fr.flowsqy.stelyclaim.command.claim.CommandPermissionChecker;
-import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
+import fr.flowsqy.stelyclaim.command.claim.OtherCommandPermissionChecker;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -14,8 +14,8 @@ import java.util.UUID;
 
 public class ShowStatsSubCommand extends SubStatsSubCommand {
 
-    public ShowStatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @NotNull CommandPermissionChecker data, @NotNull String helpName, @NotNull HelpMessage helpMessage) {
-        super(name, triggers, plugin, data, helpName, helpMessage);
+    public ShowStatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @NotNull OtherCommandPermissionChecker permChecker, @NotNull String helpName, @NotNull HelpMessage helpMessage) {
+        super(name, triggers, plugin, permChecker, helpName, helpMessage);
     }
 
     @Override
