@@ -21,7 +21,7 @@ public class ResetStatsSubCommand extends SubStatsSubCommand {
     @Override
     protected boolean process(@NotNull CommandContext<ClaimContext> context, boolean own, @Nullable String command, @NotNull OfflinePlayer target) {
         final String other = own ? "" : "-other";
-        final CommandSender sender = context.getSender().getBukkit();
+        final CommandSender sender = context.getActor().getBukkit();
         final UUID targetId = target.getUniqueId();
         final String targetName = target.getName();
         if (command == null) {

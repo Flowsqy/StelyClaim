@@ -7,6 +7,7 @@ import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.command.claim.CommandPermissionChecker;
+import fr.flowsqy.stelyclaim.command.claim.OtherCommandPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.WorldChecker;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.bukkit.Bukkit;
@@ -25,14 +26,14 @@ public abstract class InteractSubCommand implements CommandNode<ClaimContext> {
     private final String name;
     private final String[] triggers;
     private final WorldChecker worldChecker;
-    private final CommandPermissionChecker data;
+    private final OtherCommandPermissionChecker permChecker;
     private final HelpMessage helpMessage;
 
-    public InteractSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull CommandPermissionChecker data, @NotNull HelpMessage helpMessage) {
+    public InteractSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         worldChecker = new WorldChecker(worlds, plugin.getMessages());
-        this.data = data;
+        this.permChecker = permChecker;
         this.helpMessage = helpMessage;
     }
 
@@ -76,12 +77,12 @@ public abstract class InteractSubCommand implements CommandNode<ClaimContext> {
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
-        return context.getActor().isPhysic() && context.hasPermission(data.getBasePerm(context.getData()));
+        return context.getActor().isPhysic() && permChecker.checkBase(context);
     }
 
     @Override
     public List<String> tabComplete(@NotNull CommandContext<ClaimContext> context) {
-        if (context.getArgsLength() != 1 || !context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
+        if (context.getArgsLength() != 1 || !permChecker.checkOther(context)) {
             return Collections.emptyList();
         }
         final String arg = context.getArg(0).toLowerCase(Locale.ENGLISH);

@@ -16,15 +16,15 @@ public class ContextSubCommand extends DispatchCommandTabExecutor<ClaimContext> 
     private final String[] triggers;
     private final ClaimHandler<? extends ClaimOwner> claimHandler;
     private final ClaimSubCommandManager subCommandManager;
-    private final CommandPermissionChecker data;
+    private final CommandPermissionChecker permChecker;
     private final HelpMessage helpMessage;
 
-    public ContextSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull ClaimHandler<?> claimHandler, @NotNull ClaimSubCommandManager subCommandManager, @NotNull CommandPermissionChecker data, @NotNull HelpMessage helpMessage) {
+    public ContextSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull ClaimHandler<?> claimHandler, @NotNull ClaimSubCommandManager subCommandManager, @NotNull CommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         this.claimHandler = claimHandler;
         this.subCommandManager = subCommandManager;
-        this.data = data;
+        this.permChecker = permChecker;
         this.helpMessage = helpMessage;
     }
 
@@ -40,7 +40,7 @@ public class ContextSubCommand extends DispatchCommandTabExecutor<ClaimContext> 
 
     @Override
     public void execute(@NotNull CommandContext<ClaimContext> context) {
-        context.getData().setHandler(claimHandler);
+        context.getCustomData().orElseThrow().getOwnerContext().setHandler(claimHandler);
         super.execute(context);
     }
 
@@ -52,7 +52,7 @@ public class ContextSubCommand extends DispatchCommandTabExecutor<ClaimContext> 
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
-        return context.hasPermission(data.getBasePerm(context.getData()));
+        return permChecker.checkBase(context);
     }
 
     @Override

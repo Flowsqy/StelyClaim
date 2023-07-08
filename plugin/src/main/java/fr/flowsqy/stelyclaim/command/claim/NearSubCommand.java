@@ -32,7 +32,7 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
     private final ConfigurationFormattedMessages messages;
     private final WorldChecker worldChecker;
     private final HandlerRegistry handlerRegistry;
-    private final CommandPermissionChecker data;
+    private final NearCommandPermissionChecker permChecker;
     private final HelpMessage helpMessage;
     private final int DEFAULT_DISTANCE;
     private final int DEFAULT_MAX_DISTANCE;
@@ -41,20 +41,20 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
     private final int MAXIMAL_REGION_AMOUNT;
     private final Map<UUID, Long> lastExecTimeByPlayerId;
 
-    public NearSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull CommandPermissionChecker data, @NotNull HelpMessage helpMessage) {
+    public NearSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull NearCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         messages = plugin.getMessages();
         worldChecker = new WorldChecker(worlds, messages);
         handlerRegistry = plugin.getHandlerRegistry();
-        this.data = data;
+        this.permChecker = permChecker;
         this.helpMessage = helpMessage;
         final YamlConfiguration configuration = plugin.getConfiguration();
         // The distances should be >= 1 (0 is /claim here and bellow it does not make any sense)
         DEFAULT_DISTANCE = Math.max(configuration.getInt(name + ".default-distance", 200), 1);
         DEFAULT_MAX_DISTANCE = Math.max(configuration.getInt(name + ".base-max-distance", 200), 1);
         COOLDOWN = configuration.getLong(name + ".cooldown", 1000L);
-        COOLDOWN_SIZE_CLEAR_CHECK = configuration.getInt(name + ".cooldown-size-clear-check", 4);
+        COOLDOWN_SIZE_CLEAR_CHECK = configuration.getInt(name + ".cooldown-size-clear-checkFull", 4);
         // The minimal amount should be one (0 Show nothing and bellow, it does not make any sense)
         MAXIMAL_REGION_AMOUNT = Math.max(configuration.getInt(name + ".maximal-region-amount", 10), 1);
         lastExecTimeByPlayerId = new HashMap<>();
@@ -70,8 +70,8 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
      */
     private int[] getNearestPoint(int posX, int posZ, ProtectedRegion protectedRegion) {
         final int[] nearestPoint = new int[2];
-        // TODO Better check for polygon region
-        // This check is exact only for cuboid
+        // TODO Better checkFull for polygon region
+        // This checkFull is exact only for cuboid
         final BlockVector3 max = protectedRegion.getMaximumPoint();
         final BlockVector3 min = protectedRegion.getMinimumPoint();
         nearestPoint[0] = getNearestPointOnLine(posX, min.getBlockX(), max.getBlockX());
@@ -133,7 +133,7 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
 
     @Override
     public void execute(@NotNull CommandContext<ClaimContext> context) {
-        if (worldChecker.checkCancelledWorld(context.getSender())) {
+        if (worldChecker.checkCancelledWorld(context.getActor())) {
             return;
         }
         // Check if there is more than a distance
@@ -143,10 +143,10 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
             return;
         }
 
-        final CommandSender sender = context.getSender().getBukkit();
+        final CommandSender sender = context.getActor().getBukkit();
 
         // Check full perm
-        final boolean hasFullPerm = sender.hasPermission(data.getModifierPerm(context.getData(), "full"));
+        final boolean hasFullPerm = permChecker.checkFull(context);//sender.hasPermission(permChecker.getModifierPerm(context.getData(), "full"));
 
         // Init distance
         final int distance;
@@ -214,7 +214,7 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
         final int x = pos.getBlockX(), z = pos.getBlockZ();
 
         // Create a region with a radius of distance
-        // Don't check 'y' coordinates
+        // Don't checkFull 'y' coordinates
         final ProtectedCuboidRegion region = new ProtectedCuboidRegion("checking-area", true,
                 BlockVector3.at(
                         x + distance,
@@ -333,7 +333,7 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
-        return context.getSender().isPhysic() && context.hasPermission(data.getBasePerm(context.getData()));
+        return context.getActor().isPhysic() && permChecker.checkBase(context);
     }
 
     @Override

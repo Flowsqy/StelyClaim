@@ -1,13 +1,17 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class CommandPermissionChecker {
+public interface CommandPermissionChecker {
 
+    boolean checkBase(@NotNull CommandContext<ClaimContext> context);
+
+    /*
     private final String basePerm;
     private final String parentPerm;
     private final boolean contextSpecific;
@@ -32,6 +36,6 @@ public class CommandPermissionChecker {
 
     public boolean isContextSpecific() {
         return contextSpecific;
-    }
+    }*/
 
 }

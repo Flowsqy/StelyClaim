@@ -6,7 +6,7 @@ import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.CommandPermissionChecker;
+import fr.flowsqy.stelyclaim.command.claim.OtherCommandPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.WorldChecker;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
@@ -27,10 +27,10 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContext> {
     private final String name;
     private final String[] triggers;
     private final WorldChecker worldChecker;
-    private final CommandPermissionChecker permChecker;
+    private final OtherCommandPermissionChecker permChecker;
     private final HelpMessage helpMessage;
 
-    public DomainSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull CommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+    public DomainSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         worldChecker = new WorldChecker(worlds, plugin.getMessages());
@@ -91,13 +91,13 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContext> {
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
-        return context.getActor().isPhysic() && permChecker.checkBase();
+        return context.getActor().isPhysic() && permChecker.checkBase(context);
     }
 
     @Override
     public List<String> tabComplete(@NotNull CommandContext<ClaimContext> context) {
         final int size = context.getArgsLength();
-        if (size != 1 && !(size == 2 || permChecker.checkOther())) {
+        if (size != 1 && !(size == 2 || permChecker.checkOther(context))) {
             return Collections.emptyList();
         }
         final String arg = context.getArg(context.getArgsLength() - 1).toLowerCase(Locale.ENGLISH);

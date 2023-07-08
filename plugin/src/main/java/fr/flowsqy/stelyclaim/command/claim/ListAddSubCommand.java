@@ -37,7 +37,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
     private final ConfigurationFormattedMessages messages;
     private final WorldChecker worldChecker;
     private final HandlerRegistry handlerRegistry;
-    private final CommandPermissionChecker data;
+    private final OtherCommandPermissionChecker permChecker;
     private final HelpMessage helpMessage;
     private final long CACHE_PERIOD;
     private final int CACHE_SIZE_CLEAR_CHECK;
@@ -47,17 +47,17 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
 
     private final String regionMessage;
 
-    public ListAddSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull CommandPermissionChecker data, @NotNull HelpMessage helpMessage) {
+    public ListAddSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         messages = plugin.getMessages();
         worldChecker = new WorldChecker(worlds, messages);
         handlerRegistry = plugin.getHandlerRegistry();
-        this.data = data;
+        this.permChecker = permChecker;
         this.helpMessage = helpMessage;
         final Configuration configuration = plugin.getConfiguration();
         CACHE_PERIOD = configuration.getLong(name + ".cache-period", 4000);
-        CACHE_SIZE_CLEAR_CHECK = configuration.getInt(name + ".cache-size-clear-check", 4);
+        CACHE_SIZE_CLEAR_CHECK = configuration.getInt(name + ".cache-size-clear-checkFull", 4);
         REGION_BY_PAGE = Math.max(configuration.getInt(name + ".region-by-page", 5), 1);
         cache = new HashMap<>();
         regionMessage = messages.getFormattedMessage("claim." + name + ".region-message");
@@ -91,7 +91,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
 
     @Override
     public void execute(@NotNull CommandContext<ClaimContext> context) {
-        if (worldChecker.checkCancelledWorld(context.getSender())) {
+        if (worldChecker.checkCancelledWorld(context.getActor())) {
             return;
         }
         if (regionMessage == null) {
@@ -99,7 +99,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
             return;
         }
 
-        final boolean hasOtherPerm = context.hasPermission(data.getModifierPerm(context.getData(), "other"));
+        final boolean hasOtherPerm = permChecker.checkOther(context);
         final OfflinePlayer target;
         String pageArg = null;
         int page = 1;
@@ -309,12 +309,12 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
-        return context.getSender().isPhysic() && context.hasPermission(data.getBasePerm(context.getData()));
+        return context.getActor().isPhysic() && permChecker.checkOther(context);
     }
 
     @Override
     public List<String> tabComplete(@NotNull CommandContext<ClaimContext> context) {
-        if (context.getArgsLength() != 1 || !context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
+        if (context.getArgsLength() != 1 || !permChecker.checkOther(context)) {
             return Collections.emptyList();
         }
         final String arg = context.getArg(0).toLowerCase(Locale.ROOT);

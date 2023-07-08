@@ -1,11 +1,11 @@
 package fr.flowsqy.stelyclaim.command.claim.statistics;
 
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import fr.flowsqy.stelyclaim.command.claim.CommandPermissionChecker;
-import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
+import fr.flowsqy.stelyclaim.command.claim.CommandPermissionChecker;
+import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -15,14 +15,14 @@ public class StatsSubCommand extends DispatchCommandTabExecutor<ClaimContext> im
 
     private final String name;
     private final String[] triggers;
-    private final CommandPermissionChecker data;
+    private final CommandPermissionChecker permChecker;
     private final HelpMessage helpMessage;
     private final List<CommandNode<ClaimContext>> children;
 
-    public StatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull CommandPermissionChecker data, @NotNull HelpMessage helpMessage, @NotNull List<CommandNode<ClaimContext>> children) {
+    public StatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull CommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage, @NotNull List<CommandNode<ClaimContext>> children) {
         this.name = name;
         this.triggers = triggers;
-        this.data = data;
+        this.permChecker = permChecker;
         this.helpMessage = helpMessage;
         this.children = new ArrayList<>(children);
     }
@@ -71,7 +71,7 @@ public class StatsSubCommand extends DispatchCommandTabExecutor<ClaimContext> im
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
-        return context.hasPermission(data.getBasePerm(context.getData()));
+        return permChecker.checkBase(context);
     }
 
 }

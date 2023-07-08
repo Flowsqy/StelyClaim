@@ -8,6 +8,7 @@ import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.HandlerRegistry;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.api.actor.PhysicActor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
@@ -50,7 +51,8 @@ public class HereSubCommand implements CommandNode<ClaimContext> {
 
     @Override
     public void execute(@NotNull CommandContext<ClaimContext> context) {
-        if (worldChecker.checkCancelledWorld(context.getSender())) {
+        final Actor actor = context.getActor();
+        if (worldChecker.checkCancelledWorld(actor)) {
             return;
         }
         if (context.getArgsLength() != 0) {
@@ -58,8 +60,8 @@ public class HereSubCommand implements CommandNode<ClaimContext> {
             return;
         }
 
-        final CommandSender sender = context.getSender().getBukkit();
-        final PhysicActor physicActor = context.getSender().getPhysic();
+        final CommandSender sender = actor.getBukkit();
+        final PhysicActor physicActor = actor.getPhysic();
         final Location senderLoc = physicActor.getLocation();
         final RegionManager regionManager = RegionNameManager.getRegionManager(new WorldName(physicActor.getWorld().getName()), sender);
 
@@ -212,7 +214,7 @@ public class HereSubCommand implements CommandNode<ClaimContext> {
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
-        return context.getSender().isPhysic() && context.hasPermission(data.getBasePerm(context.getData()));
+        return context.getActor().isPhysic() && data.checkBase(context);
     }
 
     @Override

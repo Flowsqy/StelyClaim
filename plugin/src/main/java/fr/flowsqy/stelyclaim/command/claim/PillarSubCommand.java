@@ -34,7 +34,7 @@ public class PillarSubCommand implements CommandNode<ClaimContext> {
             helpMessage.sendMessage(context);
             return;
         }
-        final PillarData pillarData = this.pillarData.get(context.getSender().getBukkit().getName());
+        final PillarData pillarData = this.pillarData.get(context.getActor().getBukkit().getName());
         if (pillarData == null) {
             helpMessage.sendMessage(context);
             return;
@@ -58,7 +58,7 @@ public class PillarSubCommand implements CommandNode<ClaimContext> {
             teleportLoc.setY(loc.getWorld().getHighestBlockYAt(loc));
             teleportLoc.add(0.5, 1, 0.5);
         }
-        context.getSender().getMovable().setLocation(teleportSync, teleportLoc);
+        context.getActor().getMovable().setLocation(teleportSync, teleportLoc);
         context.getData().setStatistic(name);
     }
 
@@ -74,7 +74,7 @@ public class PillarSubCommand implements CommandNode<ClaimContext> {
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
-        return context.getSender().isMovable();
+        return context.getActor().isMovable();
     }
 
     @Override

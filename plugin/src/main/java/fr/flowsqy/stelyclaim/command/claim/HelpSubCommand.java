@@ -14,14 +14,14 @@ public class HelpSubCommand implements CommandNode<ClaimContext> {
 
     private final String name;
     private final String[] triggers;
-    private final CommandPermissionChecker data;
+    private final CommandPermissionChecker permChecker;
     private final ClaimSubCommandManager claimSubCommandManager;
     private final HelpMessage helpMessage;
 
-    public HelpSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull CommandPermissionChecker data, @NotNull ClaimSubCommandManager claimSubCommandManager, @NotNull HelpMessage helpMessage) {
+    public HelpSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull CommandPermissionChecker permChecker, @NotNull ClaimSubCommandManager claimSubCommandManager, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
-        this.data = data;
+        this.permChecker = permChecker;
         this.claimSubCommandManager = claimSubCommandManager;
         this.helpMessage = helpMessage;
     }
@@ -51,7 +51,7 @@ public class HelpSubCommand implements CommandNode<ClaimContext> {
 
     @Override
     public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
-        return context.hasPermission(data.getBasePerm(context.getData()));
+        return permChecker.checkBase(context);
     }
 
     @Override
