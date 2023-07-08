@@ -7,19 +7,22 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
+import fr.flowsqy.stelyclaim.protocol.OwnerContext;
 import fr.flowsqy.stelyclaim.protocol.ProtocolInteractChecker;
 import fr.flowsqy.stelyclaim.protocol.RegionManagerRetriever;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class SelectionProtocol {
 
     public static final int SELECTION_NOT_DEFINED = ActionResult.registerResultCode();
     public static final int SELECTION_NOT_CUBOID = ActionResult.registerResultCode();
 
-    public void process(@NotNull ActionContext<ClaimContextData> context, @NotNull SelectionProvider selectionProvider, @Nullable SelectionModifier selectionModifier, @Nullable RegionValidator regionValidator, @NotNull SelectionProtocolHandler selectionProtocolHandler, @NotNull ProtocolInteractChecker protocolInteractChecker) {
+    public void process(@NotNull ActionContext<ClaimContext> context, @NotNull SelectionProvider selectionProvider, @Nullable SelectionModifier selectionModifier, @Nullable RegionValidator regionValidator, @NotNull SelectionProtocolHandler selectionProtocolHandler, @NotNull ProtocolInteractChecker protocolInteractChecker) {
         final Region selection = selectionProvider.getSelection(context);
         if (selection == null) {
             //messages.sendMessage(player, "claim.selection.empty");
@@ -27,12 +30,15 @@ public class SelectionProtocol {
             return;
         }
 
-        if (!context.getCustomData().own() && !protocolInteractChecker.canInteractNotOwned(context)) {
+        final ClaimContext claimContext = Objects.requireNonNull(context.getCustomData());
+        final OwnerContext<?> ownerContext = claimContext.getOwnerContext();
+        ownerContext.setActorOwnTheRegion(() -> ownerContext.getHandledOwner().owner().own(context.getActor()), false);
+        if (!claimContext.getOwnerContext().isActorOwnTheRegion() && !protocolInteractChecker.canInteractNotOwned(context)) {
             context.setResult(new ActionResult(InteractProtocol.CANT_OTHER, false));
             return;
         }
 
-        final RegionManager regionManager = RegionManagerRetriever.retrieve(world.getName());
+        final RegionManager regionManager = RegionManagerRetriever.retrieve(claimContext.getWorld().orElseThrow());
         if (regionManager == null) {
             context.setResult(new ActionResult(InteractProtocol.WORLD_NOT_HANDLED, false));
             return;
@@ -51,7 +57,7 @@ public class SelectionProtocol {
             return;
         }
 
-        final String regionName = handledOwner.getRegionName();
+        final String regionName = ownerContext.getHandledOwner().getRegionName();
         final ProtectedRegion selectedRegion = new ProtectedCuboidRegion(regionName, selection.getMaximumPoint(), selection.getMinimumPoint());
 
         if (regionValidator != null && !regionValidator.validate(context, regionManager, selectedRegion)) {

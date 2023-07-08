@@ -1,15 +1,15 @@
 package fr.flowsqy.stelyclaim.command.claim.interact;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import fr.flowsqy.stelyclaim.api.HandledOwner;
+import fr.flowsqy.stelyclaim.api.LazyHandledOwner;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.command.claim.*;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
+import fr.flowsqy.stelyclaim.command.claim.PermissionData;
+import fr.flowsqy.stelyclaim.command.claim.WorldChecker;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public abstract class InteractSubCommand implements CommandNode<ClaimContextData> {
+public abstract class InteractSubCommand implements CommandNode<ClaimContext> {
 
     private final String name;
     private final String[] triggers;
@@ -37,31 +37,31 @@ public abstract class InteractSubCommand implements CommandNode<ClaimContextData
     }
 
     @Override
-    public void execute(@NotNull CommandContext<ClaimContextData> context) {
-        if (worldChecker.checkCancelledWorld(context.getSender())) {
+    public void execute(@NotNull CommandContext<ClaimContext> context) {
+        if (worldChecker.checkCancelledWorld(context.getActor())) {
             return;
         }
-        final OwnerRetriever.Result<?> retrievedOwner;
+        final ClaimContext claimContext = context.getCustomData().orElseThrow();
+        final LazyHandledOwner<?> lazyHandledOwner = claimContext.getOwnerContext().getLazyHandledOwner();
         if (context.getArgsLength() == 0) {
-            if (!context.getSender().isPlayer()) {
+            final Actor sender = context.getActor();
+            if (!sender.isPlayer()) {
                 helpMessage.sendMessage(context, name);
+                return;
             }
-            final Actor sender = context.getSender();
-            retrievedOwner = OwnerRetriever.retrieve(sender, context.getData().getHandler(), sender.getPlayer());
+            lazyHandledOwner.retrieve(sender, sender.getPlayer());
         } else if (context.getArgsLength() == 1) {
-            retrievedOwner = OwnerRetriever.retrieve(context.getSender(), context.getData().getHandler(), context.getArg(0));
+            lazyHandledOwner.retrieve(context.getActor(), context.getArg(0));
         } else {
             helpMessage.sendMessage(context, name);
             return;
         }
-        if (retrievedOwner.isEmpty()) {
+        if (lazyHandledOwner.getOwner() == null) {
+            // TODO Send a message to say that this owner can't be retrieved
             return;
         }
-        final Actor sender = context.getSender();
-        final boolean success = interactRegion(sender.getPhysic().getWorld(), sender, retrievedOwner.toHandledOwner());
-        if (success) {
-            context.getData().setStatistic(name);
-        }
+        claimContext.setWorld(() -> context.getActor().getPhysic().getWorld().getName(), false);
+        interactRegion(context);
     }
 
     @Override
@@ -75,12 +75,12 @@ public abstract class InteractSubCommand implements CommandNode<ClaimContextData
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
-        return context.getSender().isPhysic() && context.hasPermission(data.getBasePerm(context.getData()));
+    public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
+        return context.getActor().isPhysic() && context.hasPermission(data.getBasePerm(context.getData()));
     }
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
+    public List<String> tabComplete(@NotNull CommandContext<ClaimContext> context) {
         if (context.getArgsLength() != 1 || !context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
             return Collections.emptyList();
         }
@@ -91,6 +91,6 @@ public abstract class InteractSubCommand implements CommandNode<ClaimContextData
                 .collect(Collectors.toList());
     }
 
-    protected abstract <T extends ClaimOwner> boolean interactRegion(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner);
+    protected abstract void interactRegion(@NotNull CommandContext<ClaimContext> context);
 
 }

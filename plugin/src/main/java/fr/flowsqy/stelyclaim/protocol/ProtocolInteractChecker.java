@@ -5,9 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 public interface ProtocolInteractChecker {
 
-    boolean canInteractNotOwned(@NotNull ActionContext<ClaimContextData> context);
+    boolean canInteractNotOwned(@NotNull ActionContext<ClaimContext> context);
 
-    default boolean canInteractGlobal(@NotNull ActionContext<ClaimContextData> context) {
+    default boolean canInteractGlobal(@NotNull ActionContext<ClaimContext> context) {
         return false;
     }
 

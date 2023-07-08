@@ -5,8 +5,10 @@ import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.command.claim.PermissionData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.protocol.interact.TeleportHandler;
 import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.World;
@@ -27,8 +29,8 @@ public class TeleportSubCommand extends InteractSubCommand {
     }
 
     @Override
-    protected <T extends ClaimOwner> boolean interactRegion(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
-        return protocolManager.interact(world, actor, owner, new TeleportHandler(teleportSync));
+    protected void interactRegion(@NotNull CommandContext<ClaimContext> context) {
+        protocolManager.interact(context, new TeleportHandler(teleportSync));
     }
 
 }

@@ -7,7 +7,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.regions.Region;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +16,7 @@ public class PlayerSelectionProvider implements SelectionProvider {
 
     @Nullable
     @Override
-    public Region getSelection(@NotNull ActionContext<ClaimContextData> context) {
+    public Region getSelection(@NotNull ActionContext<ClaimContext> context) {
         if (!context.getActor().isPlayer()) {
             throw new IllegalArgumentException("Actor should be a player");
         }

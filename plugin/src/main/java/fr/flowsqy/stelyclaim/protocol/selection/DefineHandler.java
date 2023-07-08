@@ -4,7 +4,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +20,7 @@ public class DefineHandler implements SelectionProtocolHandler {
     }
 
     @Override
-    public void handle(@NotNull ActionContext<ClaimContextData> context, @NotNull RegionManager regionManager, @NotNull ProtectedRegion selectedRegion) {
+    public void handle(@NotNull ActionContext<ClaimContext> context, @NotNull RegionManager regionManager, @NotNull ProtectedRegion selectedRegion) {
         final ProtectedRegion currentRegion = regionManager.getRegion(selectedRegion.getId());
         //RegionNameManager.mustNotExist(regionManager, regionName, owner.getName(), ownRegion, actor);
         if (currentRegion != null) {

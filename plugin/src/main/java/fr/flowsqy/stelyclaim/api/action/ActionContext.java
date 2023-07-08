@@ -4,6 +4,8 @@ import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 public class ActionContext<T> {
 
     private final Actor actor;
@@ -20,8 +22,8 @@ public class ActionContext<T> {
         return actor;
     }
 
-    @Nullable
-    public T getCustomData() {
+    @NotNull
+    public Optional<T> getCustomData() {
         return customData;
     }
 

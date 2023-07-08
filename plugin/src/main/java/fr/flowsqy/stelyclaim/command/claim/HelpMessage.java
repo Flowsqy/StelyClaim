@@ -1,7 +1,7 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,15 +20,15 @@ public class HelpMessage {
         helpDataList = new LinkedList<>();
     }
 
-    public void sendMessage(@NotNull CommandContext<ClaimContextData> context) {
+    public void sendMessage(@NotNull CommandContext<ClaimContext> context) {
         sendMessage(context, null);
     }
 
-    public void sendMessage(@NotNull CommandContext<ClaimContextData> context, @Nullable String command) {
+    public void sendMessage(@NotNull CommandContext<ClaimContext> context, @Nullable String command) {
         sendMessage(context, command, false);
     }
 
-    public void sendMessage(@NotNull CommandContext<ClaimContextData> context, @Nullable String command, boolean reducedToSpecific) {
+    public void sendMessage(@NotNull CommandContext<ClaimContext> context, @Nullable String command, boolean reducedToSpecific) {
         final Optional<HelpData> specificData = helpDataList.stream().filter(data -> data.command().equalsIgnoreCase(command)).findAny();
         final Collection<HelpData> dataList = specificData.map(Collections::singletonList).orElse(helpDataList);
         final String handlerId = context.getData().getHandler().getId();

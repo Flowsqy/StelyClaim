@@ -2,7 +2,7 @@ package fr.flowsqy.stelyclaim.command.claim;
 
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-public class HelpSubCommand implements CommandNode<ClaimContextData> {
+public class HelpSubCommand implements CommandNode<ClaimContext> {
 
     private final String name;
     private final String[] triggers;
@@ -27,7 +27,7 @@ public class HelpSubCommand implements CommandNode<ClaimContextData> {
     }
 
     @Override
-    public void execute(@NotNull CommandContext<ClaimContextData> context) {
+    public void execute(@NotNull CommandContext<ClaimContext> context) {
         final String command;
         if (context.getArgsLength() > 1) {
             command = name;
@@ -50,18 +50,18 @@ public class HelpSubCommand implements CommandNode<ClaimContextData> {
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
+    public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
         return context.hasPermission(data.getBasePerm(context.getData()));
     }
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
+    public List<String> tabComplete(@NotNull CommandContext<ClaimContext> context) {
         if (context.getArgsLength() != 1) {
             return Collections.emptyList();
         }
         final String arg = context.getArg(0).toLowerCase(Locale.ENGLISH);
         final List<String> completions = new LinkedList<>();
-        for (CommandNode<ClaimContextData> command : claimSubCommandManager.getCommands()) {
+        for (CommandNode<ClaimContext> command : claimSubCommandManager.getCommands()) {
             if (!command.canTabComplete(context)) {
                 continue;
             }

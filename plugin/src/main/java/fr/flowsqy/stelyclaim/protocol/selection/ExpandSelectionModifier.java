@@ -4,7 +4,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionOperationException;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
 
 public class ExpandSelectionModifier implements SelectionModifier {
@@ -18,7 +18,7 @@ public class ExpandSelectionModifier implements SelectionModifier {
     }
 
     @Override
-    public void modify(@NotNull Region selection, @NotNull ActionContext<ClaimContextData> context) {
+    public void modify(@NotNull Region selection, @NotNull ActionContext<ClaimContext> context) {
         try {
             selection.expand(
                     BlockVector3.ZERO.withY(maxY - selection.getMaximumPoint().getY()),

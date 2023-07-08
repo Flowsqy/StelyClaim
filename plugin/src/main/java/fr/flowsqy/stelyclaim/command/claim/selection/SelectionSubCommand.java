@@ -1,7 +1,7 @@
 package fr.flowsqy.stelyclaim.command.claim.selection;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.command.claim.PermissionData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.command.claim.interact.InteractSubCommand;
@@ -18,7 +18,7 @@ public abstract class SelectionSubCommand extends InteractSubCommand {
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
+    public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
         return context.getSender().isPlayer() && super.canExecute(context);
     }
 

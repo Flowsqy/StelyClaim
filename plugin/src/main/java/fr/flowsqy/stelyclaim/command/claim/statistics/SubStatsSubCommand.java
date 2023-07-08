@@ -1,7 +1,7 @@
 package fr.flowsqy.stelyclaim.command.claim.statistics;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.command.claim.PermissionData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class SubStatsSubCommand implements CommandNode<ClaimContextData> {
+public abstract class SubStatsSubCommand implements CommandNode<ClaimContext> {
 
     private final String name;
     private final String[] triggers;
@@ -40,7 +40,7 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContextData
     }
 
     @Override
-    public void execute(@NotNull CommandContext<ClaimContextData> context) {
+    public void execute(@NotNull CommandContext<ClaimContext> context) {
         final OfflinePlayer target;
         final String command;
         switch (context.getArgsLength()) {
@@ -107,12 +107,12 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContextData
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
+    public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
         return context.hasPermission(data.getBasePerm(context.getData()));
     }
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
+    public List<String> tabComplete(@NotNull CommandContext<ClaimContext> context) {
         if (context.getArgsLength() == 1 && context.hasPermission(data.getModifierPerm(context.getData(), "other"))) {
             return null;
         }
@@ -135,6 +135,6 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContextData
                 .collect(Collectors.toList());
     }
 
-    protected abstract boolean process(@NotNull CommandContext<ClaimContextData> context, boolean own, @Nullable String command, @NotNull OfflinePlayer target);
+    protected abstract boolean process(@NotNull CommandContext<ClaimContext> context, boolean own, @Nullable String command, @NotNull OfflinePlayer target);
 
 }

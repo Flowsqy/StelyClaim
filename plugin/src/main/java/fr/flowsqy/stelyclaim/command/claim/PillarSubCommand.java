@@ -3,7 +3,7 @@ package fr.flowsqy.stelyclaim.command.claim;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.util.PillarData;
 import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.Location;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 
-public class PillarSubCommand implements CommandNode<ClaimContextData> {
+public class PillarSubCommand implements CommandNode<ClaimContext> {
 
     private final String name;
     private final String[] triggers;
@@ -29,7 +29,7 @@ public class PillarSubCommand implements CommandNode<ClaimContextData> {
     }
 
     @Override
-    public void execute(@NotNull CommandContext<ClaimContextData> context) {
+    public void execute(@NotNull CommandContext<ClaimContext> context) {
         if (context.getArgsLength() != 1) {
             helpMessage.sendMessage(context);
             return;
@@ -73,17 +73,17 @@ public class PillarSubCommand implements CommandNode<ClaimContextData> {
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
+    public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
         return context.getSender().isMovable();
     }
 
     @Override
-    public boolean canTabComplete(@NotNull CommandContext<ClaimContextData> context) {
+    public boolean canTabComplete(@NotNull CommandContext<ClaimContext> context) {
         return false;
     }
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
+    public List<String> tabComplete(@NotNull CommandContext<ClaimContext> context) {
         throw new IllegalStateException();
     }
 

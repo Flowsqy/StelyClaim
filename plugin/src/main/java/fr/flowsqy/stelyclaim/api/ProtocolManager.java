@@ -3,7 +3,7 @@ package fr.flowsqy.stelyclaim.api;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.protocol.domain.DomainProtocol;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import fr.flowsqy.stelyclaim.protocol.selection.SelectionProtocolOLD;
@@ -31,19 +31,19 @@ public class ProtocolManager {
         return selectionProtocol.process(world, actor, owner, SelectionProtocolOLD.Protocol.REDEFINE);
     }
 
-    public void addMember(@NotNull ActionContext<ClaimContextData> context, @NotNull OfflinePlayer target) {
+    public void addMember(@NotNull ActionContext<ClaimContext> context, @NotNull OfflinePlayer target) {
         interact(context, new DomainProtocol(DomainProtocol.Protocol.ADD_MEMBER, target));
     }
 
-    public void removeMember(@NotNull ActionContext<ClaimContextData> context, @NotNull OfflinePlayer player) {
+    public void removeMember(@NotNull ActionContext<ClaimContext> context, @NotNull OfflinePlayer player) {
         interact(context, new DomainProtocol(DomainProtocol.Protocol.REMOVE_MEMBER, player));
     }
 
-    public void addOwner(@NotNull ActionContext<ClaimContextData> context, @NotNull OfflinePlayer player) {
+    public void addOwner(@NotNull ActionContext<ClaimContext> context, @NotNull OfflinePlayer player) {
         interact(context, new DomainProtocol(DomainProtocol.Protocol.ADD_OWNER, player));
     }
 
-    public void removeOwner(@NotNull ActionContext<ClaimContextData> context, @NotNull OfflinePlayer player) {
+    public void removeOwner(@NotNull ActionContext<ClaimContext> context, @NotNull OfflinePlayer player) {
         interact(context, new DomainProtocol(DomainProtocol.Protocol.REMOVE_OWNER, player));
     }
 
@@ -51,7 +51,7 @@ public class ProtocolManager {
         return interact(world, actor, owner, interactProtocol.getRemoveProtocolHandler());
     }
 
-    public void interact(@NotNull ActionContext<ClaimContextData> context, @NotNull InteractProtocolHandler interactHandler) {
+    public void interact(@NotNull ActionContext<ClaimContext> context, @NotNull InteractProtocolHandler interactHandler) {
         interactProtocol.process(context, interactHandler);
     }
 

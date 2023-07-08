@@ -5,8 +5,10 @@ import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.command.claim.PermissionData;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
+import fr.flowsqy.stelyclaim.command.claim.PermissionData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +26,8 @@ public class AddOwnerSubCommand extends DomainSubCommand {
     }
 
     @Override
-    protected <T extends ClaimOwner> boolean interact(@NotNull Actor actor, @NotNull World world, @NotNull HandledOwner<T> owner, @NotNull OfflinePlayer target) {
-        return protocolManager.addOwner(world, actor, owner, target);
+    protected void interact(@NotNull CommandContext<ClaimContext> context, @NotNull OfflinePlayer target) {
+        protocolManager.addOwner(context, target);
     }
+
 }

@@ -1,13 +1,11 @@
 package fr.flowsqy.stelyclaim.command.claim.interact;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
-import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.command.claim.PermissionData;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
-import org.bukkit.World;
+import fr.flowsqy.stelyclaim.command.claim.PermissionData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,8 +21,8 @@ public class RemoveSubCommand extends InteractSubCommand {
     }
 
     @Override
-    protected <T extends ClaimOwner> boolean interactRegion(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
-        return protocolManager.remove(world, actor, owner);
+    protected void interactRegion(@NotNull CommandContext<ClaimContext> context) {
+        protocolManager.remove(context);
     }
 
 }

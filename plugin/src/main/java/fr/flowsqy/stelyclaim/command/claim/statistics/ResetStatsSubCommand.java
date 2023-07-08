@@ -1,7 +1,7 @@
 package fr.flowsqy.stelyclaim.command.claim.statistics;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.command.claim.PermissionData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
@@ -19,7 +19,7 @@ public class ResetStatsSubCommand extends SubStatsSubCommand {
     }
 
     @Override
-    protected boolean process(@NotNull CommandContext<ClaimContextData> context, boolean own, @Nullable String command, @NotNull OfflinePlayer target) {
+    protected boolean process(@NotNull CommandContext<ClaimContext> context, boolean own, @Nullable String command, @NotNull OfflinePlayer target) {
         final String other = own ? "" : "-other";
         final CommandSender sender = context.getSender().getBukkit();
         final UUID targetId = target.getUniqueId();

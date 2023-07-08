@@ -23,7 +23,7 @@ import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.bukkit.command.*;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Entity;
@@ -55,7 +55,7 @@ public class ClaimCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         final Actor actor = getActor(sender);
-        final CommandContext<ClaimContextData> context = new CommandContext<>(actor, args, new ClaimContextData(), 0);
+        final CommandContext<ClaimContext> context = new CommandContext<>(actor, args, new ClaimContext(), 0);
         context.getData().setHandler(playerHandler);
         rootCommand.execute(context);
         final String statistic = context.getData().getStatistic();
@@ -69,7 +69,7 @@ public class ClaimCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         final Actor actor = getActor(sender);
-        final CommandContext<ClaimContextData> context = new CommandContext<>(actor, args, new ClaimContextData(), 0);
+        final CommandContext<ClaimContext> context = new CommandContext<>(actor, args, new ClaimContext(), 0);
         return rootCommand.tabComplete(context);
     }
 
@@ -437,7 +437,7 @@ public class ClaimCommand implements TabExecutor {
         helpMessage.registerCommand(new HelpMessage.HelpData(statsName, statsData, id -> statsHelpMessage));
     }
 
-    private void registerCommand(@NotNull CommandNode<ClaimContextData> command, @NotNull PermissionData data) {
+    private void registerCommand(@NotNull CommandNode<ClaimContext> command, @NotNull PermissionData data) {
         // TODO Check for unsafe add
         subCommandManager.register(command, data.isContextSpecific());
     }

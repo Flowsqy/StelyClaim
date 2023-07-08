@@ -3,10 +3,10 @@ package fr.flowsqy.stelyclaim.command.claim;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
 
-public class ClaimRootCommand extends DispatchCommandTabExecutor<ClaimContextData> {
+public class ClaimRootCommand extends DispatchCommandTabExecutor<ClaimContext> {
 
     private final ClaimSubCommandManager subCommandManager;
     private final HelpMessage helpMessage;
@@ -17,12 +17,12 @@ public class ClaimRootCommand extends DispatchCommandTabExecutor<ClaimContextDat
     }
 
     @Override
-    public @NotNull Iterable<CommandNode<ClaimContextData>> getChildren() {
+    public @NotNull Iterable<CommandNode<ClaimContext>> getChildren() {
         return subCommandManager.getCommands();
     }
 
     @Override
-    public void fallBackExecute(@NotNull CommandContext<ClaimContextData> context) {
+    public void fallBackExecute(@NotNull CommandContext<ClaimContext> context) {
         helpMessage.sendMessage(context);
     }
 

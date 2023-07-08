@@ -1,6 +1,6 @@
 package fr.flowsqy.stelyclaim.command.claim.statistics;
 
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.command.claim.PermissionData;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
@@ -11,15 +11,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StatsSubCommand extends DispatchCommandTabExecutor<ClaimContextData> implements CommandNode<ClaimContextData> {
+public class StatsSubCommand extends DispatchCommandTabExecutor<ClaimContext> implements CommandNode<ClaimContext> {
 
     private final String name;
     private final String[] triggers;
     private final PermissionData data;
     private final HelpMessage helpMessage;
-    private final List<CommandNode<ClaimContextData>> children;
+    private final List<CommandNode<ClaimContext>> children;
 
-    public StatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull PermissionData data, @NotNull HelpMessage helpMessage, @NotNull List<CommandNode<ClaimContextData>> children) {
+    public StatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull PermissionData data, @NotNull HelpMessage helpMessage, @NotNull List<CommandNode<ClaimContext>> children) {
         this.name = name;
         this.triggers = triggers;
         this.data = data;
@@ -50,12 +50,12 @@ public class StatsSubCommand extends DispatchCommandTabExecutor<ClaimContextData
         );*/
 
     @Override
-    public @NotNull Iterable<CommandNode<ClaimContextData>> getChildren() {
+    public @NotNull Iterable<CommandNode<ClaimContext>> getChildren() {
         return children;
     }
 
     @Override
-    public void fallBackExecute(@NotNull CommandContext<ClaimContextData> context) {
+    public void fallBackExecute(@NotNull CommandContext<ClaimContext> context) {
         helpMessage.sendMessage(context, name);
     }
 
@@ -70,7 +70,7 @@ public class StatsSubCommand extends DispatchCommandTabExecutor<ClaimContextData
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
+    public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
         return context.hasPermission(data.getBasePerm(context.getData()));
     }
 

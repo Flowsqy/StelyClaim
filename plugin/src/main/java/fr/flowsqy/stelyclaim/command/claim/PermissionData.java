@@ -1,6 +1,6 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +18,7 @@ public class PermissionData {
         this.contextSpecific = contextSpecific;
     }
 
-    public String getBasePerm(@Nullable ClaimContextData data) {
+    public String getBasePerm(@Nullable ClaimContext data) {
         return (parentPerm != null ? parentPerm : "")
                 + (parentPerm != null && contextSpecific ? "." : "")
                 + (contextSpecific ? (Objects.requireNonNull(data).getHandler().getId()) : "")
@@ -26,7 +26,7 @@ public class PermissionData {
                 + (basePerm != null ? basePerm : "");
     }
 
-    public String getModifierPerm(@Nullable ClaimContextData data, @NotNull String modifier) {
+    public String getModifierPerm(@Nullable ClaimContext data, @NotNull String modifier) {
         return getBasePerm(data) + "-" + modifier;
     }
 

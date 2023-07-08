@@ -12,7 +12,7 @@ import fr.flowsqy.stelyclaim.api.HandlerRegistry;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
 import fr.flowsqy.stelyclaim.util.WorldName;
 import org.bukkit.Location;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class NearSubCommand implements CommandNode<ClaimContextData> {
+public class NearSubCommand implements CommandNode<ClaimContext> {
 
     private final String name;
     private final String[] triggers;
@@ -132,7 +132,7 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
     }
 
     @Override
-    public void execute(@NotNull CommandContext<ClaimContextData> context) {
+    public void execute(@NotNull CommandContext<ClaimContext> context) {
         if (worldChecker.checkCancelledWorld(context.getSender())) {
             return;
         }
@@ -332,12 +332,12 @@ public class NearSubCommand implements CommandNode<ClaimContextData> {
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext<ClaimContextData> context) {
+    public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
         return context.getSender().isPhysic() && context.hasPermission(data.getBasePerm(context.getData()));
     }
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext<ClaimContextData> context) {
+    public List<String> tabComplete(@NotNull CommandContext<ClaimContext> context) {
         return Collections.emptyList();
     }
 

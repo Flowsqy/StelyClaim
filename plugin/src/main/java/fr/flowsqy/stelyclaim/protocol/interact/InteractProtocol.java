@@ -6,7 +6,7 @@ import com.sk89q.worldguard.protection.regions.RegionType;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.protocol.LazyOwner;
 import fr.flowsqy.stelyclaim.protocol.ProtocolInteractChecker;
 import fr.flowsqy.stelyclaim.protocol.RegionManagerRetriever;
@@ -34,14 +34,14 @@ public class InteractProtocol {
         return removeProtocolHandler;
     }*/
 
-    public void process(@NotNull ActionContext<ClaimContextData> context, @NotNull InteractProtocolHandler interactProtocolHandler, @NotNull ProtocolInteractChecker protocolInteractChecker) {
+    public void process(@NotNull ActionContext<ClaimContext> context, @NotNull InteractProtocolHandler interactProtocolHandler, @NotNull ProtocolInteractChecker protocolInteractChecker) {
         //final T owner = handledOwner.owner();
         //final ClaimHandler<T> handler = handledOwner.handler();
         //final HandlerMessages messages = handler.getClaimInteractHandler().getMessages();
 
         //final CommandSender sender = actor.getBukkit();
         //final boolean ownRegion = owner.own(actor);
-        final ClaimContextData claimContext = Objects.requireNonNull(context.getCustomData());
+        final ClaimContext claimContext = Objects.requireNonNull(context.getCustomData());
         if (!claimContext.isActorOwnTheClaim() && protocolInteractChecker.canInteractNotOwned(context)
             /*!sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(interactProtocolHandler.getPermission())) */
         ) {

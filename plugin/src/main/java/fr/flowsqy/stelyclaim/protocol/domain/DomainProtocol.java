@@ -7,7 +7,7 @@ import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
-import fr.flowsqy.stelyclaim.protocol.ClaimContextData;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +32,7 @@ public class DomainProtocol implements InteractProtocolHandler {
     }
 
     @Override
-    public <T extends ClaimOwner> void interactRegion(@NotNull RegionManager regionManager, @NotNull ProtectedRegion region, @NotNull ActionContext<ClaimContextData> context) {
+    public void interactRegion(@NotNull RegionManager regionManager, @NotNull ProtectedRegion region, @NotNull ActionContext<ClaimContext> context) {
         final DefaultDomain domain = protocol.getDomain().apply(region);
         final UUID uuid = target.getUniqueId();
         final boolean add = protocol.isAdd();
@@ -62,16 +62,6 @@ public class DomainProtocol implements InteractProtocolHandler {
         if (!ownRegion) {
             mailManager.sendInfoToOwner(actor, owner, messages, protocol.getName(), target);
         }*/
-    }
-
-    @Override
-    public boolean canInteractNotOwned(@NotNull ActionContext<ClaimContextData> context) {
-        return false;
-    }
-
-    @Override
-    public boolean canInteractGlobal(@NotNull ActionContext<ClaimContextData> context) {
-        return false;
     }
 
     public enum Protocol {
