@@ -5,13 +5,9 @@ import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
-
 public class HelpMessage {
 
-    public record HelpData(@NotNull String command, boolean contextual,
-                           @NotNull Function<CommandContext<ClaimContext>, String> messageProvider) {
-    }
+
 
     private HelpData[] dataArray;
 
@@ -53,7 +49,7 @@ public class HelpMessage {
     // Slow operation to save memory at runtime
     // Should only be used at configuration / initialization phase
     public void registerCommand(@NotNull HelpData helpData) {
-        if (getIndex(helpData.command) >= 0) {
+        if (getIndex(helpData.command()) >= 0) {
             throw new IllegalArgumentException("Command already registered");
         }
         final HelpData[] newArray = new HelpData[dataArray.length + 1];
