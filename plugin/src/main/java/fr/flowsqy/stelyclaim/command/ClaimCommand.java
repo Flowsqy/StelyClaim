@@ -58,7 +58,7 @@ public class ClaimCommand implements TabExecutor {
         final CommandContext<ClaimContext> context = new CommandContext<>(actor, args, new ClaimContext(defaultHandler), 0);
         rootCommand.execute(context);
         /* TODO Implement stats again, but well do we really need it ? :D
-        final String statistic = context.getData().getStatistic();
+        final String statistic = contextual.getData().getStatistic();
         if (statistic != null && statisticManager.allowStats(statistic) && actor.isPlayer()) {
             statisticManager.increment(actor.getPlayer().getUniqueId(), statistic);
             statisticManager.saveTask();
@@ -369,7 +369,7 @@ public class ClaimCommand implements TabExecutor {
 
         // Player
         final String playerName = "player";
-        final CommandPermissionChecker playerPermChecker = new ContextCPC(basePermission + ".context.", "");
+        final CommandPermissionChecker playerPermChecker = new ContextCPC(basePermission + ".contextual.", "");
         registerCommand(
                 new ContextSubCommand(
                         playerName,
@@ -391,7 +391,7 @@ public class ClaimCommand implements TabExecutor {
         final String statsName = "stats";
 
         final String showStatsName = "show";
-        final CommandPermissionChecker showStatsPermChecker = new OtherBasicCPC(basePermission + "." + statsName + "." + showStatsName);
+        final OtherCommandPermissionChecker showStatsPermChecker = new OtherBasicCPC(basePermission + "." + statsName + "." + showStatsName);
         final String showStatsHelpName = statsName + "_" + showStatsName;
         final ShowStatsSubCommand showStatsSubCommand = new ShowStatsSubCommand(
                 showStatsName,
@@ -405,18 +405,18 @@ public class ClaimCommand implements TabExecutor {
         helpMessage.registerCommand(new HelpMessage.HelpData(showStatsHelpName, showStatsPermChecker, id -> showStatsHelpMessage));
 
         final String resetStatsName = "reset";
-        final CommandPermissionChecker resetStatsData = new CommandPermissionChecker(statsName + "." + resetStatsName, basePermission, false);
+        final OtherCommandPermissionChecker resetStatsPermChecker = new OtherBasicCPC(basePermission + "." + statsName + "." + resetStatsName);
         final String resetStatsHelpName = statsName + "_" + resetStatsName;
         final ResetStatsSubCommand resetStatsSubCommand = new ResetStatsSubCommand(
                 resetStatsName,
                 new String[]{resetStatsName, "r"},
                 plugin,
-                resetStatsData,
+                resetStatsPermChecker,
                 resetStatsHelpName,
                 helpMessage
         );
         final String resetStatsHelpMessage = messages.getFormattedMessage("help." + resetStatsHelpName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(resetStatsHelpName, resetStatsData, id -> resetStatsHelpMessage));
+        helpMessage.registerCommand(new HelpMessage.HelpData(resetStatsHelpName, resetStatsPermChecker, id -> resetStatsHelpMessage));
 
 
         final CommandPermissionChecker statsData = new BasicCPC(basePermission + "." + statsName);
@@ -437,7 +437,7 @@ public class ClaimCommand implements TabExecutor {
         helpMessage.registerCommand(new HelpMessage.HelpData(statsName, statsData, id -> statsHelpMessage));
     }
 
-    private void registerCommand(@NotNull CommandNode<ClaimContext> command, @NotNull CommandPermissionChecker data) {
+    private void registerCommand(@NotNull CommandNode<ClaimContext> command, ) {
         // TODO Check for unsafe add
         subCommandManager.register(command, data.isContextSpecific());
     }

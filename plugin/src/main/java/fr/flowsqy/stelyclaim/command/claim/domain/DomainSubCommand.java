@@ -75,7 +75,7 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContext> {
         interact(context, targetPlayer);
         /* Stats stuff.
         if (success) {
-            context.getData().setStatistic(name);
+            contextual.getData().setStatistic(name);
         }*/
     }
 

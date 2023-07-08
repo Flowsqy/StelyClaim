@@ -94,7 +94,7 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContext> {
         final boolean success = process(context, own, command, target);
         if (success) {
             // TODO Handle stats
-            //context.getData().setStatistic("stats-" + name);
+            //contextual.getData().setStatistic("stats-" + name);
         }
     }
 

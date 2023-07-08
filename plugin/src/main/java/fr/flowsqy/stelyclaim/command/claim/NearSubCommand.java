@@ -146,7 +146,7 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
         final CommandSender sender = context.getActor().getBukkit();
 
         // Check full perm
-        final boolean hasFullPerm = permChecker.checkFull(context);//sender.hasPermission(permChecker.getModifierPerm(context.getData(), "full"));
+        final boolean hasFullPerm = permChecker.checkFull(context);//sender.hasPermission(permChecker.getModifierPerm(contextual.getData(), "full"));
 
         // Init distance
         final int distance;

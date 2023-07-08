@@ -5,19 +5,32 @@ import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
 import java.util.function.Function;
 
 public class HelpMessage {
 
-    public record HelpData(@NotNull String command, @NotNull CommandPermissionChecker data,
-                           @NotNull Function<String, String> helpMessage) {
+    public record HelpData(@NotNull String command, boolean contextual,
+                           @NotNull Function<CommandContext<ClaimContext>, String> messageProvider) {
     }
 
-    private final List<HelpData> helpDataList;
+    private HelpData[] dataArray;
 
     public HelpMessage() {
-        helpDataList = new LinkedList<>();
+        dataArray = new HelpData[0];
+    }
+
+    public void sendMessage(@NotNull CommandContext<ClaimContext> context, @Nullable String command, boolean reducedToContextual) {
+        final int index = command == null ? -1 : getIndex(command);
+        final HelpData[] toProcessData = index >= 0 ? new HelpData[]{dataArray[index]} : dataArray;
+        for (HelpData data : toProcessData) {
+            if (reducedToContextual && !data.contextual()) {
+                continue;
+            }
+            final String message = data.messageProvider().apply(context);
+            if (message != null) {
+                context.getActor().getBukkit().sendMessage(message);
+            }
+        }
     }
 
     public void sendMessage(@NotNull CommandContext<ClaimContext> context) {
@@ -28,48 +41,38 @@ public class HelpMessage {
         sendMessage(context, command, false);
     }
 
-    public void sendMessage(@NotNull CommandContext<ClaimContext> context, @Nullable String command, boolean reducedToSpecific) {
-        final Optional<HelpData> specificData = helpDataList.stream().filter(data -> data.command().equalsIgnoreCase(command)).findAny();
-        final Collection<HelpData> dataList = specificData.map(Collections::singletonList).orElse(helpDataList);
-        final String handlerId = context.getData().getHandler().getId();
-        for (HelpData data : dataList) {
-            if (reducedToSpecific && !data.data().isContextSpecific()) {
-                continue;
-            }
-            if (!context.hasPermission(data.data().getBasePerm(context.getData()))) {
-                continue;
-            }
-            final String message = data.helpMessage().apply(handlerId);
-            if (message != null) {
-                context.getActor().getBukkit().sendMessage(message);
-            }
-        }
-    }
-
     private int getIndex(@NotNull String command) {
-        final Iterator<HelpData> helpDataIterator = helpDataList.iterator();
-        for (int i = 0; helpDataIterator.hasNext(); i++) {
-            final HelpData data = helpDataIterator.next();
-            if (data.command().equalsIgnoreCase(command)) {
-                return i;
+        for (int index = 0; index < dataArray.length; index++) {
+            if (dataArray[index].command().equalsIgnoreCase(command)) {
+                return index;
             }
         }
         return -1;
     }
 
+    // Slow operation to save memory at runtime
+    // Should only be used at configuration / initialization phase
     public void registerCommand(@NotNull HelpData helpData) {
         if (getIndex(helpData.command) >= 0) {
             throw new IllegalArgumentException("Command already registered");
         }
-        helpDataList.add(helpData);
+        final HelpData[] newArray = new HelpData[dataArray.length + 1];
+        System.arraycopy(dataArray, 0, newArray, 0, dataArray.length);
+        newArray[dataArray.length] = helpData;
+        dataArray = newArray;
     }
 
+    // Slow operation to save memory at runtime
+    // Should only be used at configuration / initialization phase
     public void unregisterCommand(@NotNull String command) {
         final int index = getIndex(command);
         if (getIndex(command) < 0) {
             throw new IllegalArgumentException("Command not registered");
         }
-        helpDataList.remove(index);
+        final HelpData[] newArray = new HelpData[dataArray.length - 1];
+        System.arraycopy(dataArray, 0, newArray, 0, index);
+        System.arraycopy(dataArray, index + 1, newArray, index, dataArray.length - index - 1);
+        dataArray = newArray;
     }
 
 }

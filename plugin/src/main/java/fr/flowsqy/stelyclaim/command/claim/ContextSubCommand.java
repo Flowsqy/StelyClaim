@@ -62,7 +62,7 @@ public class ContextSubCommand extends DispatchCommandTabExecutor<ClaimContext> 
 
     @Override
     public void fallBackExecute(@NotNull CommandContext<ClaimContext> context) {
-        helpMessage.sendMessage(context);
+        helpMessage.sendMessage(context, null, true);
     }
 
 }

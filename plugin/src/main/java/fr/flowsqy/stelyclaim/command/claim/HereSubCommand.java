@@ -99,7 +99,7 @@ public class HereSubCommand implements CommandNode<ClaimContext> {
         final String separatorMessage = messages.getFormattedMessage("claim." + name + ".separator");
 
         // TODO Fix that . . . .
-        if (false /*context.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.INFO))*/) {
+        if (false /*contextual.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.Permissions.INFO))*/) {
             final String hover = messages.getFormattedMessage("claim." + name + ".hover");
             final List<BaseComponent> separator = new ArrayList<>(
                     Arrays.asList(
