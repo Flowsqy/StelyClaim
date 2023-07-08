@@ -32,7 +32,15 @@ public class InteractProtocol {
         return removeProtocolHandler;
     }*/
 
-    public void process(@NotNull ActionContext<ClaimContext> context, @NotNull InteractProtocolHandler interactProtocolHandler, @NotNull ProtocolInteractChecker protocolInteractChecker) {
+    private final @NotNull InteractProtocolHandler interactProtocolHandler;
+    private final @NotNull ProtocolInteractChecker protocolInteractChecker;
+
+    public InteractProtocol(@NotNull InteractProtocolHandler interactProtocolHandler, @NotNull ProtocolInteractChecker protocolInteractChecker) {
+        this.interactProtocolHandler = interactProtocolHandler;
+        this.protocolInteractChecker = protocolInteractChecker;
+    }
+
+    public void process(@NotNull ActionContext<ClaimContext> context) {
         //final T owner = handledOwner.owner();
         //final ClaimHandler<T> handler = handledOwner.handler();
         //final HandlerMessages messages = handler.getClaimInteractHandler().getMessages();
