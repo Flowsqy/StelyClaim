@@ -11,6 +11,7 @@ import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.HandlerRegistry;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
+import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.protocol.RegionNameManager;

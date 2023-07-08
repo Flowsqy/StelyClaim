@@ -4,7 +4,7 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
-import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
+import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
 import fr.flowsqy.stelyclaim.command.claim.permission.OtherCommandPermissionChecker;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;

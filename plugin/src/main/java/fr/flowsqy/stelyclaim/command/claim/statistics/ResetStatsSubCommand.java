@@ -3,7 +3,7 @@ package fr.flowsqy.stelyclaim.command.claim.statistics;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.command.claim.permission.OtherCommandPermissionChecker;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
+import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;

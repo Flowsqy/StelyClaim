@@ -13,6 +13,7 @@ import fr.flowsqy.stelyclaim.command.claim.domain.AddMemberSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.domain.AddOwnerSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.domain.RemoveMemberSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.domain.RemoveOwnerSubCommand;
+import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
 import fr.flowsqy.stelyclaim.command.claim.interact.InfoSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.interact.RemoveSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.interact.TeleportSubCommand;

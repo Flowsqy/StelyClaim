@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.command.claim;
+package fr.flowsqy.stelyclaim.command.claim.help;
 
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
