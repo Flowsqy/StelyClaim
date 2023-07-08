@@ -32,7 +32,7 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
     private final ConfigurationFormattedMessages messages;
     private final WorldChecker worldChecker;
     private final HandlerRegistry handlerRegistry;
-    private final PermissionData data;
+    private final CommandPermissionChecker data;
     private final HelpMessage helpMessage;
     private final int DEFAULT_DISTANCE;
     private final int DEFAULT_MAX_DISTANCE;
@@ -41,7 +41,7 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
     private final int MAXIMAL_REGION_AMOUNT;
     private final Map<UUID, Long> lastExecTimeByPlayerId;
 
-    public NearSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull PermissionData data, @NotNull HelpMessage helpMessage) {
+    public NearSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull CommandPermissionChecker data, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         messages = plugin.getMessages();

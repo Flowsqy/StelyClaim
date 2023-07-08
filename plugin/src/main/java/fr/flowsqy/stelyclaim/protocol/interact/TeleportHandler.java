@@ -8,9 +8,12 @@ import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
+import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.command.ClaimCommand;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.util.TeleportSync;
+import org.jetbrains.annotations.NotNull;
 
 public class TeleportHandler implements InteractProtocolHandler {
 
@@ -21,17 +24,7 @@ public class TeleportHandler implements InteractProtocolHandler {
     }
 
     @Override
-    public String getPermission() {
-        return ClaimCommand.Permissions.TELEPORT;
-    }
-
-    @Override
-    public String getName() {
-        return "teleport";
-    }
-
-    @Override
-    public <T extends ClaimOwner> boolean interactRegion(RegionManager regionManager, ProtectedRegion region, boolean ownRegion, HandledOwner<T> owner, Actor actor, FormattedMessages messages) {
+    public void interactRegion(@NotNull RegionManager regionManager, @NotNull ProtectedRegion region, @NotNull ActionContext<ClaimContext> context) {
         final com.sk89q.worldedit.util.Location weLoc = region.getFlag(Flags.TELE_LOC);
 
         if (weLoc == null) {
@@ -46,4 +39,5 @@ public class TeleportHandler implements InteractProtocolHandler {
         messages.sendMessage(actor.getBukkit(), "claim.command.tp" + (ownRegion ? "" : "-other"), "%region%", owner.owner().getName());
         return true;
     }
+
 }

@@ -98,7 +98,7 @@ public class ClaimCommand implements TabExecutor {
 
         // Help
         final String helpName = "help";
-        final PermissionData helpData = new PermissionData(helpName, basePermission, false);
+        final CommandPermissionChecker helpData = new CommandPermissionChecker(helpName, basePermission, false);
         registerCommand(
                 new HelpSubCommand(helpName, new String[]{helpName, "h"}, helpData, subCommandManager, helpMessage),
                 helpData
@@ -111,7 +111,7 @@ public class ClaimCommand implements TabExecutor {
 
         // Define
         final String defineName = "define";
-        final PermissionData defineData = new PermissionData(defineName, basePermission, true);
+        final CommandPermissionChecker defineData = new CommandPermissionChecker(defineName, basePermission, true);
         registerCommand(
                 new DefineSubCommand(
                         defineName,
@@ -131,7 +131,7 @@ public class ClaimCommand implements TabExecutor {
 
         // Redefine
         final String redefineName = "redefine";
-        final PermissionData redefineData = new PermissionData(redefineName, basePermission, true);
+        final CommandPermissionChecker redefineData = new CommandPermissionChecker(redefineName, basePermission, true);
         registerCommand(
                 new RedefineSubCommand(
                         redefineName,
@@ -151,7 +151,7 @@ public class ClaimCommand implements TabExecutor {
 
         // AddMember
         final String addmemberName = "addmember";
-        final PermissionData addmemberData = new PermissionData(addmemberName, basePermission, true);
+        final CommandPermissionChecker addmemberData = new CommandPermissionChecker(addmemberName, basePermission, true);
         registerCommand(
                 new AddMemberSubCommand(
                         addmemberName,
@@ -171,7 +171,7 @@ public class ClaimCommand implements TabExecutor {
 
         // RemoveMember
         final String removememberName = "removemember";
-        final PermissionData removememberData = new PermissionData(removememberName, basePermission, true);
+        final CommandPermissionChecker removememberData = new CommandPermissionChecker(removememberName, basePermission, true);
         registerCommand(
                 new RemoveMemberSubCommand(
                         removememberName,
@@ -191,7 +191,7 @@ public class ClaimCommand implements TabExecutor {
 
         // AddOwner
         final String addownerName = "addowner";
-        final PermissionData addownerData = new PermissionData(addownerName, basePermission, true);
+        final CommandPermissionChecker addownerData = new CommandPermissionChecker(addownerName, basePermission, true);
         registerCommand(
                 new AddOwnerSubCommand(
                         addownerName,
@@ -211,7 +211,7 @@ public class ClaimCommand implements TabExecutor {
 
         // RemoveOwner
         final String removeownerName = "removeowner";
-        final PermissionData removeownerData = new PermissionData(removeownerName, basePermission, true);
+        final CommandPermissionChecker removeownerData = new CommandPermissionChecker(removeownerName, basePermission, true);
         registerCommand(
                 new RemoveOwnerSubCommand(
                         removeownerName,
@@ -231,7 +231,7 @@ public class ClaimCommand implements TabExecutor {
 
         // Remove
         final String removeName = "remove";
-        final PermissionData removeData = new PermissionData(removeName, basePermission, true);
+        final CommandPermissionChecker removeData = new CommandPermissionChecker(removeName, basePermission, true);
         registerCommand(
                 new RemoveSubCommand(
                         removeName,
@@ -251,7 +251,7 @@ public class ClaimCommand implements TabExecutor {
 
         // Info
         final String infoName = "info";
-        final PermissionData infoData = new PermissionData(infoName, basePermission, true);
+        final CommandPermissionChecker infoData = new CommandPermissionChecker(infoName, basePermission, true);
         registerCommand(
                 new InfoSubCommand(
                         infoName,
@@ -271,7 +271,7 @@ public class ClaimCommand implements TabExecutor {
 
         // Teleport
         final String teleportName = "teleport";
-        final PermissionData teleportData = new PermissionData(teleportName, basePermission, true);
+        final CommandPermissionChecker teleportData = new CommandPermissionChecker(teleportName, basePermission, true);
         registerCommand(
                 new TeleportSubCommand(
                         teleportName,
@@ -291,7 +291,7 @@ public class ClaimCommand implements TabExecutor {
 
         // Here
         final String hereName = "here";
-        final PermissionData hereData = new PermissionData(hereName, basePermission, false);
+        final CommandPermissionChecker hereData = new CommandPermissionChecker(hereName, basePermission, false);
         registerCommand(
                 new HereSubCommand(
                         hereName,
@@ -311,7 +311,7 @@ public class ClaimCommand implements TabExecutor {
 
         // Near
         final String nearName = "near";
-        final PermissionData nearData = new PermissionData(nearName, basePermission, false);
+        final CommandPermissionChecker nearData = new CommandPermissionChecker(nearName, basePermission, false);
         registerCommand(
                 new NearSubCommand(
                         nearName,
@@ -331,7 +331,7 @@ public class ClaimCommand implements TabExecutor {
 
         // ListAdd
         final String listaddName = "listadd";
-        final PermissionData listaddData = new PermissionData(listaddName, basePermission, false);
+        final CommandPermissionChecker listaddData = new CommandPermissionChecker(listaddName, basePermission, false);
         registerCommand(
                 new ListAddSubCommand(
                         listaddName,
@@ -351,7 +351,7 @@ public class ClaimCommand implements TabExecutor {
 
         // Pillar
         final String pillarName = "pillar";
-        final PermissionData pillarData = new PermissionData(pillarName, basePermission, false);
+        final CommandPermissionChecker pillarData = new CommandPermissionChecker(pillarName, basePermission, false);
         registerCommand(
                 new PillarSubCommand(
                         pillarName,
@@ -369,7 +369,7 @@ public class ClaimCommand implements TabExecutor {
 
         // Player
         final String playerName = "player";
-        final PermissionData playerData = new PermissionData(null, basePermission, false);
+        final CommandPermissionChecker playerData = new CommandPermissionChecker(null, basePermission, false);
         registerCommand(
                 new ContextSubCommand(
                         playerName,
@@ -391,7 +391,7 @@ public class ClaimCommand implements TabExecutor {
         final String statsName = "stats";
 
         final String showStatsName = "show";
-        final PermissionData showStatsData = new PermissionData(statsName + "." + showStatsName, basePermission, false);
+        final CommandPermissionChecker showStatsData = new CommandPermissionChecker(statsName + "." + showStatsName, basePermission, false);
         final String showStatsHelpName = statsName + "_" + showStatsName;
         final ShowStatsSubCommand showStatsSubCommand = new ShowStatsSubCommand(
                 showStatsName,
@@ -405,7 +405,7 @@ public class ClaimCommand implements TabExecutor {
         helpMessage.registerCommand(new HelpMessage.HelpData(showStatsHelpName, showStatsData, id -> showStatsHelpMessage));
 
         final String resetStatsName = "reset";
-        final PermissionData resetStatsData = new PermissionData(statsName + "." + resetStatsName, basePermission, false);
+        final CommandPermissionChecker resetStatsData = new CommandPermissionChecker(statsName + "." + resetStatsName, basePermission, false);
         final String resetStatsHelpName = statsName + "_" + resetStatsName;
         final ResetStatsSubCommand resetStatsSubCommand = new ResetStatsSubCommand(
                 resetStatsName,
@@ -419,7 +419,7 @@ public class ClaimCommand implements TabExecutor {
         helpMessage.registerCommand(new HelpMessage.HelpData(resetStatsHelpName, resetStatsData, id -> resetStatsHelpMessage));
 
 
-        final PermissionData statsData = new PermissionData(statsName, basePermission, true);
+        final CommandPermissionChecker statsData = new CommandPermissionChecker(statsName, basePermission, true);
         registerCommand(
                 new StatsSubCommand(
                         statsName,
@@ -437,12 +437,12 @@ public class ClaimCommand implements TabExecutor {
         helpMessage.registerCommand(new HelpMessage.HelpData(statsName, statsData, id -> statsHelpMessage));
     }
 
-    private void registerCommand(@NotNull CommandNode<ClaimContext> command, @NotNull PermissionData data) {
+    private void registerCommand(@NotNull CommandNode<ClaimContext> command, @NotNull CommandPermissionChecker data) {
         // TODO Check for unsafe add
         subCommandManager.register(command, data.isContextSpecific());
     }
 
-    private void registerPerm(@NotNull PermissionData data, @NotNull String[] modifiers) {
+    private void registerPerm(@NotNull CommandPermissionChecker data, @NotNull String[] modifiers) {
         // TODO Update that :clown:
         /*
         final PluginManager pluginManager = Bukkit.getPluginManager();

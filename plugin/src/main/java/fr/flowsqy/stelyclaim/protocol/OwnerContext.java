@@ -2,6 +2,7 @@ package fr.flowsqy.stelyclaim.protocol;
 
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.LazyHandledOwner;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
@@ -37,12 +38,16 @@ public class OwnerContext {
         return actorOwnTheClaim;
     }
 
-    public void setActorOwnTheClaim(Supplier<Boolean> ownProvider, boolean force) {
+    public void setActorOwnTheClaim(@NotNull Supplier<Boolean> ownProvider, boolean force) {
         if (ownInit && !force) {
             return;
         }
         this.actorOwnTheClaim = ownProvider.get();
         ownInit = false;
+    }
+
+    public void calculateOwningProperty(@NotNull Actor actor, boolean force) {
+        setActorOwnTheClaim(() -> lazyHandledOwner.toHandledOwner().owner().own(actor), force);
     }
 
 }

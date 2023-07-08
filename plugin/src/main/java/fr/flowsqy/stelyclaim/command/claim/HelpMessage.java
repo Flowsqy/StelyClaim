@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 public class HelpMessage {
 
-    public record HelpData(@NotNull String command, @NotNull PermissionData data,
+    public record HelpData(@NotNull String command, @NotNull CommandPermissionChecker data,
                            @NotNull Function<String, String> helpMessage) {
     }
 

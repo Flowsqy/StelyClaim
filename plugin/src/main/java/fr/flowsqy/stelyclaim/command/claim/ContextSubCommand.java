@@ -16,10 +16,10 @@ public class ContextSubCommand extends DispatchCommandTabExecutor<ClaimContext> 
     private final String[] triggers;
     private final ClaimHandler<? extends ClaimOwner> claimHandler;
     private final ClaimSubCommandManager subCommandManager;
-    private final PermissionData data;
+    private final CommandPermissionChecker data;
     private final HelpMessage helpMessage;
 
-    public ContextSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull ClaimHandler<?> claimHandler, @NotNull ClaimSubCommandManager subCommandManager, @NotNull PermissionData data, @NotNull HelpMessage helpMessage) {
+    public ContextSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull ClaimHandler<?> claimHandler, @NotNull ClaimSubCommandManager subCommandManager, @NotNull CommandPermissionChecker data, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         this.claimHandler = claimHandler;

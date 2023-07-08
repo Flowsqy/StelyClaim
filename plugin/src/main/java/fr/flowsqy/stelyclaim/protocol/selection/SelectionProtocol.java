@@ -5,7 +5,6 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
@@ -31,14 +30,13 @@ public class SelectionProtocol {
 
         final ClaimContext claimContext = context.getCustomData().orElseThrow();
         final OwnerContext ownerContext = claimContext.getOwnerContext();
-        final HandledOwner<?> handledOwner = ownerContext.getLazyHandledOwner().toHandledOwner();
-        ownerContext.setActorOwnTheClaim(() -> handledOwner.owner().own(context.getActor()), false);
+        ownerContext.calculateOwningProperty(context.getActor(), false);
         if (!claimContext.getOwnerContext().isActorOwnTheClaim() && !protocolInteractChecker.canInteractNotOwned(context)) {
             context.setResult(new ActionResult(InteractProtocol.CANT_OTHER, false));
             return;
         }
 
-        final RegionManager regionManager = RegionManagerRetriever.retrieve(claimContext.getWorld().orElseThrow());
+        final RegionManager regionManager = RegionManagerRetriever.retrieve(claimContext.getWorld().orElseThrow().getName());
         if (regionManager == null) {
             context.setResult(new ActionResult(InteractProtocol.WORLD_NOT_HANDLED, false));
             return;
@@ -57,7 +55,7 @@ public class SelectionProtocol {
             return;
         }
 
-        final String regionName = handledOwner.getRegionName();
+        final String regionName = ownerContext.getLazyHandledOwner().toHandledOwner().getRegionName();
         final ProtectedRegion selectedRegion = new ProtectedCuboidRegion(regionName, selection.getMaximumPoint(), selection.getMinimumPoint());
 
         if (regionValidator != null && !regionValidator.validate(context, regionManager, selectedRegion)) {

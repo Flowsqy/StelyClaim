@@ -35,10 +35,10 @@ public class HereSubCommand implements CommandNode<ClaimContext> {
     private final ConfigurationFormattedMessages messages;
     private final WorldChecker worldChecker;
     private final HandlerRegistry handlerRegistry;
-    private final PermissionData data;
+    private final CommandPermissionChecker data;
     private final HelpMessage helpMessage;
 
-    public HereSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull PermissionData data, @NotNull HelpMessage helpMessage) {
+    public HereSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull CommandPermissionChecker data, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         messages = plugin.getMessages();

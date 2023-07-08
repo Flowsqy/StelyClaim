@@ -4,7 +4,7 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.PermissionData;
+import fr.flowsqy.stelyclaim.command.claim.CommandPermissionChecker;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.protocol.interact.InfoHandler;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ import java.util.Collection;
 public class InfoSubCommand extends InteractSubCommand {
     private final ProtocolManager protocolManager;
 
-    public InfoSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull PermissionData data, @NotNull HelpMessage helpMessage) {
+    public InfoSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull CommandPermissionChecker data, @NotNull HelpMessage helpMessage) {
         super(name, triggers, plugin, worlds, data, helpMessage);
         protocolManager = plugin.getProtocolManager();
     }

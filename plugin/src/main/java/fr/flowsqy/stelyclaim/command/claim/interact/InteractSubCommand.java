@@ -6,7 +6,7 @@ import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.PermissionData;
+import fr.flowsqy.stelyclaim.command.claim.CommandPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.WorldChecker;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.bukkit.Bukkit;
@@ -25,10 +25,10 @@ public abstract class InteractSubCommand implements CommandNode<ClaimContext> {
     private final String name;
     private final String[] triggers;
     private final WorldChecker worldChecker;
-    private final PermissionData data;
+    private final CommandPermissionChecker data;
     private final HelpMessage helpMessage;
 
-    public InteractSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull PermissionData data, @NotNull HelpMessage helpMessage) {
+    public InteractSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull CommandPermissionChecker data, @NotNull HelpMessage helpMessage) {
         this.name = name;
         this.triggers = triggers;
         worldChecker = new WorldChecker(worlds, plugin.getMessages());

@@ -6,13 +6,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class PermissionData {
+public class CommandPermissionChecker {
 
     private final String basePerm;
     private final String parentPerm;
     private final boolean contextSpecific;
 
-    public PermissionData(String basePerm, String parentPerm, boolean contextSpecific) {
+    public CommandPermissionChecker(String basePerm, String parentPerm, boolean contextSpecific) {
         this.basePerm = basePerm;
         this.parentPerm = parentPerm;
         this.contextSpecific = contextSpecific;

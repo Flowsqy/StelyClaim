@@ -3,7 +3,6 @@ package fr.flowsqy.stelyclaim.protocol.interact;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionType;
-import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
@@ -42,8 +41,7 @@ public class InteractProtocol {
         //final boolean ownRegion = owner.own(actor);
         final ClaimContext claimContext = context.getCustomData().orElseThrow();
         final OwnerContext ownerContext = claimContext.getOwnerContext();
-        final HandledOwner<?> handledOwner = ownerContext.getLazyHandledOwner().toHandledOwner();
-        ownerContext.setActorOwnTheClaim(() -> handledOwner.owner().own(context.getActor()), false);
+        ownerContext.calculateOwningProperty(context.getActor(), false);
         if (!ownerContext.isActorOwnTheClaim() && protocolInteractChecker.canInteractNotOwned(context)
             /*!sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(interactProtocolHandler.getPermission())) */
         ) {
@@ -59,7 +57,7 @@ public class InteractProtocol {
             return;
         }
 
-        final String regionName = handledOwner.getRegionName();
+        final String regionName = ownerContext.getLazyHandledOwner().toHandledOwner().getRegionName();
 
         final ProtectedRegion region = regionManager.getRegion(regionName);
         //RegionNameManager.mustExist(regionManager, regionName, owner.getName(), ownRegion, actor);
