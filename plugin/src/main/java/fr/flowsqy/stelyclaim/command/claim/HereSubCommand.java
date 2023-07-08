@@ -12,6 +12,7 @@ import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.api.actor.PhysicActor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
+import fr.flowsqy.stelyclaim.command.claim.permission.CommandPermissionChecker;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.internal.PlayerHandler;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;

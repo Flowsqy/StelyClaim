@@ -1,14 +1,10 @@
 package fr.flowsqy.stelyclaim.command.claim.domain;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
-import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.CommandPermissionChecker;
-import fr.flowsqy.stelyclaim.command.claim.OtherCommandPermissionChecker;
+import fr.flowsqy.stelyclaim.command.claim.permission.OtherCommandPermissionChecker;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import fr.flowsqy.stelyclaim.protocol.ProtocolInteractChecker;
 import fr.flowsqy.stelyclaim.protocol.domain.DomainProtocol;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import org.bukkit.OfflinePlayer;

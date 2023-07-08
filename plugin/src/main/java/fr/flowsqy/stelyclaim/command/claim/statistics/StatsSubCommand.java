@@ -3,7 +3,7 @@ package fr.flowsqy.stelyclaim.command.claim.statistics;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
-import fr.flowsqy.stelyclaim.command.claim.CommandPermissionChecker;
+import fr.flowsqy.stelyclaim.command.claim.permission.CommandPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.HelpMessage;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;

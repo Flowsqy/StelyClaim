@@ -16,6 +16,7 @@ import fr.flowsqy.stelyclaim.command.claim.domain.RemoveOwnerSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.interact.InfoSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.interact.RemoveSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.interact.TeleportSubCommand;
+import fr.flowsqy.stelyclaim.command.claim.permission.*;
 import fr.flowsqy.stelyclaim.command.claim.selection.DefineSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.selection.RedefineSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.statistics.ResetStatsSubCommand;
