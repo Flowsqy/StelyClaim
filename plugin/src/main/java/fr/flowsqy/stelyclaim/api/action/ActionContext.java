@@ -24,7 +24,7 @@ public class ActionContext<T> {
 
     @NotNull
     public Optional<T> getCustomData() {
-        return customData;
+        return Optional.ofNullable(customData);
     }
 
     @Nullable
