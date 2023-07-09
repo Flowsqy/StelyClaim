@@ -7,13 +7,15 @@ import fr.flowsqy.stelyclaim.api.actor.BlockActor;
 import fr.flowsqy.stelyclaim.api.actor.ConsoleActor;
 import fr.flowsqy.stelyclaim.api.actor.EntityActor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.command.claim.*;
 import fr.flowsqy.stelyclaim.command.claim.domain.AddMemberSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.domain.AddOwnerSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.domain.RemoveMemberSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.domain.RemoveOwnerSubCommand;
+import fr.flowsqy.stelyclaim.command.claim.help.BasicHelpMessageProvider;
+import fr.flowsqy.stelyclaim.command.claim.help.HelpData;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
+import fr.flowsqy.stelyclaim.command.claim.help.OtherHelpMessageProvider;
 import fr.flowsqy.stelyclaim.command.claim.interact.InfoSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.interact.RemoveSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.interact.TeleportSubCommand;
@@ -101,20 +103,21 @@ public class ClaimCommand implements TabExecutor {
         // Help
         final String helpName = "help";
         final CommandPermissionChecker helpPermChecker = new BasicCPC(basePermission + "." + helpName);
-        registerCommand(
+        subCommandManager.register(
                 new HelpSubCommand(helpName, new String[]{helpName, "h"}, helpPermChecker, subCommandManager, helpMessage),
-                helpPermChecker
+                false
         );
         if (config.getBoolean("statistic.help")) {
             statisticManager.allowStats(helpName);
         }
         final String helpHelpMessage = messages.getFormattedMessage("help." + helpName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(helpName, helpPermChecker, id -> helpHelpMessage));
+        final HelpData helpHelpData = new HelpData(helpName, false, new BasicHelpMessageProvider(helpPermChecker, helpHelpMessage));
+        helpMessage.registerCommand(helpHelpData);
 
         // Define
         final String defineName = "define";
         final OtherCommandPermissionChecker definePermChecker = new OtherContextCPC(basePermission + ".", "." + defineName);
-        registerCommand(
+        subCommandManager.register(
                 new DefineSubCommand(
                         defineName,
                         new String[]{defineName, "d"},
@@ -123,18 +126,21 @@ public class ClaimCommand implements TabExecutor {
                         definePermChecker,
                         helpMessage
                 ),
-                definePermChecker
+                true
         );
         if (config.getBoolean("statistic.define")) {
             statisticManager.addCommand(defineName);
         }
         final String defineHelpMessage = messages.getFormattedMessage("help." + defineName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(defineName, definePermChecker, id -> defineHelpMessage));
+        final String defineOtherHelpMessage = messages.getFormattedMessage("help." + defineName + "-other");
+        final OtherHelpMessageProvider defineHMP = new OtherHelpMessageProvider(definePermChecker, defineHelpMessage, defineOtherHelpMessage);
+        final HelpData defineHelpData = new HelpData(defineName, true, defineHMP);
+        helpMessage.registerCommand(defineHelpData);
 
         // Redefine
         final String redefineName = "redefine";
         final OtherCommandPermissionChecker redefinePermChecker = new OtherContextCPC(basePermission + ".", "." + redefineName);
-        registerCommand(
+        subCommandManager.register(
                 new RedefineSubCommand(
                         redefineName,
                         new String[]{redefineName, "rd"},
@@ -143,18 +149,21 @@ public class ClaimCommand implements TabExecutor {
                         redefinePermChecker,
                         helpMessage
                 ),
-                redefinePermChecker
+                true
         );
         if (config.getBoolean("statistic.redefine")) {
             statisticManager.addCommand(redefineName);
         }
         final String redefineHelpMessage = messages.getFormattedMessage("help." + redefineName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(redefineName, redefinePermChecker, id -> redefineHelpMessage));
+        final String redefineOtherHelpMessage = messages.getFormattedMessage("help." + redefineName + "-other");
+        final OtherHelpMessageProvider redefineHMP = new OtherHelpMessageProvider(redefinePermChecker, redefineHelpMessage, redefineOtherHelpMessage);
+        final HelpData redefineHelpData = new HelpData(redefineName, true, redefineHMP);
+        helpMessage.registerCommand(redefineHelpData);
 
         // AddMember
         final String addmemberName = "addmember";
         final OtherCommandPermissionChecker addmemberPermChecker = new OtherContextCPC(basePermission + ".", "." + addmemberName);
-        registerCommand(
+        subCommandManager.register(
                 new AddMemberSubCommand(
                         addmemberName,
                         new String[]{addmemberName, "am"},
@@ -163,18 +172,21 @@ public class ClaimCommand implements TabExecutor {
                         addmemberPermChecker,
                         helpMessage
                 ),
-                addmemberPermChecker
+                true
         );
         if (config.getBoolean("statistic.addmember")) {
             statisticManager.addCommand(addmemberName);
         }
         final String addmemberHelpMessage = messages.getFormattedMessage("help." + addmemberName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(addmemberName, addmemberPermChecker, id -> addmemberHelpMessage));
+        final String addmemberOtherHelpMessage = messages.getFormattedMessage("help." + addmemberName + "-other");
+        final OtherHelpMessageProvider addMemberHMP = new OtherHelpMessageProvider(addmemberPermChecker, addmemberHelpMessage, addmemberOtherHelpMessage);
+        final HelpData addMemberHelpData = new HelpData(addmemberName, true, addMemberHMP);
+        helpMessage.registerCommand(addMemberHelpData);
 
         // RemoveMember
         final String removememberName = "removemember";
         final OtherCommandPermissionChecker removememberPermChecker = new OtherContextCPC(basePermission + ".", "." + removememberName);
-        registerCommand(
+        subCommandManager.register(
                 new RemoveMemberSubCommand(
                         removememberName,
                         new String[]{removememberName, "rm"},
@@ -183,18 +195,21 @@ public class ClaimCommand implements TabExecutor {
                         removememberPermChecker,
                         helpMessage
                 ),
-                removememberPermChecker
+                true
         );
         if (config.getBoolean("statistic.removemember")) {
             statisticManager.addCommand(removememberName);
         }
         final String removememberHelpMessage = messages.getFormattedMessage("help." + removememberName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(removememberName, removememberPermChecker, id -> removememberHelpMessage));
+        final String removeMemberOtherHelpMessage = messages.getFormattedMessage("help." + removememberName + "-other");
+        final OtherHelpMessageProvider removeMemberHMP = new OtherHelpMessageProvider(removememberPermChecker, removememberHelpMessage, removeMemberOtherHelpMessage);
+        final HelpData removeMemberHelpData = new HelpData(removememberName, true, removeMemberHMP);
+        helpMessage.registerCommand(removeMemberHelpData);
 
         // AddOwner
         final String addownerName = "addowner";
         final OtherCommandPermissionChecker addownerPermChecker = new OtherContextCPC(basePermission + ".", "." + addownerName);
-        registerCommand(
+        subCommandManager.register(
                 new AddOwnerSubCommand(
                         addownerName,
                         new String[]{addownerName, "ao"},
@@ -203,33 +218,39 @@ public class ClaimCommand implements TabExecutor {
                         addownerPermChecker,
                         helpMessage
                 ),
-                addownerPermChecker
+                true
         );
         if (config.getBoolean("statistic.addowner")) {
             statisticManager.addCommand(addownerName);
         }
-        final String addownerHelpMessage = messages.getFormattedMessage("help." + addownerName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(addownerName, addownerPermChecker, id -> addownerHelpMessage));
+        final String addOwnerHelpMessage = messages.getFormattedMessage("help." + addownerName);
+        final String addOwnerOtherHelpMessage = messages.getFormattedMessage("help." + addownerName + "-other");
+        final OtherHelpMessageProvider addOwnerHMP = new OtherHelpMessageProvider(addownerPermChecker, addOwnerHelpMessage, addOwnerOtherHelpMessage);
+        final HelpData addOwnerHelpData = new HelpData(addownerName, true, addOwnerHMP);
+        helpMessage.registerCommand(addOwnerHelpData);
 
         // RemoveOwner
-        final String removeownerName = "removeowner";
-        final OtherCommandPermissionChecker removeownerPermChecker = new OtherContextCPC(basePermission + ".", "." + removeownerName);
-        registerCommand(
+        final String removeOwnerName = "removeowner";
+        final OtherCommandPermissionChecker removeOwnerPermChecker = new OtherContextCPC(basePermission + ".", "." + removeOwnerName);
+        subCommandManager.register(
                 new RemoveOwnerSubCommand(
-                        removeownerName,
-                        new String[]{removeownerName, "ro"},
+                        removeOwnerName,
+                        new String[]{removeOwnerName, "ro"},
                         plugin,
                         config.getStringList("worlds.removeowner"),
-                        removeownerPermChecker,
+                        removeOwnerPermChecker,
                         helpMessage
                 ),
-                removeownerPermChecker
+                true
         );
         if (config.getBoolean("statistic.removeowner")) {
-            statisticManager.addCommand(removeownerName);
+            statisticManager.addCommand(removeOwnerName);
         }
-        final String removeownerHelpMessage = messages.getFormattedMessage("help." + removeownerName);
-        helpMessage.registerCommand(new HelpMessage.HelpData(removeownerName, removeownerPermChecker, id -> removeownerHelpMessage));
+        final String removeOwnerHelpMessage = messages.getFormattedMessage("help." + removeOwnerName);
+        final String removeOwnerOtherHelpMessage = messages.getFormattedMessage("help." + removeOwnerName + "-other");
+        final OtherHelpMessageProvider removeOwnerHMP = new OtherHelpMessageProvider(removeOwnerPermChecker, removeOwnerHelpMessage, removeOwnerOtherHelpMessage);
+        final HelpData removeOwnerHelpData = new HelpData(removeOwnerName, true, removeOwnerHMP);
+        helpMessage.registerCommand(removeOwnerHelpData);
 
         // Remove
         final String removeName = "remove";
@@ -437,11 +458,6 @@ public class ClaimCommand implements TabExecutor {
         }
         final String statsHelpMessage = messages.getFormattedMessage("help." + statsName);
         helpMessage.registerCommand(new HelpMessage.HelpData(statsName, statsData, id -> statsHelpMessage));
-    }
-
-    private void registerCommand(@NotNull CommandNode<ClaimContext> command, ) {
-        // TODO Check for unsafe add
-        subCommandManager.register(command, data.isContextSpecific());
     }
 
     private void registerPerm(@NotNull CommandPermissionChecker data, @NotNull String[] modifiers) {
