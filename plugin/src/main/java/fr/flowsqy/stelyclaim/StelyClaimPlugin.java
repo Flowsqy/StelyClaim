@@ -16,6 +16,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -104,6 +105,7 @@ public class StelyClaimPlugin extends JavaPlugin {
         return configuration;
     }
 
+    @NotNull
     public ConfigurationFormattedMessages getMessages() {
         return messages;
     }

@@ -1,13 +1,15 @@
 package fr.flowsqy.stelyclaim.protocol.selection;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import org.jetbrains.annotations.NotNull;
 
 public interface RegionValidator {
 
-    boolean validate(@NotNull ActionContext<ClaimContext> context, @NotNull RegionManager regionManager, @NotNull ProtectedRegion selectedRegion);
+    boolean validate(@NotNull ActionContext context, @NotNull RegionManager regionManager,
+            @NotNull ProtectedRegion selectedRegion);
 
 }

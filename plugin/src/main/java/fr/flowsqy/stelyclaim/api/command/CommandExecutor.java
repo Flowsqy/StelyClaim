@@ -2,9 +2,8 @@ package fr.flowsqy.stelyclaim.api.command;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface CommandExecutor<T> {
+public interface CommandExecutor {
 
-    void execute(@NotNull CommandContext<T> context);
-
+    void execute(@NotNull CommandContext context);
 
 }

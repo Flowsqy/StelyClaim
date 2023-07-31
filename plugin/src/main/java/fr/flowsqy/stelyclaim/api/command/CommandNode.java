@@ -2,17 +2,17 @@ package fr.flowsqy.stelyclaim.api.command;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface CommandNode<T> extends CommandTabExecutor<T> {
+public interface CommandNode extends CommandTabExecutor {
 
     @NotNull
     String[] getTriggers();
 
     @NotNull
-    String getTabCompletion();
+    String getName();
 
-    boolean canExecute(@NotNull CommandContext<T> context);
+    boolean canExecute(@NotNull CommandContext context);
 
-    default boolean canTabComplete(@NotNull CommandContext<T> context) {
+    default boolean canTabComplete(@NotNull CommandContext context) {
         return canExecute(context);
     }
 

@@ -11,18 +11,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public class RemoveOwnerSubCommand extends DomainSubCommand {
 
     private final ProtocolManager protocolManager;
 
-    public RemoveOwnerSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
-        super(name, triggers, plugin, worlds, permChecker, helpMessage);
+    public RemoveOwnerSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+        super(id, name, triggers, plugin, worlds, permChecker, helpMessage);
         protocolManager = plugin.getProtocolManager();
     }
 
     @Override
-    protected void interact(@NotNull CommandContext<ClaimContext> context, @NotNull OfflinePlayer target) {
+    protected void interact(@NotNull CommandContext context, @NotNull OfflinePlayer target) {
         protocolManager.removeOwner(context, target);
     }
 

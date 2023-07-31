@@ -1,13 +1,11 @@
 package fr.flowsqy.stelyclaim.command.claim.help;
 
-import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.command.claim.permission.CommandPermissionChecker;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.command.claim.permission.CommandPermissionChecker;
 
-public class BasicHelpMessageProvider implements Function<CommandContext<ClaimContext>, String> {
+public class BasicHelpMessageProvider implements HelpMessageProvider {
 
     private final CommandPermissionChecker permChecker;
     private final String message;
@@ -18,7 +16,7 @@ public class BasicHelpMessageProvider implements Function<CommandContext<ClaimCo
     }
 
     @Override
-    public String apply(@NotNull CommandContext<ClaimContext> context) {
+    public String get(@NotNull CommandContext context) {
         return permChecker.checkBase(context) ? message : null;
     }
 

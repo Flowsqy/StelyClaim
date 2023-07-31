@@ -1,19 +1,23 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.jetbrains.annotations.NotNull;
+
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
 import fr.flowsqy.stelyclaim.command.claim.permission.CommandPermissionChecker;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+public class ContextSubCommand extends DispatchCommandTabExecutor implements CommandNode, Identifiable {
 
-public class ContextSubCommand extends DispatchCommandTabExecutor<ClaimContext> implements CommandNode<ClaimContext> {
-
+    private final UUID id;
     private final String name;
     private final String[] triggers;
     private final ClaimHandler<? extends ClaimOwner> claimHandler;
@@ -21,7 +25,10 @@ public class ContextSubCommand extends DispatchCommandTabExecutor<ClaimContext> 
     private final CommandPermissionChecker permChecker;
     private final HelpMessage helpMessage;
 
-    public ContextSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull ClaimHandler<?> claimHandler, @NotNull ClaimSubCommandManager subCommandManager, @NotNull CommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+    public ContextSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers, @NotNull ClaimHandler<?> claimHandler,
+            @NotNull ClaimSubCommandManager subCommandManager, @NotNull CommandPermissionChecker permChecker,
+            @NotNull HelpMessage helpMessage) {
+        this.id = id;
         this.name = name;
         this.triggers = triggers;
         this.claimHandler = claimHandler;
@@ -31,40 +38,52 @@ public class ContextSubCommand extends DispatchCommandTabExecutor<ClaimContext> 
     }
 
     @Override
+    @NotNull
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
     public @NotNull String[] getTriggers() {
         return triggers;
     }
 
     @Override
-    public @NotNull String getTabCompletion() {
+    public @NotNull String getName() {
         return name;
     }
 
     @Override
-    public void execute(@NotNull CommandContext<ClaimContext> context) {
-        context.getCustomData().orElseThrow().getOwnerContext().setHandler(claimHandler);
+    public void execute(@NotNull CommandContext context) {
+        if (!(context.getCustomData() instanceof final ClaimContext claimContext)) {
+            throw new RuntimeException();
+        }
+        claimContext.getOwnerContext().setHandler(claimHandler);
         super.execute(context);
     }
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext<ClaimContext> context) {
-        context.getCustomData().orElseThrow().getOwnerContext().setHandler(claimHandler);
+    public List<String> tabComplete(@NotNull CommandContext context) {
+        if (!(context.getCustomData() instanceof final ClaimContext claimContext)) {
+            throw new RuntimeException();
+        }
+        claimContext.getOwnerContext().setHandler(claimHandler);
         return super.tabComplete(context);
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
+    public boolean canExecute(@NotNull CommandContext context) {
         return permChecker.checkBase(context);
     }
 
     @Override
-    public @NotNull Iterable<CommandNode<ClaimContext>> getChildren() {
+    public @NotNull Iterable<CommandNode> getChildren() {
         return subCommandManager.getSpecifics();
     }
 
     @Override
-    public void fallBackExecute(@NotNull CommandContext<ClaimContext> context) {
-        helpMessage.sendMessage(context, null, true);
+    public void fallBackExecute(@NotNull CommandContext context) {
+        helpMessage.sendMessages(context, this);
     }
 
 }

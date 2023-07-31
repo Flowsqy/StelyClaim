@@ -7,20 +7,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-public abstract class DispatchCommandTabExecutor<T> implements CommandTabExecutor<T> {
+public abstract class DispatchCommandTabExecutor implements CommandTabExecutor {
 
     @NotNull
-    public abstract Iterable<CommandNode<T>> getChildren();
+    public abstract Iterable<CommandNode> getChildren();
 
     @Override
-    public void execute(@NotNull CommandContext<T> context) {
+    public void execute(@NotNull CommandContext context) {
         if (context.getArgsLength() == 0) {
             return;
         }
         final String arg = context.getArg(0).toLowerCase(Locale.ENGLISH);
-        CommandNode<T> selectedChild = null;
+        CommandNode selectedChild = null;
         nodeLoop:
-        for (CommandNode<T> child : getChildren()) {
+        for (CommandNode child : getChildren()) {
             if (!child.canExecute(context)) {
                 continue;
             }
@@ -37,19 +37,21 @@ public abstract class DispatchCommandTabExecutor<T> implements CommandTabExecuto
             return;
         }
         context.consumeArg();
+        context.appendCommandName(selectedChild.getName());
         selectedChild.execute(context);
+        context.removeLastCommandName();
         context.restoreArg();
     }
 
-    public abstract void fallBackExecute(@NotNull CommandContext<T> context);
+    public abstract void fallBackExecute(@NotNull CommandContext context);
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext<T> context) {
+    public List<String> tabComplete(@NotNull CommandContext context) {
         final String arg = context.getArg(0).toLowerCase(Locale.ENGLISH);
         if (context.getArgsLength() > 1) {
-            CommandNode<T> selectedChild = null;
+            CommandNode selectedChild = null;
             nodeLoop:
-            for (CommandNode<T> child : getChildren()) {
+            for (CommandNode child : getChildren()) {
                 if (!child.canTabComplete(context)) {
                     continue;
                 }
@@ -65,14 +67,15 @@ public abstract class DispatchCommandTabExecutor<T> implements CommandTabExecuto
                 return Collections.emptyList();
             }
             context.consumeArg();
+            context.appendCommandName(selectedChild.getName());
             return selectedChild.tabComplete(context);
         }
         final List<String> completions = new LinkedList<>();
-        for (CommandNode<T> child : getChildren()) {
+        for (CommandNode child : getChildren()) {
             if (!child.canTabComplete(context)) {
                 continue;
             }
-            final String completion = child.getTabCompletion();
+            final String completion = child.getName();
             if (!completion.startsWith(arg)) {
                 continue;
             }

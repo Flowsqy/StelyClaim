@@ -1,21 +1,14 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.ClaimHandler;
-import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import fr.flowsqy.stelyclaim.api.HandlerRegistry;
-import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.api.command.CommandNode;
-import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
-import fr.flowsqy.stelyclaim.util.WorldName;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -24,10 +17,27 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
-public class NearSubCommand implements CommandNode<ClaimContext> {
+import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.ClaimHandler;
+import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import fr.flowsqy.stelyclaim.api.HandlerRegistry;
+import fr.flowsqy.stelyclaim.api.Identifiable;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.api.command.CommandNode;
+import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
+import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
+import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
+import fr.flowsqy.stelyclaim.util.WorldName;
 
+public class NearSubCommand implements CommandNode, Identifiable {
+
+    private final UUID id;
     private final String name;
     private final String[] triggers;
     private final ConfigurationFormattedMessages messages;
@@ -42,7 +52,10 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
     private final int MAXIMAL_REGION_AMOUNT;
     private final Map<UUID, Long> lastExecTimeByPlayerId;
 
-    public NearSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull NearCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+    public NearSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
+            @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds,
+            @NotNull NearCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+        this.id = id;
         this.name = name;
         this.triggers = triggers;
         messages = plugin.getMessages();
@@ -51,14 +64,22 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
         this.permChecker = permChecker;
         this.helpMessage = helpMessage;
         final YamlConfiguration configuration = plugin.getConfiguration();
-        // The distances should be >= 1 (0 is /claim here and bellow it does not make any sense)
+        // The distances should be >= 1 (0 is /claim here and bellow it does not make
+        // any sense)
         DEFAULT_DISTANCE = Math.max(configuration.getInt(name + ".default-distance", 200), 1);
         DEFAULT_MAX_DISTANCE = Math.max(configuration.getInt(name + ".base-max-distance", 200), 1);
         COOLDOWN = configuration.getLong(name + ".cooldown", 1000L);
         COOLDOWN_SIZE_CLEAR_CHECK = configuration.getInt(name + ".cooldown-size-clear-checkFull", 4);
-        // The minimal amount should be one (0 Show nothing and bellow, it does not make any sense)
+        // The minimal amount should be one (0 Show nothing and bellow, it does not make
+        // any sense)
         MAXIMAL_REGION_AMOUNT = Math.max(configuration.getInt(name + ".maximal-region-amount", 10), 1);
         lastExecTimeByPlayerId = new HashMap<>();
+    }
+
+    @Override
+    @NotNull
+    public UUID getId() {
+        return id;
     }
 
     /**
@@ -67,7 +88,8 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
      * @param posX            The x coordinate of the position
      * @param posZ            The z coordinate of the position
      * @param protectedRegion The {@link ProtectedRegion}
-     * @return An {@code int} array of two elements, the x and z coordinate of the nearest point
+     * @return An {@code int} array of two elements, the x and z coordinate of the
+     *         nearest point
      */
     private int[] getNearestPoint(int posX, int posZ, ProtectedRegion protectedRegion) {
         final int[] nearestPoint = new int[2];
@@ -118,7 +140,8 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
      * @param regionData The {@link RegionData}
      * @param x          The x coordinate of the player
      * @param z          The z coordinate of the player
-     * @return The region id that corresponds to the direction in which is the nearest point from the player position
+     * @return The region id that corresponds to the direction in which is the
+     *         nearest point from the player position
      */
     private int getDirectionId(RegionData regionData, int x, int z) {
         // Calculate the angle
@@ -127,27 +150,29 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
         // Transform the angle from -pi to pi in radian to 0 to 359 in degrees as an int
         final int sanitizedAngle = (int) Math.toDegrees(rawAngle >= 0 ? rawAngle : rawAngle + Math.PI * 2);
         // Get the id
-        // Multiply by 10 to avoid loss of precision and add an offset of 22.5 (*10) to get the right
+        // Multiply by 10 to avoid loss of precision and add an offset of 22.5 (*10) to
+        // get the right
         // zone as we start at the middle of the East zone
         return (sanitizedAngle * 10 + 225) % 3600 / 450;
     }
 
     @Override
-    public void execute(@NotNull CommandContext<ClaimContext> context) {
+    public void execute(@NotNull CommandContext context) {
         if (worldChecker.checkCancelledWorld(context.getActor())) {
             return;
         }
         // Check if there is more than a distance
         if (context.getArgsLength() > 1) {
             // Send help message
-            helpMessage.sendMessage(context, name);
+            helpMessage.sendMessage(context, id);
             return;
         }
 
         final CommandSender sender = context.getActor().getBukkit();
 
         // Check full perm
-        final boolean hasFullPerm = permChecker.checkFull(context);//sender.hasPermission(permChecker.getModifierPerm(contextual.getData(), "full"));
+        final boolean hasFullPerm = permChecker.checkFull(context);// sender.hasPermission(permChecker.getModifierPerm(contextual.getData(),
+                                                                   // "full"));
 
         // Init distance
         final int distance;
@@ -165,7 +190,8 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
 
             // Check if the distance is valid (>= 1)
             if (distance < 1) {
-                messages.sendMessage(sender, "claim." + name + ".invalid-distance", "%distance%", String.valueOf(distance));
+                messages.sendMessage(sender, "claim." + name + ".invalid-distance", "%distance%",
+                        String.valueOf(distance));
                 return;
             }
 
@@ -174,8 +200,7 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
                 messages.sendMessage(
                         sender,
                         "claim." + name + ".limit",
-                        "%distance%", "%max-distance%", String.valueOf(distance), String.valueOf(DEFAULT_MAX_DISTANCE)
-                );
+                        "%distance%", "%max-distance%", String.valueOf(distance), String.valueOf(DEFAULT_MAX_DISTANCE));
                 return;
             }
         } else {
@@ -220,15 +245,11 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
                 BlockVector3.at(
                         x + distance,
                         world.getMaxHeight(),
-                        z + distance
-                ),
+                        z + distance),
                 BlockVector3.at(
                         x - distance,
                         world.getMinHeight(),
-                        z - distance
-                )
-        );
-
+                        z - distance));
 
         // Get the region in the radius
         final ApplicableRegionSet intersecting = regionManager.getApplicableRegions(region);
@@ -245,9 +266,9 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
                     regionName = regionId;
                 } else {
                     // Retrieve the ClaimOwner
-                    final ClaimOwner claimOwner = regionHandler.getOwner(parts[2]);
+                    final ClaimOwner claimOwner = regionHandler.getOwner(parts[2]).owner();
                     // Check if the player own the region
-                    if (claimOwner.own(context.getSender())) {
+                    if (claimOwner.own(context.getActor())) {
                         // Does not display the region that a player own
                         continue;
                     }
@@ -272,12 +293,14 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
         // If there is no intersection, it means there is no region
         if (detectedRegions.isEmpty()) {
             messages.sendMessage(sender, "claim." + name + ".no-region", "%distance%", String.valueOf(distance));
-            context.getData().setStatistic(name);
+            // TODO Stats stuff
+            // context.getData().setStatistic(name);
             return;
         }
 
         // Send header
-        messages.sendMessage(sender, "claim." + name + ".header", "%region-count%", String.valueOf(detectedRegions.size()));
+        messages.sendMessage(sender, "claim." + name + ".header", "%region-count%",
+                String.valueOf(detectedRegions.size()));
 
         // Get the general message
         final String nearMessage = messages.getFormattedMessage("claim." + name + ".region");
@@ -286,7 +309,8 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
             detectedRegions.sort(Comparator.comparingDouble(RegionData::getDistance));
 
             // Get the direction messages
-            // Order matter. From above, North is on top and the angle start at the right (East) from 0 to 360 degrees
+            // Order matter. From above, North is on top and the angle start at the right
+            // (East) from 0 to 360 degrees
             final String[] directions = {
                     getDirectionMessage("east"),
                     getDirectionMessage("northeast"),
@@ -299,7 +323,8 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
             };
 
             // Send information
-            // Limit the loop at the size of the list or the maximal amount defined by the config
+            // Limit the loop at the size of the list or the maximal amount defined by the
+            // config
             for (int index = 0; index < detectedRegions.size() && index < MAXIMAL_REGION_AMOUNT; index++) {
                 final RegionData regionData = detectedRegions.get(index);
                 // Get the direction towards the region
@@ -311,15 +336,16 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
                         .replace("%distance%", String.valueOf((int) regionData.distance))
                         .replace("%nearest-x%", String.valueOf(regionData.nearestX))
                         .replace("%nearest-z%", String.valueOf(regionData.nearestZ))
-                        .replace("%direction%", direction)
-                );
+                        .replace("%direction%", direction));
             }
         }
 
         // Send footer
-        messages.sendMessage(sender, "claim." + name + ".footer", "%region-count%", String.valueOf(detectedRegions.size()));
+        messages.sendMessage(sender, "claim." + name + ".footer", "%region-count%",
+                String.valueOf(detectedRegions.size()));
 
-        context.getData().setStatistic(name);
+        // TODO Stats stuff
+        // context.getData().setStatistic(name);
     }
 
     @Override
@@ -328,17 +354,17 @@ public class NearSubCommand implements CommandNode<ClaimContext> {
     }
 
     @Override
-    public @NotNull String getTabCompletion() {
+    public @NotNull String getName() {
         return name;
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
+    public boolean canExecute(@NotNull CommandContext context) {
         return context.getActor().isPhysic() && permChecker.checkBase(context);
     }
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext<ClaimContext> context) {
+    public List<String> tabComplete(@NotNull CommandContext context) {
         return Collections.emptyList();
     }
 

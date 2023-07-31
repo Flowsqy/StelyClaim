@@ -1,9 +1,9 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
+import org.jetbrains.annotations.NotNull;
+
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.command.claim.permission.BasicCPC;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import org.jetbrains.annotations.NotNull;
 
 public class NearCommandPermissionChecker extends BasicCPC {
 
@@ -16,7 +16,7 @@ public class NearCommandPermissionChecker extends BasicCPC {
         return getBasePermission() + "-full";
     }
 
-    public boolean checkFull(@NotNull CommandContext<ClaimContext> context) {
+    public boolean checkFull(@NotNull CommandContext context) {
         return context.hasPermission(getFullPermission());
     }
 

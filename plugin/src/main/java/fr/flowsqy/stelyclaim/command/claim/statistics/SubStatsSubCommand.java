@@ -1,6 +1,18 @@
 package fr.flowsqy.stelyclaim.command.claim.statistics;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
@@ -8,47 +20,45 @@ import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
 import fr.flowsqy.stelyclaim.command.claim.permission.OtherCommandPermissionChecker;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
-import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+public abstract class SubStatsSubCommand implements CommandNode, Identifiable {
 
-public abstract class SubStatsSubCommand implements CommandNode<ClaimContext> {
-
+    private final UUID id;
     private final String name;
     private final String[] triggers;
     private final OtherCommandPermissionChecker permChecker;
-    private final String helpName;
     private final HelpMessage helpMessage;
     protected final ConfigurationFormattedMessages messages;
     protected final StatisticManager statisticManager;
 
-    public SubStatsSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @NotNull OtherCommandPermissionChecker permChecker, @NotNull String helpName, @NotNull HelpMessage helpMessage) {
+    public SubStatsSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
+            @NotNull StelyClaimPlugin plugin, @NotNull OtherCommandPermissionChecker permChecker,
+            @NotNull HelpMessage helpMessage) {
+        this.id = id;
         this.name = name;
         this.triggers = triggers;
         this.permChecker = permChecker;
-        this.helpName = helpName;
         this.helpMessage = helpMessage;
         messages = plugin.getMessages();
         statisticManager = plugin.getStatisticManager();
     }
 
     @Override
-    public void execute(@NotNull CommandContext<ClaimContext> context) {
+    @NotNull
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
+    public void execute(@NotNull CommandContext context) {
         final Actor actor = context.getActor();
         final OfflinePlayer target;
         final String command;
         switch (context.getArgsLength()) {
             case 0 -> {
                 if (!actor.isPlayer()) {
-                    helpMessage.sendMessage(context, helpName);
+                    helpMessage.sendMessage(context, id);
                     return;
                 }
                 target = actor.getPlayer();
@@ -59,7 +69,7 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContext> {
                     target = OfflinePlayerRetriever.getOfflinePlayer(context.getArg(0));
                     command = null;
                 } else if (!actor.isPlayer()) {
-                    helpMessage.sendMessage(context, helpName);
+                    helpMessage.sendMessage(context, id);
                     return;
                 } else {
                     target = actor.getPlayer();
@@ -71,21 +81,23 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContext> {
                 command = context.getArg(1).toLowerCase(Locale.ENGLISH);
             }
             default -> {
-                helpMessage.sendMessage(context, helpName);
+                helpMessage.sendMessage(context, id);
                 return;
             }
         }
         final boolean own = actor.isPlayer() && actor.getPlayer().getUniqueId().equals(target.getUniqueId());
         if (!own && !permChecker.checkOther(context)) {
-            helpMessage.sendMessage(context, helpName);
+            helpMessage.sendMessage(context, id);
             return;
         }
         if (command != null) {
             /*
-            if (!commandsName.contains(command)) {
-                //messages.sendMessage(sender, "claim.stats.commandnotexist", "%command%", command);
-                return false;
-            }*/
+             * if (!commandsName.contains(command)) {
+             * //messages.sendMessage(sender, "claim.stats.commandnotexist", "%command%",
+             * command);
+             * return false;
+             * }
+             */
             if (!statisticManager.allowStats(command)) {
                 messages.sendMessage(actor.getBukkit(), "claim.stats.commandnotstat", "%command%", command);
                 return;
@@ -94,7 +106,7 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContext> {
         final boolean success = process(context, own, command, target);
         if (success) {
             // TODO Handle stats
-            //contextual.getData().setStatistic("stats-" + name);
+            // contextual.getData().setStatistic("stats-" + name);
         }
     }
 
@@ -104,17 +116,17 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContext> {
     }
 
     @Override
-    public @NotNull String getTabCompletion() {
+    public @NotNull String getName() {
         return name;
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
+    public boolean canExecute(@NotNull CommandContext context) {
         return permChecker.checkBase(context);
     }
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext<ClaimContext> context) {
+    public List<String> tabComplete(@NotNull CommandContext context) {
         final String cmdArg;
         if (context.getArgsLength() == 1) {
             if (permChecker.checkOther(context)) {
@@ -134,6 +146,7 @@ public abstract class SubStatsSubCommand implements CommandNode<ClaimContext> {
                 .collect(Collectors.toList());
     }
 
-    protected abstract boolean process(@NotNull CommandContext<ClaimContext> context, boolean own, @Nullable String command, @NotNull OfflinePlayer target);
+    protected abstract boolean process(@NotNull CommandContext context, boolean own,
+            @Nullable String command, @NotNull OfflinePlayer target);
 
 }

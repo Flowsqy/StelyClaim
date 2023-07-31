@@ -1,12 +1,13 @@
 package fr.flowsqy.stelyclaim.command.claim.permission;
 
+import org.jetbrains.annotations.NotNull;
+
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import org.jetbrains.annotations.NotNull;
 
 public class BasicCPC implements CommandPermissionChecker {
 
-    private final String permission;
+    private final @NotNull String permission;
 
     public BasicCPC(@NotNull String permission) {
         this.permission = permission;

@@ -1,74 +1,68 @@
 package fr.flowsqy.stelyclaim.command.claim.help;
 
-import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import fr.flowsqy.stelyclaim.api.Identifiable;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.api.command.CommandNode;
+import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
 
 public class HelpMessage {
 
-
-
-    private HelpData[] dataArray;
+    private final Map<UUID, HelpMessageProvider> providerRegistry;
 
     public HelpMessage() {
-        dataArray = new HelpData[0];
+        providerRegistry = new HashMap<>();
     }
 
-    public void sendMessage(@NotNull CommandContext<ClaimContext> context, @Nullable String command, boolean reducedToContextual) {
-        final int index = command == null ? -1 : getIndex(command);
-        final HelpData[] toProcessData = index >= 0 ? new HelpData[]{dataArray[index]} : dataArray;
-        for (HelpData data : toProcessData) {
-            if (reducedToContextual && !data.contextual()) {
+    public void register(@NotNull UUID commandId, @NotNull HelpMessageProvider provider) {
+        providerRegistry.put(commandId, provider);
+    }
+
+    public void unregister(@NotNull UUID commandId) {
+        providerRegistry.remove(commandId);
+    }
+
+    public void sendMessage(@NotNull CommandContext context, @NotNull UUID commandId) {
+        // May check for context specific handler provider registry to allow custom help
+        // messages
+        final HelpMessageProvider messageProvider = providerRegistry.get(commandId);
+        if (messageProvider == null) {
+            return;
+        }
+        final String message = messageProvider.get(context);
+        if (message == null) {
+            return;
+        }
+        context.getActor().getBukkit().sendMessage(message);
+    }
+
+    public void sendMessage(@NotNull CommandContext context, @NotNull Identifiable identifiable) {
+        sendMessage(context, identifiable.getId());
+    }
+
+    public void sendMessage(@NotNull CommandContext context, @NotNull CommandNode commandNode) {
+        if (!(commandNode instanceof Identifiable identifiable)) {
+            return;
+        }
+        sendMessage(context, identifiable);
+    }
+
+    public void sendMessages(@NotNull CommandContext context, @NotNull DispatchCommandTabExecutor dispatcher) {
+        for (CommandNode node : dispatcher.getChildren()) {
+            if (!(node instanceof Identifiable identifiable)) {
                 continue;
             }
-            final String message = data.messageProvider().apply(context);
-            if (message != null) {
-                context.getActor().getBukkit().sendMessage(message);
-            }
+            context.appendCommandName(node.getName());
+            context.consumeArg();
+            sendMessage(context, identifiable);
+            context.removeLastCommandName();
+            context.restoreArg();
         }
-    }
-
-    public void sendMessage(@NotNull CommandContext<ClaimContext> context) {
-        sendMessage(context, null);
-    }
-
-    public void sendMessage(@NotNull CommandContext<ClaimContext> context, @Nullable String command) {
-        sendMessage(context, command, false);
-    }
-
-    private int getIndex(@NotNull String command) {
-        for (int index = 0; index < dataArray.length; index++) {
-            if (dataArray[index].command().equalsIgnoreCase(command)) {
-                return index;
-            }
-        }
-        return -1;
-    }
-
-    // Slow operation to save memory at runtime
-    // Should only be used at configuration / initialization phase
-    public void registerCommand(@NotNull HelpData helpData) {
-        if (getIndex(helpData.command()) >= 0) {
-            throw new IllegalArgumentException("Command already registered");
-        }
-        final HelpData[] newArray = new HelpData[dataArray.length + 1];
-        System.arraycopy(dataArray, 0, newArray, 0, dataArray.length);
-        newArray[dataArray.length] = helpData;
-        dataArray = newArray;
-    }
-
-    // Slow operation to save memory at runtime
-    // Should only be used at configuration / initialization phase
-    public void unregisterCommand(@NotNull String command) {
-        final int index = getIndex(command);
-        if (getIndex(command) < 0) {
-            throw new IllegalArgumentException("Command not registered");
-        }
-        final HelpData[] newArray = new HelpData[dataArray.length - 1];
-        System.arraycopy(dataArray, 0, newArray, 0, index);
-        System.arraycopy(dataArray, index + 1, newArray, index, dataArray.length - index - 1);
-        dataArray = newArray;
     }
 
 }

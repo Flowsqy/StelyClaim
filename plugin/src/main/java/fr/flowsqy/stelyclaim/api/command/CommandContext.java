@@ -1,27 +1,50 @@
 package fr.flowsqy.stelyclaim.api.command;
 
-import fr.flowsqy.stelyclaim.api.action.ActionContext;
-import fr.flowsqy.stelyclaim.api.actor.Actor;
-import org.jetbrains.annotations.NotNull;
-
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
-public class CommandContext<T> extends ActionContext<T> {
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import fr.flowsqy.stelyclaim.api.action.ActionContext;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
+
+public class CommandContext extends ActionContext {
+
+    private final LinkedList<String> currentPath;
     private final Map<String, Boolean> permissions;
     private final String[] args;
     private int argPos;
 
-    public CommandContext(@NotNull Actor sender, @NotNull String[] args, @NotNull T data, int argPos) {
+    public CommandContext(@NotNull Actor sender, @NotNull String[] args, @Nullable Object data, int argPos) {
         super(sender, data);
+        currentPath = new LinkedList<>();
         permissions = new HashMap<>();
         this.args = args;
         this.argPos = argPos;
     }
 
+    public static CommandContext buildFake(@NotNull CommandContext context, @NotNull String[] args,
+            @NotNull String... commandPath) {
+        final CommandContext fakeContext = new CommandContext(context.getActor(), args, null, 0);
+        for (String commandName : commandPath) {
+            fakeContext.appendCommandName(commandName);
+        }
+        return context;
+    }
+
     public boolean hasPermission(@NotNull String permission) {
-        return permissions.computeIfAbsent(permission, perm -> getActor().getBukkit().hasPermission(perm));
+        return permissions.computeIfAbsent(permission, getActor().getBukkit()::hasPermission);
+    }
+
+    @NotNull
+    public String[] copyArgs() {
+        final String[] copy = new String[getArgsLength()];
+        System.arraycopy(args, argPos, copy, 0, copy.length);
+        return copy;
     }
 
     public int getArgsLength() {
@@ -39,6 +62,19 @@ public class CommandContext<T> extends ActionContext<T> {
 
     public void restoreArg() {
         this.argPos--;
+    }
+
+    public void appendCommandName(@NotNull String commandName) {
+        currentPath.add(commandName);
+    }
+
+    public void removeLastCommandName() {
+        currentPath.removeLast();
+    }
+
+    @NotNull
+    public List<String> getCurrentPath() {
+        return Collections.unmodifiableList(currentPath);
     }
 
 }

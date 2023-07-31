@@ -1,13 +1,13 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
+import org.jetbrains.annotations.NotNull;
+
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import org.jetbrains.annotations.NotNull;
 
-public class ClaimRootCommand extends DispatchCommandTabExecutor<ClaimContext> {
+public class ClaimRootCommand extends DispatchCommandTabExecutor {
 
     private final ClaimSubCommandManager subCommandManager;
     private final HelpMessage helpMessage;
@@ -18,13 +18,13 @@ public class ClaimRootCommand extends DispatchCommandTabExecutor<ClaimContext> {
     }
 
     @Override
-    public @NotNull Iterable<CommandNode<ClaimContext>> getChildren() {
+    public @NotNull Iterable<CommandNode> getChildren() {
         return subCommandManager.getCommands();
     }
 
     @Override
-    public void fallBackExecute(@NotNull CommandContext<ClaimContext> context) {
-        helpMessage.sendMessage(context);
+    public void fallBackExecute(@NotNull CommandContext context) {
+        helpMessage.sendMessages(context, this);
     }
 
 }

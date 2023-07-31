@@ -6,6 +6,7 @@ import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.HandlerRegistry;
+import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
@@ -32,8 +33,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ListAddSubCommand implements CommandNode<ClaimContext> {
+public class ListAddSubCommand implements CommandNode, Identifiable {
 
+    private final UUID id;
     private final String name;
     private final String[] triggers;
     private final ConfigurationFormattedMessages messages;
@@ -49,7 +51,8 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
 
     private final String regionMessage;
 
-    public ListAddSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+    public ListAddSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+        this.id = id;
         this.name = name;
         this.triggers = triggers;
         messages = plugin.getMessages();
@@ -63,6 +66,12 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
         REGION_BY_PAGE = Math.max(configuration.getInt(name + ".region-by-page", 5), 1);
         cache = new HashMap<>();
         regionMessage = messages.getFormattedMessage("claim." + name + ".region-message");
+    }
+
+    @Override
+    @NotNull
+    public UUID getId() {
+        return id;
     }
 
     private TextComponent getTextComponent(String category, int page, String player) {
@@ -92,12 +101,13 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
     }
 
     @Override
-    public void execute(@NotNull CommandContext<ClaimContext> context) {
+    public void execute(@NotNull CommandContext context) {
         if (worldChecker.checkCancelledWorld(context.getActor())) {
             return;
         }
         if (regionMessage == null) {
-            context.getData().setStatistic(name);
+            // TODO Stats stuff
+            //context.getData().setStatistic(name);
             return;
         }
 
@@ -106,28 +116,28 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
         String pageArg = null;
         int page = 1;
         if (context.getArgsLength() == 0) {
-            if (!context.getSender().isPlayer()) {
-                helpMessage.sendMessage(context, name);
+            if (!context.getActor().isPlayer()) {
+                helpMessage.sendMessage(context, id);
                 return;
             }
-            target = context.getSender().getPlayer();
+            target = context.getActor().getPlayer();
         } else if (context.getArgsLength() == 1) {
             if (hasOtherPerm) {
                 target = OfflinePlayerRetriever.getOfflinePlayer(context.getArg(0));
             } else {
-                target = context.getSender().getPlayer();
+                target = context.getActor().getPlayer();
                 pageArg = context.getArg(0);
             }
         } else if (context.getArgsLength() == 3 && hasOtherPerm) {
             target = OfflinePlayerRetriever.getOfflinePlayer(context.getArg(0));
             pageArg = context.getArg(1);
         } else {
-            helpMessage.sendMessage(context, name);
+            helpMessage.sendMessage(context, id);
             return;
         }
-        final CommandSender sender = context.getSender().getBukkit();
-        final boolean targetedIsSender = context.getSender().isPlayer() &&
-                context.getSender().getPlayer().getUniqueId().equals(target.getUniqueId());
+        final CommandSender sender = context.getActor().getBukkit();
+        final boolean targetedIsSender = context.getActor().isPlayer() &&
+                context.getActor().getPlayer().getUniqueId().equals(target.getUniqueId());
         if (pageArg != null) {
             try {
                 page = Integer.parseInt(pageArg);
@@ -141,7 +151,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
             }
         }
 
-        final World world = context.getSender().getPhysic().getWorld();
+        final World world = context.getActor().getPhysic().getWorld();
         final UUID targetUUID = target.getUniqueId();
         final CacheKey cacheKey = new CacheKey(targetUUID, world.getName());
 
@@ -212,7 +222,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
                 if (regionHandler == null) {
                     regionName = regionId;
                 } else {
-                    regionName = regionHandler.getOwner(parts[2]).getName();
+                    regionName = regionHandler.getOwner(parts[2]).owner().getName();
                 }
             } else {
                 regionName = regionId;
@@ -236,7 +246,7 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
                             messages.getFormattedMessage("claim." + name + ".no-next")
                     );
                     sender.sendMessage(finalMessage);
-                    context.getData().setStatistic(name);
+                    //context.getData().setStatistic(name);
                     return;
                 }
                 // No previous but next
@@ -251,7 +261,8 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
                                 "%next%", new BaseComponent[]{nextComponent}
                         ).create()
                 );
-                context.getData().setStatistic(name);
+                // TODO Stats stuff
+                //context.getData().setStatistic(name);
                 return;
             } else if (page == pageCount) {
                 // Previous but no next
@@ -270,7 +281,8 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
                                 "%previous%", new BaseComponent[]{previousComponent}
                         ).create()
                 );
-                context.getData().setStatistic(name);
+                // TODO Stats stuff
+                // context.getData().setStatistic(name);
                 return;
             } else {
                 // Previous and next
@@ -296,7 +308,9 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
                 );
             }
         }
-        context.getData().setStatistic(name);
+        // TODO Stats stuff
+
+        //context.getData().setStatistic(name);
     }
 
     @Override
@@ -305,17 +319,17 @@ public class ListAddSubCommand implements CommandNode<ClaimContext> {
     }
 
     @Override
-    public @NotNull String getTabCompletion() {
+    public @NotNull String getName() {
         return name;
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
+    public boolean canExecute(@NotNull CommandContext context) {
         return context.getActor().isPhysic() && permChecker.checkOther(context);
     }
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext<ClaimContext> context) {
+    public List<String> tabComplete(@NotNull CommandContext context) {
         if (context.getArgsLength() != 1 || !permChecker.checkOther(context)) {
             return Collections.emptyList();
         }

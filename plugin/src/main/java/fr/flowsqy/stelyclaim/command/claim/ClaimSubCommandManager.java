@@ -11,31 +11,33 @@ public class ClaimSubCommandManager {
 
     // TODO Improve this
 
-    private final List<CommandNode<ClaimContext>> commands;
-    private final List<CommandNode<ClaimContext>> specifics;
+    private final List<CommandNode> commands;
+    private final List<CommandNode> specifics;
 
     public ClaimSubCommandManager() {
         commands = new LinkedList<>();
         specifics = new LinkedList<>();
     }
 
-    public void register(@NotNull CommandNode<ClaimContext> command, boolean isSpecific) {
+    public void register(@NotNull CommandNode command, boolean isSpecific) {
         commands.add(command);
         if (isSpecific) {
             specifics.add(command);
         }
     }
 
-    public void unregister(@NotNull CommandNode<ClaimContext> command) {
+    public void unregister(@NotNull CommandNode command) {
         commands.remove(command);
         specifics.remove(command);
     }
 
-    public Iterable<CommandNode<ClaimContext>> getCommands() {
+    @NotNull
+    public Iterable<CommandNode> getCommands() {
         return commands;
     }
 
-    public Iterable<CommandNode<ClaimContext>> getSpecifics() {
+    @NotNull
+    public Iterable<CommandNode> getSpecifics() {
         return specifics;
     }
 

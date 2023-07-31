@@ -1,18 +1,17 @@
 package fr.flowsqy.stelyclaim.api.action;
 
-import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 
-public class ActionContext<T> {
+public class ActionContext {
 
     private final Actor actor;
-    private final T customData;
+    private Object customData;
     private ActionResult result;
 
-    public ActionContext(@NotNull Actor actor, @Nullable T customData) {
+    public ActionContext(@NotNull Actor actor, @Nullable Object customData) {
         this.actor = actor;
         this.customData = customData;
     }
@@ -22,9 +21,13 @@ public class ActionContext<T> {
         return actor;
     }
 
-    @NotNull
-    public Optional<T> getCustomData() {
-        return Optional.ofNullable(customData);
+    @Nullable
+    public Object getCustomData() {
+        return customData;
+    }
+
+    public void setCustomData(@Nullable Object customData) {
+        this.customData = customData;
     }
 
     @Nullable

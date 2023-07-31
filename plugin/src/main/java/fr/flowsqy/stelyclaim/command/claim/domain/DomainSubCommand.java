@@ -20,17 +20,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-public abstract class DomainSubCommand implements CommandNode<ClaimContext> {
+public abstract class DomainSubCommand implements CommandNode {
 
+    private final UUID id;
     private final String name;
     private final String[] triggers;
     private final WorldChecker worldChecker;
     private final OtherCommandPermissionChecker permChecker;
     private final HelpMessage helpMessage;
 
-    public DomainSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+    public DomainSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+        this.id = id;
         this.name = name;
         this.triggers = triggers;
         worldChecker = new WorldChecker(worlds, plugin.getMessages());
@@ -39,17 +42,19 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContext> {
     }
 
     @Override
-    public void execute(@NotNull CommandContext<ClaimContext> context) {
+    public void execute(@NotNull CommandContext context) {
         if (worldChecker.checkCancelledWorld(context.getActor())) {
             return;
         }
-        final ClaimContext claimContext = context.getCustomData().orElseThrow();
+        if (!(context.getCustomData() instanceof final ClaimContext claimContext)) {
+            throw new RuntimeException();
+        }
         final LazyHandledOwner<?> lazyOwner = claimContext.getOwnerContext().getLazyHandledOwner();
         final String target;
         if (context.getArgsLength() == 1) {
             final Actor actor = context.getActor();
             if (!actor.isPlayer()) {
-                helpMessage.sendMessage(context, name);
+                helpMessage.sendMessage(context, id);
                 return;
             }
             lazyOwner.retrieve(actor, actor.getPlayer());
@@ -58,7 +63,7 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContext> {
             lazyOwner.retrieve(context.getActor(), context.getArg(0));
             target = context.getArg(1);
         } else {
-            helpMessage.sendMessage(context, name);
+            helpMessage.sendMessage(context, id);
             return;
         }
 
@@ -85,17 +90,17 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContext> {
     }
 
     @Override
-    public @NotNull String getTabCompletion() {
+    public @NotNull String getName() {
         return name;
     }
 
     @Override
-    public boolean canExecute(@NotNull CommandContext<ClaimContext> context) {
+    public boolean canExecute(@NotNull CommandContext context) {
         return context.getActor().isPhysic() && permChecker.checkBase(context);
     }
 
     @Override
-    public List<String> tabComplete(@NotNull CommandContext<ClaimContext> context) {
+    public List<String> tabComplete(@NotNull CommandContext context) {
         final int size = context.getArgsLength();
         if (size != 1 && !(size == 2 || permChecker.checkOther(context))) {
             return Collections.emptyList();
@@ -107,6 +112,6 @@ public abstract class DomainSubCommand implements CommandNode<ClaimContext> {
                 .collect(Collectors.toList());
     }
 
-    protected abstract void interact(@NotNull CommandContext<ClaimContext> context, @NotNull OfflinePlayer target);
+    protected abstract void interact(@NotNull CommandContext context, @NotNull OfflinePlayer target);
 
 }
