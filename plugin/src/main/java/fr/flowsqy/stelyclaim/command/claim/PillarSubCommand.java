@@ -1,19 +1,19 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
+import java.util.List;
+import java.util.Map;
+
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
+
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.util.PillarData;
 import fr.flowsqy.stelyclaim.util.TeleportSync;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Map;
 
 public class PillarSubCommand implements CommandNode {
 
@@ -23,7 +23,8 @@ public class PillarSubCommand implements CommandNode {
     private final Map<String, PillarData> pillarData;
     private final TeleportSync teleportSync;
 
-    public PillarSubCommand(@NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @NotNull HelpMessage helpMessage, @NotNull DispatchCommandTabExecutor root) {
+    public PillarSubCommand(@NotNull String[] triggers, @NotNull StelyClaimPlugin plugin,
+            @NotNull HelpMessage helpMessage, @NotNull DispatchCommandTabExecutor root) {
         this.triggers = triggers;
         this.helpMessage = helpMessage;
         this.root = root;
@@ -63,7 +64,7 @@ public class PillarSubCommand implements CommandNode {
             teleportLoc.add(0.5, 1, 0.5);
         }
         context.getActor().getMovable().setLocation(teleportSync, teleportLoc);
-        //context.getData().setStatistic(name);
+        // context.getData().setStatistic(name);
     }
 
     @Override
