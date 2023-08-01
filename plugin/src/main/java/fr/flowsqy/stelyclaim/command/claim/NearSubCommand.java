@@ -1,10 +1,11 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,14 +25,15 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.HandlerRegistry;
 import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
+import fr.flowsqy.stelyclaim.protocol.RegionHandler;
 import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
 import fr.flowsqy.stelyclaim.util.WorldName;
 
@@ -253,29 +255,23 @@ public class NearSubCommand implements CommandNode, Identifiable {
 
         // Get the region in the radius
         final ApplicableRegionSet intersecting = regionManager.getApplicableRegions(region);
-        final List<RegionData> detectedRegions = new ArrayList<>();
+        final List<RegionData> detectedRegions = new LinkedList<>();
         // Remove claim where the sender is owner and format other
         for (ProtectedRegion protectedRegion : intersecting) {
             final String regionId = protectedRegion.getId();
-            final String regionName;
-            // Try to get the ClaimOwner if it's a StelyClaim region
-            if (RegionNameManager.isCorrectId(regionId)) {
-                final String[] parts = regionId.split("_", 3);
-                final ClaimHandler<?> regionHandler = handlerRegistry.getHandler(parts[1]);
-                if (regionHandler == null) {
-                    regionName = regionId;
-                } else {
-                    // Retrieve the ClaimOwner
-                    final ClaimOwner claimOwner = regionHandler.getOwner(parts[2]).owner();
-                    // Check if the player own the region
-                    if (claimOwner.own(context.getActor())) {
-                        // Does not display the region that a player own
+            final RegionHandler regionHandler = new RegionHandler(regionId);
+            String regionName = null;
+            if (regionHandler.isInternalRegion()) {
+                final HandledOwner<?> handledOwner = regionHandler.getOwner(handlerRegistry);
+                if (handledOwner != null) {
+                    final ClaimOwner owner = handledOwner.owner();
+                    if (owner.own(context.getActor())) {
                         continue;
                     }
-                    // Set the proper name of the region
-                    regionName = claimOwner.getName();
+                    regionName = owner.getName();
                 }
-            } else {
+            }
+            if (regionName == null) {
                 regionName = regionId;
             }
 
@@ -325,8 +321,9 @@ public class NearSubCommand implements CommandNode, Identifiable {
             // Send information
             // Limit the loop at the size of the list or the maximal amount defined by the
             // config
-            for (int index = 0; index < detectedRegions.size() && index < MAXIMAL_REGION_AMOUNT; index++) {
-                final RegionData regionData = detectedRegions.get(index);
+            final Iterator<RegionData> detectedRegionsItr = detectedRegions.iterator();
+            for (int index = 0; detectedRegionsItr.hasNext() && index < MAXIMAL_REGION_AMOUNT; index++) {
+                final RegionData regionData = detectedRegionsItr.next();
                 // Get the direction towards the region
                 final String direction = directions[getDirectionId(regionData, x, z)];
 
