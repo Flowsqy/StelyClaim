@@ -1,8 +1,8 @@
 package fr.flowsqy.stelyclaim.command.claim.permission;
 
-import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
+
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
 
 public class OtherBasicCPC extends BasicCPC implements OtherCommandPermissionChecker {
 
@@ -16,7 +16,7 @@ public class OtherBasicCPC extends BasicCPC implements OtherCommandPermissionChe
     }
 
     @Override
-    public boolean checkOther(@NotNull CommandContext<ClaimContext> context) {
+    public boolean checkOther(@NotNull CommandContext context) {
         return context.hasPermission(getOtherPermission());
     }
 }

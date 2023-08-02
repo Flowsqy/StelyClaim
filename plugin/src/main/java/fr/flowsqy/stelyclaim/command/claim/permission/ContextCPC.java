@@ -1,8 +1,8 @@
 package fr.flowsqy.stelyclaim.command.claim.permission;
 
-import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
+
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
 
 public class ContextCPC implements CommandPermissionChecker {
 
@@ -15,12 +15,13 @@ public class ContextCPC implements CommandPermissionChecker {
     }
 
     @NotNull
-    public String buildBasePerm(@NotNull CommandContext<ClaimContext> context) {
-        return prefix + context.getCustomData().orElseThrow().getOwnerContext().getHandler().getId() + suffix;
+    public String buildBasePerm(@NotNull CommandContext context) {
+        final String handlerId = null; // TODO Retrieve id
+        return prefix + handlerId + suffix;
     }
 
     @Override
-    public boolean checkBase(@NotNull CommandContext<ClaimContext> context) {
+    public boolean checkBase(@NotNull CommandContext context) {
         return context.hasPermission(buildBasePerm(context));
     }
 

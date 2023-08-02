@@ -1,11 +1,11 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
-import fr.flowsqy.stelyclaim.api.command.CommandNode;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.LinkedList;
 import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
+
+import fr.flowsqy.stelyclaim.api.command.CommandNode;
 
 public class ClaimSubCommandManager {
 

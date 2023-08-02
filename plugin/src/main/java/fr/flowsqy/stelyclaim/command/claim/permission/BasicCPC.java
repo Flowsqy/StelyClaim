@@ -3,7 +3,6 @@ package fr.flowsqy.stelyclaim.command.claim.permission;
 import org.jetbrains.annotations.NotNull;
 
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 
 public class BasicCPC implements CommandPermissionChecker {
 
@@ -19,7 +18,7 @@ public class BasicCPC implements CommandPermissionChecker {
     }
 
     @Override
-    public boolean checkBase(@NotNull CommandContext<ClaimContext> context) {
+    public boolean checkBase(@NotNull CommandContext context) {
         return context.hasPermission(permission);
     }
 
