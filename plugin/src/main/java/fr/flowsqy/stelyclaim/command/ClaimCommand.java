@@ -363,6 +363,7 @@ public class ClaimCommand implements TabExecutor {
                         plugin,
                         config.getStringList("worlds.here"),
                         herePermChecker,
+                        infoPermChecker,
                         helpMessage
                 ),
                 false

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +21,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
+import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.HandlerRegistry;
 import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
@@ -30,11 +33,13 @@ import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
 import fr.flowsqy.stelyclaim.command.claim.permission.OtherCommandPermissionChecker;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.internal.PlayerHandler;
+import fr.flowsqy.stelyclaim.protocol.RegionHandler;
 import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
 import fr.flowsqy.stelyclaim.util.WorldName;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.HoverEvent.Action;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 
@@ -47,11 +52,13 @@ public class HereSubCommand implements CommandNode, Identifiable {
     private final WorldChecker worldChecker;
     private final HandlerRegistry handlerRegistry;
     private final OtherCommandPermissionChecker permChecker;
+    private final OtherCommandPermissionChecker infoPermChecker;
     private final HelpMessage helpMessage;
 
     public HereSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
             @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds,
-            @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+            @NotNull OtherCommandPermissionChecker permChecker, @NotNull OtherCommandPermissionChecker infoPermChecker,
+            @NotNull HelpMessage helpMessage) {
         this.id = id;
         this.name = name;
         this.triggers = triggers;
@@ -59,6 +66,7 @@ public class HereSubCommand implements CommandNode, Identifiable {
         worldChecker = new WorldChecker(worlds, messages);
         handlerRegistry = plugin.getHandlerRegistry();
         this.permChecker = permChecker;
+        this.infoPermChecker = infoPermChecker;
         this.helpMessage = helpMessage;
     }
 
@@ -91,130 +99,85 @@ public class HereSubCommand implements CommandNode, Identifiable {
                         senderLoc.getBlockY(),
                         senderLoc.getBlockZ()));
 
+        /*
         if (!permChecker.checkOther(context)) {
             // TODO Stats stuff
             // context.getData().setStatistic(name);
             for (ProtectedRegion overlapRegion : intersecting) {
-                if (!RegionNameManager.isCorrectId(overlapRegion.getId())) {
+                final RegionHandler regionHandler = new RegionHandler(overlapRegion.getId());
+                if (!regionHandler.isInternalRegion()) {
                     continue;
                 }
-                final String[] part = overlapRegion.getId().split("_", 3);
-                final ClaimHandler<?> intersectingHandler = handlerRegistry.getHandler(part[1]);
-                if (intersectingHandler == null) {
+                final HandledOwner<?> handledOwner = regionHandler.getOwner(handlerRegistry);
+                if (handledOwner == null) {
                     continue;
                 }
 
-                if (context.getActor().isPlayer()
-                        && intersectingHandler.getOwner(part[2]).owner().own(context.getActor())) {
+                if (handledOwner.owner().own(context.getActor())) {
                     messages.sendMessage(sender, "claim." + name + ".inside");
                     return;
                 }
             }
             messages.sendMessage(sender, "claim." + name + ".not-inside");
             return;
-        }
+        }*/
 
-        final String baseMessage = messages.getFormattedMessage("claim." + name + ".message");
-        final String text = messages.getFormattedMessage("claim." + name + ".text");
-        final String separatorMessage = messages.getFormattedMessage("claim." + name + ".separator");
+        final boolean hasOtherPerm = permChecker.checkOther(context);
 
-        // TODO Fix that . . . .
-        if (false /*
-                   * contextual.hasPermission(ClaimCommand.Permissions.getOtherPerm(ClaimCommand.
-                   * Permissions.INFO))
-                   */) {
-            final String hover = messages.getFormattedMessage("claim." + name + ".hover");
-            final List<BaseComponent> separator = new ArrayList<>(
-                    Arrays.asList(
-                            TextComponent.fromLegacyText(
-                                    separatorMessage)));
-            final List<BaseComponent> regions = new ArrayList<>();
-            boolean first = true;
-            for (ProtectedRegion overlapRegion : intersecting) {
-                if (first)
-                    first = false;
-                else {
-                    regions.addAll(separator);
-                }
-                final String regionId = overlapRegion.getId();
-                final String regionName;
-                boolean playerClaim;
-                if (RegionNameManager.isCorrectId(regionId)) {
-                    final String[] parts = regionId.split("_", 3);
-                    final ClaimHandler<?> regionHandler = handlerRegistry.getHandler(parts[1]);
-                    if (regionHandler == null) {
-                        regionName = regionId;
-                        playerClaim = false;
-                    } else {
-                        regionName = regionHandler.getOwner(parts[2]).owner().getName();
-                        playerClaim = regionHandler instanceof PlayerHandler;
-                    }
-                } else {
-                    regionName = regionId;
-                    playerClaim = false;
-                }
-                final TextComponent component = new TextComponent(
-                        TextComponent.fromLegacyText(
-                                text.replace("%region%", regionName)));
-                if (hover != null) {
-                    component.setHoverEvent(
-                            new HoverEvent(
-                                    HoverEvent.Action.SHOW_TEXT,
-                                    new Text(
-                                            hover.replace("%region%", regionName))));
-                }
+        final String rawBaseMessage = messages.getFormattedMessage("claim." + name + ".message");
+        final String rawRegionTextTemplate = messages.getFormattedMessage("claim." + name + ".text");
+        final String rawSeparatorMessage = messages.getFormattedMessage("claim." + name + ".separator");
+        final String rawHoverTextTemplate = messages.getFormattedMessage("claim." + name + ".hover");
 
-                if (playerClaim) {
-                    component.setClickEvent(
-                            new ClickEvent(
-                                    ClickEvent.Action.RUN_COMMAND,
-                                    "/claim info " + regionName));
-                }
-                regions.add(component);
-            }
-            // TODO Stats Stuff
-            // context.getData().setStatistic(name);
-            if (regions.isEmpty()) {
-                messages.sendMessage(sender, "claim." + name + ".nothing");
-                return;
-            }
-            final ComponentReplacer replacer = new ComponentReplacer(baseMessage);
-            replacer.replace("%regions%", regions.toArray(new BaseComponent[0]));
-            sender.spigot().sendMessage(replacer.create());
-            return;
-        }
+        final List<BaseComponent> seperatorComponents =  Arrays.asList(TextComponent.fromLegacyText(rawSeparatorMessage));
 
-        final StringBuilder builder = new StringBuilder();
+        final List<BaseComponent> regionsComponents = new LinkedList<>();
+
         for (ProtectedRegion overlapRegion : intersecting) {
-            if (builder.length() > 0) {
-                builder.append(separatorMessage);
+            if(!regionsComponents.isEmpty()) {
+                regionsComponents.addAll(seperatorComponents);
             }
-            final String regionId = overlapRegion.getId();
-            final String regionName;
-            if (RegionNameManager.isCorrectId(regionId)) {
-                final String[] parts = regionId.split("_", 3);
-                final ClaimHandler<?> regionHandler = handlerRegistry.getHandler(parts[1]);
-                if (regionHandler == null) {
-                    regionName = regionId;
-                } else {
-                    regionName = regionHandler.getOwner(parts[2]).owner().getName();
+            final RegionHandler regionHandler = new RegionHandler(overlapRegion.getId());
+            if (!regionHandler.isInternalRegion()) {
+                // TODO Maybe handle not internal regions
+                continue;
+            }
+            final HandledOwner<?> handledOwner = regionHandler.getOwner(handlerRegistry);
+            if (handledOwner == null) {
+                // TODO Maybe add a warn ?
+                continue;
+            }
+            
+            final ClaimOwner owner = handledOwner.owner();
+            final boolean own = owner.own(actor);
+            if (!hasOtherPerm && !own) {
+                continue;
+            }
+            final String regionName = owner.getName();
+            final TextComponent regionText = new TextComponent();
+            final String formattedRegionText = rawRegionTextTemplate.replace("%region%", regionName);
+            final List<BaseComponent> regionTextComponents = Arrays.asList(TextComponent.fromLegacyText(formattedRegionText));
+            regionText.setExtra(regionTextComponents);
+            if (own ? infoPermChecker.checkBase(context) : infoPermChecker.checkOther(context)) {
+                if (rawHoverTextTemplate != null) {
+                    final String formattedHoverText = rawHoverTextTemplate.replace("%region%", regionName);
+                    final Text hoverText = new Text(TextComponent.fromLegacyText(formattedHoverText));
+                    regionText.setHoverEvent(new HoverEvent(Action.SHOW_TEXT, hoverText));
                 }
-            } else {
-                regionName = regionId;
+                regionText.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claim info " + handledOwner.handler().getId() + regionName));
             }
-            builder.append(text.replace("%region%", regionName));
+            regionsComponents.add(regionText);
         }
 
-        if (builder.length() == 0) {
+        if (regionsComponents.isEmpty()) {
             messages.sendMessage(sender, "claim." + name + ".nothing");
-            // TODO Stats stuff
-            // context.getData().setStatistic(name);
             return;
         }
 
-        sender.sendMessage(baseMessage.replace("%regions%", builder.toString()));
-        // TODO Stats stuff
-        // context.getData().setStatistic(name);
+        // TODO Handle replace
+        final ComponentReplacer replacer = new ComponentReplacer(baseMessage);
+        replacer.replace("%regions%", regions.toArray(new BaseComponent[0]));
+        sender.spigot().sendMessage(replacer.create());
     }
 
     @Override

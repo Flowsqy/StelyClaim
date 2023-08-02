@@ -1,10 +1,8 @@
 package fr.flowsqy.stelyclaim.api.command;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,14 +13,12 @@ import fr.flowsqy.stelyclaim.api.actor.Actor;
 public class CommandContext extends ActionContext {
 
     private final LinkedList<String> currentPath;
-    private final Map<String, Boolean> permissions;
     private final String[] args;
     private int argPos;
 
     public CommandContext(@NotNull Actor sender, @NotNull String[] args, @Nullable Object data, int argPos) {
         super(sender, data);
         currentPath = new LinkedList<>();
-        permissions = new HashMap<>();
         this.args = args;
         this.argPos = argPos;
     }
@@ -34,10 +30,6 @@ public class CommandContext extends ActionContext {
             fakeContext.appendCommandName(commandName);
         }
         return context;
-    }
-
-    public boolean hasPermission(@NotNull String permission) {
-        return permissions.computeIfAbsent(permission, getActor().getBukkit()::hasPermission);
     }
 
     @NotNull
