@@ -1,26 +1,14 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.componentreplacer.ComponentReplacer;
-import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.ClaimHandler;
-import fr.flowsqy.stelyclaim.api.HandlerRegistry;
-import fr.flowsqy.stelyclaim.api.Identifiable;
-import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.api.command.CommandNode;
-import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.permission.OtherCommandPermissionChecker;
-import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
-import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
-import fr.flowsqy.stelyclaim.util.WorldName;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -30,8 +18,27 @@ import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+
+import fr.flowsqy.componentreplacer.ComponentReplacer;
+import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.HandlerRegistry;
+import fr.flowsqy.stelyclaim.api.Identifiable;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.api.command.CommandNode;
+import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
+import fr.flowsqy.stelyclaim.command.claim.permission.OtherCommandPermissionChecker;
+import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
+import fr.flowsqy.stelyclaim.protocol.RegionHandler;
+import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
+import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
+import fr.flowsqy.stelyclaim.util.WorldName;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class ListAddSubCommand implements CommandNode, Identifiable {
 
@@ -51,7 +58,9 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
 
     private final String regionMessage;
 
-    public ListAddSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+    public ListAddSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
+            @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds,
+            @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
         this.id = id;
         this.name = name;
         this.triggers = triggers;
@@ -76,27 +85,14 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
 
     private TextComponent getTextComponent(String category, int page, String player) {
         final TextComponent component = new TextComponent();
-        component.setExtra(
-                Arrays.asList(
-                        TextComponent.fromLegacyText(
-                                messages.getFormattedMessage("claim." + name + "." + category + "-text")
-                        )
-                )
-        );
-        component.setHoverEvent(
-                new HoverEvent(
-                        HoverEvent.Action.SHOW_TEXT,
-                        new Text(
-                                messages.getFormattedMessage("claim." + name + "." + category + "-hover")
-                        )
-                )
-        );
-        component.setClickEvent(
-                new ClickEvent(
-                        ClickEvent.Action.RUN_COMMAND,
-                        "/claim " + name + " " + player + page
-                )
-        );
+        final String componentText = messages.getFormattedMessage("claim." + name + "." + category + "-text");
+        final BaseComponent[] text = TextComponent.fromLegacyText(componentText);
+        for (BaseComponent c : text) {
+            component.addExtra(c);
+        }
+        final String hoverText = messages.getFormattedMessage("claim." + name + "." + category + "-hover");
+        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(hoverText)));
+        component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claim " + name + " " + player + page));
         return component;
     }
 
@@ -107,7 +103,7 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
         }
         if (regionMessage == null) {
             // TODO Stats stuff
-            //context.getData().setStatistic(name);
+            // context.getData().setStatistic(name);
             return;
         }
 
@@ -184,7 +180,6 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
                 cache.remove(key);
         }
 
-
         final String targetName = target.getName();
         final List<String> result = cacheData.result;
 
@@ -194,8 +189,7 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
                     sender,
                     "claim." + name + ".no-region" + (targetedIsSender ? "" : "-other"),
                     "%player%",
-                    targetName
-            );
+                    targetName);
             return;
         }
 
@@ -207,110 +201,87 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
                     sender,
                     "claim." + name + ".not-enough-page",
                     "%page%", "%arg%",
-                    String.valueOf(pageCount), String.valueOf(page)
-            );
+                    String.valueOf(pageCount), String.valueOf(page));
             return;
         }
 
         // Send region list
-        for (int index = (page - 1) * REGION_BY_PAGE, i = 0; index < result.size() && i < REGION_BY_PAGE; index++, i++) {
+        for (int index = (page - 1) * REGION_BY_PAGE, i = 0; index < result.size()
+                && i < REGION_BY_PAGE; index++, i++) {
             final String regionId = result.get(index);
-            final String regionName;
-            if (RegionNameManager.isCorrectId(regionId)) {
-                final String[] parts = regionId.split("_", 3);
-                final ClaimHandler<?> regionHandler = handlerRegistry.getHandler(parts[1]);
-                if (regionHandler == null) {
-                    regionName = regionId;
-                } else {
-                    regionName = regionHandler.getOwner(parts[2]).owner().getName();
-                }
-            } else {
-                regionName = regionId;
-            }
+            final RegionHandler regionHandler = new RegionHandler(regionId);
+            final String regionName = regionHandler.getName(handlerRegistry);
             sender.sendMessage(regionMessage.replace("%region%", regionName));
         }
 
         // Send page navigation message
-        final String pageMessage = messages.getFormattedMessage("claim." + name + ".page-message");
+        String pageMessage = messages.getFormattedMessage("claim." + name + ".page-message");
         if (pageMessage != null) {
-            String finalMessage = pageMessage.replace("%page%", String.valueOf(page));
+            pageMessage = pageMessage.replace("%page%", String.valueOf(page));
             if (page == 1) {
-                finalMessage = finalMessage.replace(
+                pageMessage = pageMessage.replace(
                         "%previous%",
-                        messages.getFormattedMessage("claim." + name + ".no-previous")
-                );
+                        messages.getFormattedMessage("claim." + name + ".no-previous"));
                 if (page == pageCount) {
                     // No previous and no next
-                    finalMessage = finalMessage.replace(
+                    pageMessage = pageMessage.replace(
                             "%next%",
-                            messages.getFormattedMessage("claim." + name + ".no-next")
-                    );
-                    sender.sendMessage(finalMessage);
-                    //context.getData().setStatistic(name);
+                            messages.getFormattedMessage("claim." + name + ".no-next"));
+                    sender.sendMessage(pageMessage);
+                    // context.getData().setStatistic(name);
                     return;
                 }
                 // No previous but next
                 final TextComponent nextComponent = getTextComponent(
                         "next",
                         page + 1,
-                        hasOtherPerm ? (targetName + " ") : ""
-                );
-                final ComponentReplacer replacer = new ComponentReplacer(finalMessage);
+                        hasOtherPerm ? (targetName + " ") : "");
+                final ComponentReplacer replacer = new ComponentReplacer(pageMessage);
                 sender.spigot().sendMessage(
                         replacer.replace(
-                                "%next%", new BaseComponent[]{nextComponent}
-                        ).create()
-                );
+                                "%next%", new BaseComponent[] { nextComponent }).create());
                 // TODO Stats stuff
-                //context.getData().setStatistic(name);
+                // context.getData().setStatistic(name);
                 return;
             } else if (page == pageCount) {
                 // Previous but no next
-                finalMessage = finalMessage.replace(
+                pageMessage = pageMessage.replace(
                         "%next%",
-                        messages.getFormattedMessage("claim." + name + ".no-next")
-                );
+                        messages.getFormattedMessage("claim." + name + ".no-next"));
                 final TextComponent previousComponent = getTextComponent(
                         "previous",
                         page - 1,
-                        hasOtherPerm ? (targetName + " ") : ""
-                );
-                final ComponentReplacer replacer = new ComponentReplacer(finalMessage);
+                        hasOtherPerm ? (targetName + " ") : "");
+                final ComponentReplacer replacer = new ComponentReplacer(pageMessage);
                 sender.spigot().sendMessage(
                         replacer.replace(
-                                "%previous%", new BaseComponent[]{previousComponent}
-                        ).create()
-                );
+                                "%previous%", new BaseComponent[] { previousComponent }).create());
                 // TODO Stats stuff
                 // context.getData().setStatistic(name);
                 return;
             } else {
                 // Previous and next
-                final ComponentReplacer replacer = new ComponentReplacer(finalMessage);
+                final ComponentReplacer replacer = new ComponentReplacer(pageMessage);
                 final TextComponent previousComponent = getTextComponent(
                         "previous",
                         page - 1,
-                        hasOtherPerm ? (targetName + " ") : ""
-                );
+                        hasOtherPerm ? (targetName + " ") : "");
                 final TextComponent nextComponent = getTextComponent(
                         "next",
                         page + 1,
-                        hasOtherPerm ? (targetName + " ") : ""
-                );
+                        hasOtherPerm ? (targetName + " ") : "");
                 sender.spigot().sendMessage(
                         replacer
                                 .replace(
-                                        "%previous%", new BaseComponent[]{previousComponent}
-                                )
+                                        "%previous%", new BaseComponent[] { previousComponent })
                                 .replace(
-                                        "%next%", new BaseComponent[]{nextComponent}
-                                ).create()
-                );
+                                        "%next%", new BaseComponent[] { nextComponent })
+                                .create());
             }
         }
         // TODO Stats stuff
 
-        //context.getData().setStatistic(name);
+        // context.getData().setStatistic(name);
     }
 
     @Override
