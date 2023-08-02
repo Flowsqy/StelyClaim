@@ -29,8 +29,8 @@ import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.api.actor.PhysicActor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
+import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.permission.OtherCommandPermissionChecker;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.internal.PlayerHandler;
 import fr.flowsqy.stelyclaim.protocol.RegionHandler;
@@ -51,13 +51,13 @@ public class HereSubCommand implements CommandNode, Identifiable {
     private final ConfigurationFormattedMessages messages;
     private final WorldChecker worldChecker;
     private final HandlerRegistry handlerRegistry;
-    private final OtherCommandPermissionChecker permChecker;
-    private final OtherCommandPermissionChecker infoPermChecker;
+    private final OtherPermissionChecker permChecker;
+    private final OtherPermissionChecker infoPermChecker;
     private final HelpMessage helpMessage;
 
     public HereSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
             @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds,
-            @NotNull OtherCommandPermissionChecker permChecker, @NotNull OtherCommandPermissionChecker infoPermChecker,
+            @NotNull OtherPermissionChecker permChecker, @NotNull OtherPermissionChecker infoPermChecker,
             @NotNull HelpMessage helpMessage) {
         this.id = id;
         this.name = name;

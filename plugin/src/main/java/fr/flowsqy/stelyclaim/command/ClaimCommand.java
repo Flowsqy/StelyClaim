@@ -20,6 +20,12 @@ import fr.flowsqy.stelyclaim.api.actor.BlockActor;
 import fr.flowsqy.stelyclaim.api.actor.ConsoleActor;
 import fr.flowsqy.stelyclaim.api.actor.EntityActor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.api.permission.BasicPC;
+import fr.flowsqy.stelyclaim.api.permission.PermissionChecker;
+import fr.flowsqy.stelyclaim.api.permission.ContextPC;
+import fr.flowsqy.stelyclaim.api.permission.OtherBasicPC;
+import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
+import fr.flowsqy.stelyclaim.api.permission.OtherContextPC;
 import fr.flowsqy.stelyclaim.command.claim.ClaimRootCommand;
 import fr.flowsqy.stelyclaim.command.claim.ClaimSubCommandManager;
 import fr.flowsqy.stelyclaim.command.claim.ContextSubCommand;
@@ -40,12 +46,6 @@ import fr.flowsqy.stelyclaim.command.claim.help.OtherHelpMessageProvider;
 import fr.flowsqy.stelyclaim.command.claim.interact.InfoSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.interact.RemoveSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.interact.TeleportSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.permission.BasicCPC;
-import fr.flowsqy.stelyclaim.command.claim.permission.CommandPermissionChecker;
-import fr.flowsqy.stelyclaim.command.claim.permission.ContextCPC;
-import fr.flowsqy.stelyclaim.command.claim.permission.OtherBasicCPC;
-import fr.flowsqy.stelyclaim.command.claim.permission.OtherCommandPermissionChecker;
-import fr.flowsqy.stelyclaim.command.claim.permission.OtherContextCPC;
 import fr.flowsqy.stelyclaim.command.claim.selection.DefineSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.selection.RedefineSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.statistics.ResetStatsSubCommand;
@@ -123,7 +123,7 @@ public class ClaimCommand implements TabExecutor {
         // Help
         final UUID helpId = UUID.fromString("ac1851e4-dcb4-44d3-977d-f9f9f62f82a3");
         final String helpName = "help";
-        final CommandPermissionChecker helpPermChecker = new BasicCPC(basePermission + "." + helpName);
+        final PermissionChecker helpPermChecker = new BasicPC(basePermission + "." + helpName);
         subCommandManager.register(
                 new HelpSubCommand(helpId, helpName, new String[]{helpName, "h"}, helpPermChecker, rootCommand, helpMessage),
                 false
@@ -138,7 +138,7 @@ public class ClaimCommand implements TabExecutor {
         // Define
         final UUID defineId = UUID.fromString("8a387ffb-b204-409c-ab51-9a85c0c22915");
         final String defineName = "define";
-        final OtherCommandPermissionChecker definePermChecker = new OtherContextCPC(basePermission + ".", "." + defineName);
+        final OtherPermissionChecker definePermChecker = new OtherContextPC(basePermission + ".", "." + defineName);
         subCommandManager.register(
                 new DefineSubCommand(
                         defineId,
@@ -162,7 +162,7 @@ public class ClaimCommand implements TabExecutor {
         // Redefine
         final UUID redefineId = UUID.fromString("6e57c8c6-1237-4339-98fc-d20812bdeb42");
         final String redefineName = "redefine";
-        final OtherCommandPermissionChecker redefinePermChecker = new OtherContextCPC(basePermission + ".", "." + redefineName);
+        final OtherPermissionChecker redefinePermChecker = new OtherContextPC(basePermission + ".", "." + redefineName);
         subCommandManager.register(
                 new RedefineSubCommand(
                         redefineId,
@@ -186,7 +186,7 @@ public class ClaimCommand implements TabExecutor {
         // AddMember
         final UUID addMemberId = UUID.fromString("a417fbaa-0d93-4045-b26b-ae58c46ec5d9");
         final String addmemberName = "addmember";
-        final OtherCommandPermissionChecker addmemberPermChecker = new OtherContextCPC(basePermission + ".", "." + addmemberName);
+        final OtherPermissionChecker addmemberPermChecker = new OtherContextPC(basePermission + ".", "." + addmemberName);
         subCommandManager.register(
                 new AddMemberSubCommand(
                         addMemberId,
@@ -210,7 +210,7 @@ public class ClaimCommand implements TabExecutor {
         // RemoveMember
         final UUID removeMemberId = UUID.fromString("a41af9c0-419d-4b8e-9eb5-662d7551162f");
         final String removememberName = "removemember";
-        final OtherCommandPermissionChecker removememberPermChecker = new OtherContextCPC(basePermission + ".", "." + removememberName);
+        final OtherPermissionChecker removememberPermChecker = new OtherContextPC(basePermission + ".", "." + removememberName);
         subCommandManager.register(
                 new RemoveMemberSubCommand(
                         removeMemberId,
@@ -234,7 +234,7 @@ public class ClaimCommand implements TabExecutor {
         // AddOwner
         final UUID addOwnerId = UUID.fromString("109f5ea6-62d0-4e34-b6a7-4841fcc60d52");
         final String addownerName = "addowner";
-        final OtherCommandPermissionChecker addownerPermChecker = new OtherContextCPC(basePermission + ".", "." + addownerName);
+        final OtherPermissionChecker addownerPermChecker = new OtherContextPC(basePermission + ".", "." + addownerName);
         subCommandManager.register(
                 new AddOwnerSubCommand(
                         addOwnerId,
@@ -258,7 +258,7 @@ public class ClaimCommand implements TabExecutor {
         // RemoveOwner
         final UUID removeOwnerId = UUID.fromString("290aff1b-9f4d-4afc-bed7-4907c51fa7b0");
         final String removeOwnerName = "removeowner";
-        final OtherCommandPermissionChecker removeOwnerPermChecker = new OtherContextCPC(basePermission + ".", "." + removeOwnerName);
+        final OtherPermissionChecker removeOwnerPermChecker = new OtherContextPC(basePermission + ".", "." + removeOwnerName);
         subCommandManager.register(
                 new RemoveOwnerSubCommand(
                         removeOwnerId,
@@ -282,7 +282,7 @@ public class ClaimCommand implements TabExecutor {
         // Remove
         final UUID removeId = UUID.fromString("bd4b2455-9e23-4997-b983-f4d3be0c0d7a");
         final String removeName = "remove";
-        final OtherCommandPermissionChecker removePermChecker = new OtherContextCPC(basePermission + ".", "." + removeName);
+        final OtherPermissionChecker removePermChecker = new OtherContextPC(basePermission + ".", "." + removeName);
         subCommandManager.register(
                 new RemoveSubCommand(
                         removeId,
@@ -306,7 +306,7 @@ public class ClaimCommand implements TabExecutor {
         // Info
         final UUID infoId = UUID.fromString("5a5ca7ba-93f4-46ca-8b13-ca325ce286ff");
         final String infoName = "info";
-        final OtherCommandPermissionChecker infoPermChecker = new OtherContextCPC(basePermission + ".", "." + infoName);
+        final OtherPermissionChecker infoPermChecker = new OtherContextPC(basePermission + ".", "." + infoName);
         subCommandManager.register(
                 new InfoSubCommand(
                         infoId,
@@ -330,7 +330,7 @@ public class ClaimCommand implements TabExecutor {
         // Teleport
         final UUID teleportId = UUID.fromString("36d52f0c-c8e3-41d8-ba57-cd9651f3c6b4");
         final String teleportName = "teleport";
-        final OtherCommandPermissionChecker teleportPermChecker = new OtherContextCPC(basePermission + ".", "." + teleportName);
+        final OtherPermissionChecker teleportPermChecker = new OtherContextPC(basePermission + ".", "." + teleportName);
         subCommandManager.register(
                 new TeleportSubCommand(
                         teleportId,
@@ -354,7 +354,7 @@ public class ClaimCommand implements TabExecutor {
         // Here
         final UUID hereId = UUID.fromString("e8d49bbb-83b0-4796-be2d-79f8487f0532");
         final String hereName = "here";
-        final OtherCommandPermissionChecker herePermChecker = new OtherBasicCPC(basePermission + "." + hereName);
+        final OtherPermissionChecker herePermChecker = new OtherBasicPC(basePermission + "." + hereName);
         subCommandManager.register(
                 new HereSubCommand(
                         hereId,
@@ -401,7 +401,7 @@ public class ClaimCommand implements TabExecutor {
         // ListAdd
         final UUID listAddId = UUID.fromString("9b4186c9-eb7f-48e4-8a46-3c173b28af2d");
         final String listaddName = "listadd";
-        final OtherCommandPermissionChecker listaddPermChecker = new OtherBasicCPC(basePermission + "." + listaddName);
+        final OtherPermissionChecker listaddPermChecker = new OtherBasicPC(basePermission + "." + listaddName);
         subCommandManager.register(
                 new ListAddSubCommand(
                         listAddId,
@@ -441,7 +441,7 @@ public class ClaimCommand implements TabExecutor {
         // Player
         final UUID playerId = UUID.fromString("e7c0094d-5c8d-4807-a428-6e5a739e11fc");
         final String playerName = "player";
-        final CommandPermissionChecker playerPermChecker = new ContextCPC(basePermission + ".contextual.", "");
+        final PermissionChecker playerPermChecker = new ContextPC(basePermission + ".contextual.", "");
         subCommandManager.register(
                 new ContextSubCommand(
                         playerId,
@@ -466,7 +466,7 @@ public class ClaimCommand implements TabExecutor {
 
         final UUID showStatsId = UUID.fromString("412ff688-7b16-4852-b305-7e5c19b89b98");
         final String showStatsName = "show";
-        final OtherCommandPermissionChecker showStatsPermChecker = new OtherBasicCPC(basePermission + "." + statsName + "." + showStatsName);
+        final OtherPermissionChecker showStatsPermChecker = new OtherBasicPC(basePermission + "." + statsName + "." + showStatsName);
         final ShowStatsSubCommand showStatsSubCommand = new ShowStatsSubCommand(
                 showStatsId,
                 showStatsName,
@@ -482,7 +482,7 @@ public class ClaimCommand implements TabExecutor {
 
         final UUID resetStatsId = UUID.fromString("893ac1a9-ced0-4511-a997-9eb2176e5f96");
         final String resetStatsName = "reset";
-        final OtherCommandPermissionChecker resetStatsPermChecker = new OtherBasicCPC(basePermission + "." + statsName + "." + resetStatsName);
+        final OtherPermissionChecker resetStatsPermChecker = new OtherBasicPC(basePermission + "." + statsName + "." + resetStatsName);
         final ResetStatsSubCommand resetStatsSubCommand = new ResetStatsSubCommand(
                 resetStatsId,
                 resetStatsName,
@@ -497,7 +497,7 @@ public class ClaimCommand implements TabExecutor {
         helpMessage.register(resetStatsId, resetStatsHMP);
 
         final UUID statsId = UUID.fromString("be98a9a6-a6f0-4bd9-aceb-ac47c40b94ba");
-        final CommandPermissionChecker statsPermChecker = new BasicCPC(basePermission + "." + statsName);
+        final PermissionChecker statsPermChecker = new BasicPC(basePermission + "." + statsName);
         subCommandManager.register(
                 new StatsSubCommand(
                         statsId,
@@ -517,7 +517,7 @@ public class ClaimCommand implements TabExecutor {
         helpMessage.register(statsId, statsHMP);
     }
 
-    private void registerPerm(@NotNull CommandPermissionChecker data, @NotNull String[] modifiers) {
+    private void registerPerm(@NotNull PermissionChecker data, @NotNull String[] modifiers) {
         // TODO Update that :clown:
         /*
         final PluginManager pluginManager = Bukkit.getPluginManager();

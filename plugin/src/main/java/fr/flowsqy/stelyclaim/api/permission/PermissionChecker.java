@@ -1,10 +1,10 @@
-package fr.flowsqy.stelyclaim.command.claim.permission;
+package fr.flowsqy.stelyclaim.api.permission;
 
 import org.jetbrains.annotations.NotNull;
 
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 
-public interface CommandPermissionChecker {
+public interface PermissionChecker {
 
     boolean checkBase(@NotNull CommandContext context);
 

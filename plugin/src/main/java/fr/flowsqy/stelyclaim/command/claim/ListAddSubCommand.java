@@ -27,8 +27,8 @@ import fr.flowsqy.stelyclaim.api.HandlerRegistry;
 import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
+import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.permission.OtherCommandPermissionChecker;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.protocol.RegionHandler;
 import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
@@ -48,7 +48,7 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
     private final ConfigurationFormattedMessages messages;
     private final WorldChecker worldChecker;
     private final HandlerRegistry handlerRegistry;
-    private final OtherCommandPermissionChecker permChecker;
+    private final OtherPermissionChecker permChecker;
     private final HelpMessage helpMessage;
     private final long CACHE_PERIOD;
     private final int CACHE_SIZE_CLEAR_CHECK;
@@ -60,7 +60,7 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
 
     public ListAddSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
             @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds,
-            @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+            @NotNull OtherPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
         this.id = id;
         this.name = name;
         this.triggers = triggers;

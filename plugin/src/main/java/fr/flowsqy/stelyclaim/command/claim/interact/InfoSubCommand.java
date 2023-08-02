@@ -9,8 +9,8 @@ import org.jetbrains.annotations.Nullable;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.permission.OtherCommandPermissionChecker;
 import fr.flowsqy.stelyclaim.protocol.interact.InfoHandler;
 
 public class InfoSubCommand extends InteractSubCommand {
@@ -18,7 +18,7 @@ public class InfoSubCommand extends InteractSubCommand {
 
     public InfoSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
             @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds,
-            @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+            @NotNull OtherPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
         super(id, name, triggers, plugin, worlds, permChecker, helpMessage);
         protocolManager = plugin.getProtocolManager();
     }

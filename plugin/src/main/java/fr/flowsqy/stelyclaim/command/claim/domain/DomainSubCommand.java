@@ -5,8 +5,8 @@ import fr.flowsqy.stelyclaim.api.LazyHandledOwner;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
+import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.permission.OtherCommandPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.WorldChecker;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
@@ -29,10 +29,10 @@ public abstract class DomainSubCommand implements CommandNode {
     private final String name;
     private final String[] triggers;
     private final WorldChecker worldChecker;
-    private final OtherCommandPermissionChecker permChecker;
+    private final OtherPermissionChecker permChecker;
     private final HelpMessage helpMessage;
 
-    public DomainSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull OtherCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+    public DomainSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull OtherPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
         this.id = id;
         this.name = name;
         this.triggers = triggers;

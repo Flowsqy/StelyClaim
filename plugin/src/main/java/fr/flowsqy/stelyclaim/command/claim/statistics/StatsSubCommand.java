@@ -10,20 +10,20 @@ import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
+import fr.flowsqy.stelyclaim.api.permission.PermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.permission.CommandPermissionChecker;
 
 public class StatsSubCommand extends DispatchCommandTabExecutor implements CommandNode, Identifiable {
 
     private final UUID id;
     private final String name;
     private final String[] triggers;
-    private final CommandPermissionChecker permChecker;
+    private final PermissionChecker permChecker;
     private final HelpMessage helpMessage;
     private final List<CommandNode> children;
 
     public StatsSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
-            @NotNull CommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage,
+            @NotNull PermissionChecker permChecker, @NotNull HelpMessage helpMessage,
             @NotNull List<CommandNode> children) {
         this.id = id;
         this.name = name;

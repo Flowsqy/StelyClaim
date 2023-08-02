@@ -10,8 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.permission.OtherCommandPermissionChecker;
 
 public class RemoveMemberSubCommand extends DomainSubCommand {
 
@@ -19,7 +19,7 @@ public class RemoveMemberSubCommand extends DomainSubCommand {
 
     public RemoveMemberSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
             @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds,
-            @NotNull OtherCommandPermissionChecker data, @NotNull HelpMessage helpMessage) {
+            @NotNull OtherPermissionChecker data, @NotNull HelpMessage helpMessage) {
         super(id, name, triggers, plugin, worlds, data, helpMessage);
         protocolManager = plugin.getProtocolManager();
     }

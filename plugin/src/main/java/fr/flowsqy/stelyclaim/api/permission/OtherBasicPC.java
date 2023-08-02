@@ -1,12 +1,12 @@
-package fr.flowsqy.stelyclaim.command.claim.permission;
+package fr.flowsqy.stelyclaim.api.permission;
 
 import org.jetbrains.annotations.NotNull;
 
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 
-public class OtherBasicCPC extends BasicCPC implements OtherCommandPermissionChecker {
+public class OtherBasicPC extends BasicPC implements OtherPermissionChecker {
 
-    public OtherBasicCPC(@NotNull String permission) {
+    public OtherBasicPC(@NotNull String permission) {
         super(permission);
     }
 

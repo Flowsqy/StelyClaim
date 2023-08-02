@@ -13,20 +13,20 @@ import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.CommandResolver;
 import fr.flowsqy.stelyclaim.api.command.CommandResolver.Result;
+import fr.flowsqy.stelyclaim.api.permission.PermissionChecker;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
-import fr.flowsqy.stelyclaim.command.claim.permission.CommandPermissionChecker;
 
 public class HelpSubCommand implements CommandNode, Identifiable {
 
     private final UUID id;
     private final String name;
     private final String[] triggers;
-    private final CommandPermissionChecker permChecker;
+    private final PermissionChecker permChecker;
     private final DispatchCommandTabExecutor root;
     private final HelpMessage helpMessage;
 
     public HelpSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
-            @NotNull CommandPermissionChecker permChecker, @NotNull DispatchCommandTabExecutor root,
+            @NotNull PermissionChecker permChecker, @NotNull DispatchCommandTabExecutor root,
             @NotNull HelpMessage helpMessage) {
         this.id = id;
         this.name = name;

@@ -3,14 +3,14 @@ package fr.flowsqy.stelyclaim.command.claim.help;
 import org.jetbrains.annotations.NotNull;
 
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.command.claim.permission.CommandPermissionChecker;
+import fr.flowsqy.stelyclaim.api.permission.PermissionChecker;
 
 public class BasicHelpMessageProvider implements HelpMessageProvider {
 
-    private final CommandPermissionChecker permChecker;
+    private final PermissionChecker permChecker;
     private final String message;
 
-    public BasicHelpMessageProvider(@NotNull CommandPermissionChecker permChecker, @NotNull String message) {
+    public BasicHelpMessageProvider(@NotNull PermissionChecker permChecker, @NotNull String message) {
         this.permChecker = permChecker;
         this.message = message;
     }

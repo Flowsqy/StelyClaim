@@ -16,8 +16,8 @@ import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
+import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.permission.OtherCommandPermissionChecker;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
@@ -27,13 +27,13 @@ public abstract class SubStatsSubCommand implements CommandNode, Identifiable {
     private final UUID id;
     private final String name;
     private final String[] triggers;
-    private final OtherCommandPermissionChecker permChecker;
+    private final OtherPermissionChecker permChecker;
     private final HelpMessage helpMessage;
     protected final ConfigurationFormattedMessages messages;
     protected final StatisticManager statisticManager;
 
     public SubStatsSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
-            @NotNull StelyClaimPlugin plugin, @NotNull OtherCommandPermissionChecker permChecker,
+            @NotNull StelyClaimPlugin plugin, @NotNull OtherPermissionChecker permChecker,
             @NotNull HelpMessage helpMessage) {
         this.id = id;
         this.name = name;
