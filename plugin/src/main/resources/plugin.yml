@@ -1,14 +1,13 @@
-name: StelyClaim
-author: Flowsqy
-version: ${version}
-main: fr.flowsqy.stelyclaim.StelyClaimPlugin
+name: "StelyClaim"
+author: "Flowsqy"
+version: "${version}"
+main: "fr.flowsqy.stelyclaim.StelyClaimPlugin"
 depend:
-  - ComponentReplacer
   - WorldEdit
   - WorldGuard
 softdepend:
   - Essentials
-api-version: 1.13
+api-version: "1.13"
 commands:
   stelyclaim:
     aliases:
