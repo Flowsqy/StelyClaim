@@ -16,14 +16,16 @@ import java.util.Map;
 
 public class PillarSubCommand implements CommandNode {
 
+    private final String name;
     private final String[] triggers;
     private final HelpMessage helpMessage;
     private final DispatchCommandTabExecutor root;
     private final Map<String, PillarData> pillarData;
     private final TeleportSync teleportSync;
 
-    public PillarSubCommand(@NotNull String[] triggers, @NotNull StelyClaimPlugin plugin,
+    public PillarSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin,
                             @NotNull HelpMessage helpMessage, @NotNull DispatchCommandTabExecutor root) {
+        this.name = name;
         this.triggers = triggers;
         this.helpMessage = helpMessage;
         this.root = root;
@@ -73,7 +75,7 @@ public class PillarSubCommand implements CommandNode {
 
     @Override
     public @NotNull String getName() {
-        throw new IllegalStateException();
+        return name;
     }
 
     @Override
@@ -94,7 +96,7 @@ public class PillarSubCommand implements CommandNode {
     private void sendGlobalHelp(@NotNull CommandContext context) {
         // TODO Hardcoded -> bad
         final CommandContext fakeContext = CommandContext.buildFake(context, new String[0], "claim");
-        helpMessage.sendMessages(fakeContext, root);
+        helpMessage.sendMessages(fakeContext, root, CommandNode::canExecute);
     }
 
 }

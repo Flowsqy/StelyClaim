@@ -4,6 +4,7 @@ import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
+import fr.flowsqy.stelyclaim.api.LockableCounter;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
@@ -17,8 +18,19 @@ import java.util.function.Function;
 
 public class DomainProtocol implements InteractProtocolHandler {
 
-    public static final int CANT_MODIFY = ActionResult.registerResultCode();
-    public static final int MODIFY = ActionResult.registerResultCode();
+    public static final int CANT_MODIFY;
+    public static final int MODIFY;
+
+    static {
+        final LockableCounter register = ActionResult.REGISTER;
+        try {
+            register.lock();
+            CANT_MODIFY = register.get();
+            MODIFY = register.get();
+        } finally {
+            register.unlock();
+        }
+    }
 
     private final Protocol protocol;
     //private final MailManager mailManager;
@@ -31,7 +43,7 @@ public class DomainProtocol implements InteractProtocolHandler {
     }
 
     @Override
-    public void interactRegion(@NotNull RegionManager regionManager, @NotNull ProtectedRegion region, @NotNull ActionContext<ClaimContext> context) {
+    public void interactRegion(@NotNull RegionManager regionManager, @NotNull ProtectedRegion region, @NotNull ActionContext context) {
         final DefaultDomain domain = protocol.getDomain().apply(region);
         final UUID uuid = target.getUniqueId();
         final boolean add = protocol.isAdd();

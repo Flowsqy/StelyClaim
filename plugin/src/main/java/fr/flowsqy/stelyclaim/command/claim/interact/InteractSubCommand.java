@@ -85,6 +85,11 @@ public abstract class InteractSubCommand implements CommandNode, Identifiable {
         return name;
     }
 
+    @NotNull
+    public OtherPermissionChecker getPermChecker() {
+        return permChecker;
+    }
+
     @Override
     public boolean canExecute(@NotNull CommandContext context) {
         return context.getActor().isPhysic() && permChecker.checkBase(context);

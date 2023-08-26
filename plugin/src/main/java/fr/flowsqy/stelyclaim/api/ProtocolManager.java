@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ProtocolManager {
 
+    /*
     private final SelectionProtocolOLD selectionProtocol;
     //private final MailManager mailManager;
     private final InteractProtocol interactProtocol;
@@ -20,9 +21,9 @@ public class ProtocolManager {
     public ProtocolManager(@NotNull StelyClaimPlugin plugin) {
         selectionProtocol = new SelectionProtocolOLD(plugin);
         //mailManager = plugin.getMailManager();
-        interactProtocol = new InteractProtocol(/*plugin*/);
-    }
-
+        interactProtocol = new InteractProtocol(/*plugin*/ //);
+    //}
+/*
     public <T extends ClaimOwner> boolean define(@NotNull World world, @NotNull Actor actor, @NotNull HandledOwner<T> owner) {
         return selectionProtocol.process(world, actor, owner, SelectionProtocolOLD.Protocol.DEFINE);
     }
@@ -53,6 +54,6 @@ public class ProtocolManager {
 
     public void interact(@NotNull ActionContext<ClaimContext> context, @NotNull InteractProtocolHandler interactHandler) {
         interactProtocol.process(context, interactHandler);
-    }
+    }*/
 
 }

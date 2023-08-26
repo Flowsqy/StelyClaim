@@ -1,6 +1,7 @@
 package fr.flowsqy.stelyclaim.internal;
 
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -26,8 +27,8 @@ public record PlayerOwner(@NotNull OfflinePlayer player) implements ClaimOwner {
     }
 
     @Override
-    public boolean own(Player player) {
-        return Objects.equals(this.player.getUniqueId(), player.getUniqueId());
+    public boolean own(@NotNull Actor actor) {
+        return actor.isPlayer() && Objects.equals(this.player.getUniqueId(), actor.getPlayer().getUniqueId());
     }
 
 }

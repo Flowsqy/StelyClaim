@@ -1,13 +1,10 @@
 package fr.flowsqy.stelyclaim.util;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
-import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -72,6 +69,7 @@ public class PillarTextSender {
         return textComponent;
     }
 
+    /*
     public ComponentReplacer getReplacer(Player player, PillarCoordinate pillarCoordinate) {
         if (baseMessage != null) {
             PillarData pillarData = this.pillarData.get(player.getName());
@@ -101,26 +99,28 @@ public class PillarTextSender {
             return replacer;
         }
         return null;
-    }
+    }*/
 
     public boolean sendMessage(Player player, ProtectedRegion newRegion) {
         return sendMessage(player, new PillarCoordinate(newRegion, player.getWorld()));
     }
 
     public boolean sendMessage(Player player, PillarCoordinate pillarCoordinate) {
+        /*
         final ComponentReplacer replacer = getReplacer(player, pillarCoordinate);
         if (replacer != null) {
             player.spigot().sendMessage(replacer.create());
             return true;
-        }
+        }*/
         return false;
     }
 
+    /*
     private void buildPillarMessage(String regex, TextComponent textComponent, Location location, PillarData pillarData, ComponentReplacer replacer) {
         final String id = pillarData.registerLocation(location);
         final TextComponent component = textComponent.duplicate();
         component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claim pillar " + id));
         replacer.replace(regex, new TextComponent[]{component});
-    }
+    }*/
 
 }

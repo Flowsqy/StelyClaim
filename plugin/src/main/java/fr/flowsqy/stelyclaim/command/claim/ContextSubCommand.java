@@ -82,7 +82,7 @@ public class ContextSubCommand extends DispatchCommandTabExecutor implements Com
 
     @Override
     public void fallBackExecute(@NotNull CommandContext context) {
-        helpMessage.sendMessages(context, this);
+        helpMessage.sendMessages(context, this, CommandNode::canExecute);
     }
 
 }

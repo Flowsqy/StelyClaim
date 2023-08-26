@@ -16,13 +16,16 @@ public class PlayerSelectionProvider implements SelectionProvider {
 
     @Nullable
     @Override
-    public Region getSelection(@NotNull ActionContext<ClaimContext> context) {
+    public Region getSelection(@NotNull ActionContext context) {
         if (!context.getActor().isPlayer()) {
             throw new IllegalArgumentException("Actor should be a player");
         }
         final Player player = context.getActor().getPlayer();
         final LocalSession session = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player));
-        final com.sk89q.worldedit.world.World weWorld = new BukkitWorld(context.getCustomData().orElseThrow().getWorld().orElseThrow());
+        if(!(context.getCustomData() instanceof ClaimContext claimContext)) {
+            throw new RuntimeException();
+        }
+        final com.sk89q.worldedit.world.World weWorld = new BukkitWorld(claimContext.getWorld().orElseThrow());
 
         if (!session.isSelectionDefined(weWorld)) {
             return null;

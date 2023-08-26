@@ -28,6 +28,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class SelectionProtocolOLD {
+    /*
 
     private final StelyClaimPlugin plugin;
 
@@ -200,5 +201,5 @@ public class SelectionProtocolOLD {
         REDEFINE
 
     }
-
+*/
 }

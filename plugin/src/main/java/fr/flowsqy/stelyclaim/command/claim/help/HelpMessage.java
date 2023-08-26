@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiPredicate;
 
 public class HelpMessage {
 
@@ -51,9 +52,12 @@ public class HelpMessage {
         sendMessage(context, identifiable);
     }
 
-    public void sendMessages(@NotNull CommandContext context, @NotNull DispatchCommandTabExecutor dispatcher) {
+    public void sendMessages(@NotNull CommandContext context, @NotNull DispatchCommandTabExecutor dispatcher, @NotNull BiPredicate<CommandNode, CommandContext> nodePredicate) {
         for (CommandNode node : dispatcher.getChildren()) {
             if (!(node instanceof Identifiable identifiable)) {
+                continue;
+            }
+            if (!nodePredicate.test(node, context)) {
                 continue;
             }
             context.appendCommandName(node.getName());

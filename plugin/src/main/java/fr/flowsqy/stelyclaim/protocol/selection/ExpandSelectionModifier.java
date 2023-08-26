@@ -18,7 +18,7 @@ public class ExpandSelectionModifier implements SelectionModifier {
     }
 
     @Override
-    public void modify(@NotNull Region selection, @NotNull ActionContext<ClaimContext> context) {
+    public void modify(@NotNull Region selection, @NotNull ActionContext context) {
         try {
             selection.expand(
                     BlockVector3.ZERO.withY(maxY - selection.getMaximumPoint().getY()),

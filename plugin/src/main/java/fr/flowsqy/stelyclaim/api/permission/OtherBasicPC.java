@@ -1,6 +1,6 @@
 package fr.flowsqy.stelyclaim.api.permission;
 
-import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import org.jetbrains.annotations.NotNull;
 
 public class OtherBasicPC extends BasicPC implements OtherPermissionChecker {
@@ -15,7 +15,7 @@ public class OtherBasicPC extends BasicPC implements OtherPermissionChecker {
     }
 
     @Override
-    public boolean checkOther(@NotNull CommandContext context) {
+    public boolean checkOther(@NotNull ActionContext context) {
         return context.hasPermission(getOtherPermission());
     }
 }

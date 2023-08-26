@@ -1,6 +1,7 @@
 package fr.flowsqy.stelyclaim.command.claim.domain;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.LazyHandledOwner;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class DomainSubCommand implements CommandNode {
+public abstract class DomainSubCommand implements CommandNode, Identifiable {
 
     private final UUID id;
     private final String name;
@@ -35,6 +36,12 @@ public abstract class DomainSubCommand implements CommandNode {
         worldChecker = new WorldChecker(worlds, plugin.getMessages());
         this.permChecker = permChecker;
         this.helpMessage = helpMessage;
+    }
+
+    @NotNull
+    @Override
+    public UUID getId() {
+        return id;
     }
 
     @Override
@@ -90,6 +97,10 @@ public abstract class DomainSubCommand implements CommandNode {
         return name;
     }
 
+    public OtherPermissionChecker getPermChecker() {
+        return permChecker;
+    }
+
     @Override
     public boolean canExecute(@NotNull CommandContext context) {
         return context.getActor().isPhysic() && permChecker.checkBase(context);
@@ -98,7 +109,7 @@ public abstract class DomainSubCommand implements CommandNode {
     @Override
     public List<String> tabComplete(@NotNull CommandContext context) {
         final int size = context.getArgsLength();
-        if (size != 1 && !(size == 2 || permChecker.checkOther(context))) {
+        if (size != 1 && !(size == 2 && permChecker.checkOther(context))) {
             return Collections.emptyList();
         }
         final String arg = context.getArg(context.getArgsLength() - 1).toLowerCase(Locale.ENGLISH);

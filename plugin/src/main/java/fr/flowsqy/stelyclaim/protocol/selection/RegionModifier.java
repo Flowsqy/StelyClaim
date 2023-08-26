@@ -9,6 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface RegionModifier {
 
-    void modify(@NotNull ActionContext<ClaimContext> context, @NotNull RegionManager regionManager, @Nullable ProtectedRegion region);
+    void modify(@NotNull ActionContext context, @NotNull RegionManager regionManager, @Nullable ProtectedRegion region);
 
 }

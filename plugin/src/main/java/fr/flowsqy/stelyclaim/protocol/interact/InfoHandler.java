@@ -3,22 +3,24 @@ package fr.flowsqy.stelyclaim.protocol.interact;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.stelyclaim.api.ClaimOwner;
-import fr.flowsqy.stelyclaim.api.FormattedMessages;
-import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
-import fr.flowsqy.stelyclaim.api.actor.Actor;
+import fr.flowsqy.stelyclaim.api.LockableCounter;
+import fr.flowsqy.stelyclaim.api.action.ActionContext;
+import fr.flowsqy.stelyclaim.api.action.ActionResult;
+import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.util.PillarCoordinate;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class InfoHandler implements InteractProtocolHandler {
 
-
     @Override
-    public <T extends ClaimOwner> boolean interactRegion(RegionManager regionManager, ProtectedRegion region, boolean ownRegion, HandledOwner<T> owner, Actor actor, FormattedMessages messages) {
+    public void interactRegion(@NotNull RegionManager regionManager, @NotNull ProtectedRegion region, @NotNull ActionContext context) {
+        /*
         final String memberPlayerSeparator = messages.getFormattedMessage("claim.info.member-player.separator");
         final String memberGroupSeparator = messages.getFormattedMessage("claim.info.member-group.separator");
         final String ownerPlayerSeparator = messages.getFormattedMessage("claim.info.owner-player.separator");
@@ -53,7 +55,14 @@ public class InfoHandler implements InteractProtocolHandler {
         message = replacePillar(message, pillarCoordinate);
         actor.getBukkit().sendMessage(message);
 
-        return true;
+        //return true;
+        */
+        if(!(context.getCustomData() instanceof ClaimContext claimContext)) {
+            throw new RuntimeException();
+        }
+        final String handledOwner = claimContext.getOwnerContext().getLazyHandledOwner().toHandledOwner().toString();
+        context.getActor().getBukkit().spigot().sendMessage(new TextComponent(handledOwner));
+        context.setResult(new ActionResult(InteractProtocol.SUCCESS, true));
     }
 
     private String replaceDomainInfo(

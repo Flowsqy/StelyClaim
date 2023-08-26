@@ -43,7 +43,7 @@ public class OwnerContext {
             return;
         }
         this.actorOwnTheClaim = ownProvider.get();
-        ownInit = false;
+        ownInit = true;
     }
 
     public void calculateOwningProperty(@NotNull Actor actor, boolean force) {

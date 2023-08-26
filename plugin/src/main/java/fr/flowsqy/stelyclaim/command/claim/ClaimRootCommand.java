@@ -23,7 +23,7 @@ public class ClaimRootCommand extends DispatchCommandTabExecutor {
 
     @Override
     public void fallBackExecute(@NotNull CommandContext context) {
-        helpMessage.sendMessages(context, this);
+        helpMessage.sendMessages(context, this, CommandNode::canExecute);
     }
 
 }

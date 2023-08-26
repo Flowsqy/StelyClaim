@@ -15,6 +15,7 @@ public abstract class DispatchCommandTabExecutor implements CommandTabExecutor {
     @Override
     public void execute(@NotNull CommandContext context) {
         if (context.getArgsLength() == 0) {
+            executeSelf(context);
             return;
         }
         final String arg = context.getArg(0).toLowerCase(Locale.ENGLISH);
@@ -41,6 +42,10 @@ public abstract class DispatchCommandTabExecutor implements CommandTabExecutor {
         selectedChild.execute(context);
         context.removeLastCommandName();
         context.restoreArg();
+    }
+
+    public void executeSelf(@NotNull CommandContext context) {
+        fallBackExecute(context);
     }
 
     public abstract void fallBackExecute(@NotNull CommandContext context);

@@ -2,7 +2,6 @@ package fr.flowsqy.stelyclaim.command.claim;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.HandlerRegistry;
 import fr.flowsqy.stelyclaim.api.Identifiable;
@@ -228,10 +227,11 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
                         "next",
                         page + 1,
                         hasOtherPerm ? (targetName + " ") : "");
+                /*
                 final ComponentReplacer replacer = new ComponentReplacer(pageMessage);
                 sender.spigot().sendMessage(
                         replacer.replace(
-                                "%next%", new BaseComponent[]{nextComponent}).create());
+                                "%next%", new BaseComponent[]{nextComponent}).create());*/
                 // TODO Stats stuff
                 // context.getData().setStatistic(name);
             } else if (page == pageCount) {
@@ -243,15 +243,16 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
                         "previous",
                         page - 1,
                         hasOtherPerm ? (targetName + " ") : "");
+                /*
                 final ComponentReplacer replacer = new ComponentReplacer(pageMessage);
                 sender.spigot().sendMessage(
                         replacer.replace(
-                                "%previous%", new BaseComponent[]{previousComponent}).create());
+                                "%previous%", new BaseComponent[]{previousComponent}).create());*/
                 // TODO Stats stuff
                 // context.getData().setStatistic(name);
             } else {
                 // Previous and next
-                final ComponentReplacer replacer = new ComponentReplacer(pageMessage);
+                //final ComponentReplacer replacer = new ComponentReplacer(pageMessage);
                 final TextComponent previousComponent = getTextComponent(
                         "previous",
                         page - 1,
@@ -260,13 +261,14 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
                         "next",
                         page + 1,
                         hasOtherPerm ? (targetName + " ") : "");
+                /*
                 sender.spigot().sendMessage(
                         replacer
                                 .replace(
                                         "%previous%", new BaseComponent[]{previousComponent})
                                 .replace(
                                         "%next%", new BaseComponent[]{nextComponent})
-                                .create());
+                                .create());*/
             }
         }
         // TODO Stats stuff

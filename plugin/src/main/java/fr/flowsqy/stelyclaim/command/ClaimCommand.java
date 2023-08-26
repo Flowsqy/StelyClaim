@@ -2,10 +2,7 @@ package fr.flowsqy.stelyclaim.command;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
-import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.api.actor.BlockActor;
-import fr.flowsqy.stelyclaim.api.actor.ConsoleActor;
-import fr.flowsqy.stelyclaim.api.actor.EntityActor;
+import fr.flowsqy.stelyclaim.api.actor.*;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.permission.*;
 import fr.flowsqy.stelyclaim.command.claim.*;
@@ -28,6 +25,7 @@ import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.bukkit.command.*;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -78,6 +76,9 @@ public class ClaimCommand implements TabExecutor {
 
     @NotNull
     private Actor getActor(@NotNull CommandSender sender) {
+        if (sender instanceof Player player) {
+            return new PlayerActor(player);
+        }
         if (sender instanceof Entity entity) {
             return new EntityActor<>(entity);
         }
@@ -406,6 +407,7 @@ public class ClaimCommand implements TabExecutor {
         //final CommandPermissionChecker pillarData = new CommandPermissionChecker(pillarName, basePermission, false);
         subCommandManager.register(
                 new PillarSubCommand(
+                        pillarName,
                         new String[]{pillarName},
                         plugin,
                         helpMessage,

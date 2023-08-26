@@ -4,21 +4,41 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionType;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
+import fr.flowsqy.stelyclaim.api.LockableCounter;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
+import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.protocol.OwnerContext;
 import fr.flowsqy.stelyclaim.protocol.ProtocolInteractChecker;
 import fr.flowsqy.stelyclaim.protocol.RegionManagerRetriever;
+import org.checkerframework.checker.units.qual.A;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.locks.Lock;
 
 public class InteractProtocol {
 
     // Results
-    public static final int CANT_OTHER = ActionResult.registerResultCode();
-    public static final int WORLD_NOT_HANDLED = ActionResult.registerResultCode();
-    public static final int REGION_NOT_EXIST = ActionResult.registerResultCode();
-    public static final int TRY_INTERACT_GLOBAL = ActionResult.registerResultCode();
+    public static final int CANT_OTHER;
+    public static final int WORLD_NOT_HANDLED;
+    public static final int REGION_NOT_EXIST;
+    public static final int TRY_INTERACT_GLOBAL;
+    public static final int SUCCESS;
+
+    static {
+        final LockableCounter register = ActionResult.REGISTER;
+        try {
+            register.lock();
+            CANT_OTHER = register.get();
+            WORLD_NOT_HANDLED = register.get();
+            REGION_NOT_EXIST = register.get();
+            TRY_INTERACT_GLOBAL = register.get();
+            SUCCESS = register.get();
+        } finally {
+            register.unlock();
+        }
+    }
 
 
     /*
@@ -33,24 +53,26 @@ public class InteractProtocol {
     }*/
 
     private final @NotNull InteractProtocolHandler interactProtocolHandler;
-    private final @NotNull ProtocolInteractChecker protocolInteractChecker;
+    private final @NotNull OtherPermissionChecker permChecker;
 
-    public InteractProtocol(@NotNull InteractProtocolHandler interactProtocolHandler, @NotNull ProtocolInteractChecker protocolInteractChecker) {
+    public InteractProtocol(@NotNull InteractProtocolHandler interactProtocolHandler, @NotNull OtherPermissionChecker permChecker) {
         this.interactProtocolHandler = interactProtocolHandler;
-        this.protocolInteractChecker = protocolInteractChecker;
+        this.permChecker = permChecker;
     }
 
-    public void process(@NotNull ActionContext<ClaimContext> context) {
+    public void process(@NotNull ActionContext context) {
         //final T owner = handledOwner.owner();
         //final ClaimHandler<T> handler = handledOwner.handler();
         //final HandlerMessages messages = handler.getClaimInteractHandler().getMessages();
 
         //final CommandSender sender = actor.getBukkit();
         //final boolean ownRegion = owner.own(actor);
-        final ClaimContext claimContext = context.getCustomData().orElseThrow();
+        if (!(context.getCustomData() instanceof ClaimContext claimContext)) {
+            throw new RuntimeException();
+        }
         final OwnerContext ownerContext = claimContext.getOwnerContext();
         ownerContext.calculateOwningProperty(context.getActor(), false);
-        if (!ownerContext.isActorOwnTheClaim() && protocolInteractChecker.canInteractNotOwned(context)
+        if (!ownerContext.isActorOwnTheClaim() && !permChecker.checkOther(context)
             /*!sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(interactProtocolHandler.getPermission())) */
         ) {
             context.setResult(new ActionResult(CANT_OTHER, false));
@@ -74,7 +96,7 @@ public class InteractProtocol {
             return;
         }
 
-        if (region.getType() == RegionType.GLOBAL && !protocolInteractChecker.canInteractGlobal(context)) {
+        if (region.getType() == RegionType.GLOBAL /*&& !protocolInteractChecker.canInteractGlobal(context)*/) {
             //TODO Maybe general instead of specific message
             //messages.sendMessage(sender, "claim.interactglobal");
             context.setResult(new ActionResult(TRY_INTERACT_GLOBAL, false));

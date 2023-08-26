@@ -4,7 +4,6 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
@@ -165,9 +164,10 @@ public class HereSubCommand implements CommandNode, Identifiable {
         }
 
         // TODO Handle replace
+        /*
         final ComponentReplacer replacer = new ComponentReplacer(baseMessage);
         replacer.replace("%regions%", regions.toArray(new BaseComponent[0]));
-        sender.spigot().sendMessage(replacer.create());
+        sender.spigot().sendMessage(replacer.create());*/
     }
 
     @Override

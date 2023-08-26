@@ -25,7 +25,7 @@ dependencies {
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.0-SNAPSHOT")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.5-SNAPSHOT")
     compileOnly("org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT")
-    compileOnly("net.essentialsx:EssentialsX:2.20.1")
+    //compileOnly("net.essentialsx:EssentialsX:2.20.1")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

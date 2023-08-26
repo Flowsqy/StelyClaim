@@ -1,15 +1,9 @@
 package fr.flowsqy.stelyclaim.util;
 
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.I18n;
-import com.earth2me.essentials.User;
-import com.earth2me.essentials.utils.FormatUtil;
-import com.earth2me.essentials.utils.StringUtil;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.bukkit.OfflinePlayer;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -45,7 +39,7 @@ public interface EssentialsManager {
             return super.toString();
         }
     }
-
+/*
     class EssentialsManagerImpl implements EssentialsManager {
 
         private final Essentials essentials;
@@ -120,6 +114,6 @@ public interface EssentialsManager {
                     '}';
         }
 
-    }
+    }*/
 
 }

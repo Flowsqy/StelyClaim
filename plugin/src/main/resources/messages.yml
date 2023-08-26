@@ -245,7 +245,7 @@ pillar:
 ## Cette configuration là est aussi possible (une position par ligne)
 #
 #
-#  message: "%northwest%\n%northeast%\n%southwest%\n%southeast%\n%current%"
+#  message: "%northwest%\n#%northeast%\n#%southwest%\n#%southeast%\n#%current%"
 #  northwest:
 #    message: "&6Acceder au pillier &aNord Ouest"
 #    hover: "&7En cliquant sur ce message tu seras directement téléporté au pillier &8Nord Ouest"

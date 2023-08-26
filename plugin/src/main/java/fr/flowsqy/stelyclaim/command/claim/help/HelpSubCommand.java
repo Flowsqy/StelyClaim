@@ -42,11 +42,12 @@ public class HelpSubCommand implements CommandNode, Identifiable {
         final CommandResolver resolver = new CommandResolver(root);
         // TODO Hardcoded -> bad
         final CommandContext fakeContext = CommandContext.buildFake(context, context.copyArgs(), "claim");
-        final Result result = resolver.resolve(fakeContext, (node, ctx) -> node.canTabComplete(ctx));
+        final Result result = resolver.resolve(fakeContext, CommandNode::canExecute);
         if (result.isDispatcher()) {
-            helpMessage.sendMessages(fakeContext, result.asDispatcher());
+            helpMessage.sendMessages(fakeContext, result.asDispatcher(), CommandNode::canExecute);
             return;
         }
+        System.out.println(result.asNode().getName());
         helpMessage.sendMessage(fakeContext, result.asNode());
     }
 
@@ -71,7 +72,7 @@ public class HelpSubCommand implements CommandNode, Identifiable {
         // TODO Hardcoded -> Bad
         final CommandContext fakeContext = CommandContext.buildFake(context, context.copyArgs(), "claim");
         final CommandResolver resolver = new CommandResolver(root);
-        final Result result = resolver.resolve(fakeContext, (node, ctx) -> node.canTabComplete(ctx));
+        final Result result = resolver.resolve(fakeContext, CommandNode::canTabComplete);
         if (!result.isDispatcher() || context.getArgsLength() != 1) {
             return Collections.emptyList();
         }

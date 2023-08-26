@@ -4,6 +4,8 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
+import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
+import fr.flowsqy.stelyclaim.protocol.interact.RemoveHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +22,9 @@ public class RemoveSubCommand extends InteractSubCommand {
 
     @Override
     protected void interactRegion(@NotNull CommandContext context) {
-        protocolManager.remove(context);
+        final RemoveHandler removeHandler = new RemoveHandler();
+        final InteractProtocol protocol = new InteractProtocol(removeHandler, getPermChecker());
+        protocol.process(context);
     }
 
 }

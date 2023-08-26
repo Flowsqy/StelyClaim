@@ -41,11 +41,11 @@ public class LazyHandledOwner<T extends ClaimOwner> {
     }
 
     public void retrieve(@NotNull Actor actor, @NotNull String arg) {
-        Objects.requireNonNull(handler.getClaimInteractHandler()).getOwner(actor, arg);
+        Objects.requireNonNull(handler.getClaimInteractHandler()).getOwner(actor, arg).ifPresent(this::setOwner);
     }
 
     public void retrieve(@NotNull Actor actor, @NotNull Player player) {
-        Objects.requireNonNull(handler.getClaimInteractHandler()).getOwner(actor, player);
+        Objects.requireNonNull(handler.getClaimInteractHandler()).getOwner(actor, player).ifPresent(this::setOwner);
     }
 
 }

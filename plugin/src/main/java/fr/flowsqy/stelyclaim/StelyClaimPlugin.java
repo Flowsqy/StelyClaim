@@ -1,6 +1,6 @@
 package fr.flowsqy.stelyclaim;
 
-import com.earth2me.essentials.Essentials;
+//import com.earth2me.essentials.Essentials;
 import fr.flowsqy.stelyclaim.api.HandlerRegistry;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.command.CommandManager;
@@ -66,7 +66,7 @@ public class StelyClaimPlugin extends JavaPlugin {
         this.statisticManager = new StatisticManager(this, dataFolder);
         this.teleportSync = new TeleportSync(this);
         final Plugin plugin = Bukkit.getPluginManager().getPlugin("Essentials");
-        this.essentialsManager = plugin instanceof Essentials ? new EssentialsManager.EssentialsManagerImpl((Essentials) plugin) : EssentialsManager.NULL;
+        this.essentialsManager = new EssentialsManager.NullEssentialsManager();//plugin instanceof Essentials ? new EssentialsManager.EssentialsManagerImpl((Essentials) plugin) : EssentialsManager.NULL;
         this.mailManager = new MailManager(messages, configuration, essentialsManager);
 
         new DisconnectListener(this);
@@ -76,7 +76,7 @@ public class StelyClaimPlugin extends JavaPlugin {
         // Register internal ClaimHandler
         handlerRegistry.registerHandler(new PlayerHandler(this));
 
-        this.protocolManager = new ProtocolManager(this);
+        this.protocolManager = null;//new ProtocolManager(this);
 
         this.commandManager = new CommandManager(this);
 
