@@ -35,7 +35,7 @@ java {
     }
 }
 
-project.base.archivesName = rootProject.name
+project.base.archivesName.set(rootProject.name)
 group = "fr.flowsqy.stelyclaim"
 version = "3.0.2-SNAPSHOT"
 
