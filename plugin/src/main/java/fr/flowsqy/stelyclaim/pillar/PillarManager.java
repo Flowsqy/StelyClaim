@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class PillarManager {
 
-    private final Map<UUID, PillarData> sessionMap;
+    private final Map<UUID, PillarSession> sessionMap;
 
     public PillarManager() {
         sessionMap = new HashMap<>();
@@ -22,12 +22,12 @@ public class PillarManager {
     }
 
     @NotNull
-    public PillarData getOrCreateSession(@NotNull UUID sessionId) {
-        return sessionMap.computeIfAbsent(sessionId, k -> new PillarData());
+    public PillarSession getOrCreateSession(@NotNull UUID sessionId) {
+        return sessionMap.computeIfAbsent(sessionId, k -> new PillarSession());
     }
 
     @Nullable
-    public PillarData getSession(@NotNull UUID sessionId) {
+    public PillarSession getSession(@NotNull UUID sessionId) {
         return sessionMap.get(sessionId);
     }
 

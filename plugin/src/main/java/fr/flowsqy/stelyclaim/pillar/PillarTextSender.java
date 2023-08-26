@@ -26,9 +26,9 @@ public class PillarTextSender {
     private final TextComponent southeastTxtCpnt;
     private final TextComponent currentTxtCpnt;
 
-    private final Map<String, PillarData> pillarData;
+    private final Map<String, PillarSession> pillarData;
 
-    public PillarTextSender(ConfigurationFormattedMessages messages, String category, Map<String, PillarData> pillarData) {
+    public PillarTextSender(ConfigurationFormattedMessages messages, String category, Map<String, PillarSession> pillarData) {
         baseMessage = messages.getFormattedMessage("pillar." + category + ".message");
         if (baseMessage != null) {
             northwestTxtCpnt = createTextComponent(messages, category, NORTHWEST);

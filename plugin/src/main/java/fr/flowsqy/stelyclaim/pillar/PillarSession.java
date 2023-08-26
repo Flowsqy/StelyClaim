@@ -4,13 +4,13 @@ import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PillarData {
+public class PillarSession {
 
     private final static byte LOCATION_MAX_INDEX = 9;
     private final Location[] locations;
     private int nextPillarId;
 
-    public PillarData() {
+    public PillarSession() {
         this.locations = new Location[LOCATION_MAX_INDEX + 1];
         this.nextPillarId = -1;
     }

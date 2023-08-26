@@ -5,7 +5,7 @@ import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.pillar.PillarData;
+import fr.flowsqy.stelyclaim.pillar.PillarSession;
 import fr.flowsqy.stelyclaim.pillar.PillarManager;
 import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.Location;
@@ -39,8 +39,8 @@ public class PillarSubCommand implements CommandNode {
             sendGlobalHelp(context);
             return;
         }
-        final PillarData pillarData = pillarManager.getSession(context.getActor().getPlayer().getUniqueId());
-        if (pillarData == null) {
+        final PillarSession pillarSession = pillarManager.getSession(context.getActor().getPlayer().getUniqueId());
+        if (pillarSession == null) {
             sendGlobalHelp(context);
             return;
         }
@@ -54,7 +54,7 @@ public class PillarSubCommand implements CommandNode {
             sendGlobalHelp(context);
             return;
         }
-        final Location loc = pillarData.get(index);
+        final Location loc = pillarSession.get(index);
         if (loc == null) {
             sendGlobalHelp(context);
             return;
