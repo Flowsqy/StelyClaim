@@ -1,29 +1,10 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
@@ -36,6 +17,15 @@ import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.protocol.RegionHandler;
 import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
 import fr.flowsqy.stelyclaim.util.WorldName;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 public class NearSubCommand implements CommandNode, Identifiable {
 
@@ -55,8 +45,8 @@ public class NearSubCommand implements CommandNode, Identifiable {
     private final Map<UUID, Long> lastExecTimeByPlayerId;
 
     public NearSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
-            @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds,
-            @NotNull NearCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+                          @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds,
+                          @NotNull NearCommandPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
         this.id = id;
         this.name = name;
         this.triggers = triggers;
@@ -91,7 +81,7 @@ public class NearSubCommand implements CommandNode, Identifiable {
      * @param posZ            The z coordinate of the position
      * @param protectedRegion The {@link ProtectedRegion}
      * @return An {@code int} array of two elements, the x and z coordinate of the
-     *         nearest point
+     * nearest point
      */
     private int[] getNearestPoint(int posX, int posZ, ProtectedRegion protectedRegion) {
         final int[] nearestPoint = new int[2];
@@ -143,7 +133,7 @@ public class NearSubCommand implements CommandNode, Identifiable {
      * @param x          The x coordinate of the player
      * @param z          The z coordinate of the player
      * @return The region id that corresponds to the direction in which is the
-     *         nearest point from the player position
+     * nearest point from the player position
      */
     private int getDirectionId(RegionData regionData, int x, int z) {
         // Calculate the angle
@@ -174,7 +164,7 @@ public class NearSubCommand implements CommandNode, Identifiable {
 
         // Check full perm
         final boolean hasFullPerm = permChecker.checkFull(context);// sender.hasPermission(permChecker.getModifierPerm(contextual.getData(),
-                                                                   // "full"));
+        // "full"));
 
         // Init distance
         final int distance;

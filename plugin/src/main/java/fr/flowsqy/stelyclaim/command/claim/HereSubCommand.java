@@ -1,26 +1,11 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-
 import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.HandlerRegistry;
@@ -32,7 +17,6 @@ import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
-import fr.flowsqy.stelyclaim.internal.PlayerHandler;
 import fr.flowsqy.stelyclaim.protocol.RegionHandler;
 import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
 import fr.flowsqy.stelyclaim.util.WorldName;
@@ -42,6 +26,12 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
+import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 public class HereSubCommand implements CommandNode, Identifiable {
 
@@ -56,9 +46,9 @@ public class HereSubCommand implements CommandNode, Identifiable {
     private final HelpMessage helpMessage;
 
     public HereSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
-            @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds,
-            @NotNull OtherPermissionChecker permChecker, @NotNull OtherPermissionChecker infoPermChecker,
-            @NotNull HelpMessage helpMessage) {
+                          @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds,
+                          @NotNull OtherPermissionChecker permChecker, @NotNull OtherPermissionChecker infoPermChecker,
+                          @NotNull HelpMessage helpMessage) {
         this.id = id;
         this.name = name;
         this.triggers = triggers;
@@ -129,12 +119,12 @@ public class HereSubCommand implements CommandNode, Identifiable {
         final String rawSeparatorMessage = messages.getFormattedMessage("claim." + name + ".separator");
         final String rawHoverTextTemplate = messages.getFormattedMessage("claim." + name + ".hover");
 
-        final List<BaseComponent> seperatorComponents =  Arrays.asList(TextComponent.fromLegacyText(rawSeparatorMessage));
+        final List<BaseComponent> seperatorComponents = Arrays.asList(TextComponent.fromLegacyText(rawSeparatorMessage));
 
         final List<BaseComponent> regionsComponents = new LinkedList<>();
 
         for (ProtectedRegion overlapRegion : intersecting) {
-            if(!regionsComponents.isEmpty()) {
+            if (!regionsComponents.isEmpty()) {
                 regionsComponents.addAll(seperatorComponents);
             }
             final RegionHandler regionHandler = new RegionHandler(overlapRegion.getId());
@@ -147,7 +137,7 @@ public class HereSubCommand implements CommandNode, Identifiable {
                 // TODO Maybe add a warn ?
                 continue;
             }
-            
+
             final ClaimOwner owner = handledOwner.owner();
             final boolean own = owner.own(actor);
             if (!hasOtherPerm && !own) {

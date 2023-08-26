@@ -1,12 +1,11 @@
 package fr.flowsqy.stelyclaim.api.action;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import fr.flowsqy.stelyclaim.api.actor.Actor;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ActionContext {
 

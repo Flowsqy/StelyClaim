@@ -1,18 +1,5 @@
 package fr.flowsqy.stelyclaim.command;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.command.BlockCommandSender;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.TabExecutor;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
-
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
@@ -20,29 +7,13 @@ import fr.flowsqy.stelyclaim.api.actor.BlockActor;
 import fr.flowsqy.stelyclaim.api.actor.ConsoleActor;
 import fr.flowsqy.stelyclaim.api.actor.EntityActor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.api.permission.BasicPC;
-import fr.flowsqy.stelyclaim.api.permission.PermissionChecker;
-import fr.flowsqy.stelyclaim.api.permission.ContextPC;
-import fr.flowsqy.stelyclaim.api.permission.OtherBasicPC;
-import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
-import fr.flowsqy.stelyclaim.api.permission.OtherContextPC;
-import fr.flowsqy.stelyclaim.command.claim.ClaimRootCommand;
-import fr.flowsqy.stelyclaim.command.claim.ClaimSubCommandManager;
-import fr.flowsqy.stelyclaim.command.claim.ContextSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.HereSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.ListAddSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.NearCommandPermissionChecker;
-import fr.flowsqy.stelyclaim.command.claim.NearSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.PillarSubCommand;
+import fr.flowsqy.stelyclaim.api.permission.*;
+import fr.flowsqy.stelyclaim.command.claim.*;
 import fr.flowsqy.stelyclaim.command.claim.domain.AddMemberSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.domain.AddOwnerSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.domain.RemoveMemberSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.domain.RemoveOwnerSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.help.BasicHelpMessageProvider;
-import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.command.claim.help.HelpMessageProvider;
-import fr.flowsqy.stelyclaim.command.claim.help.HelpSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.help.OtherHelpMessageProvider;
+import fr.flowsqy.stelyclaim.command.claim.help.*;
 import fr.flowsqy.stelyclaim.command.claim.interact.InfoSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.interact.RemoveSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.interact.TeleportSubCommand;
@@ -54,6 +25,14 @@ import fr.flowsqy.stelyclaim.command.claim.statistics.StatsSubCommand;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
+import org.bukkit.command.*;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 public class ClaimCommand implements TabExecutor {
 

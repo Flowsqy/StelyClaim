@@ -1,10 +1,5 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
-import java.util.List;
-import java.util.UUID;
-
-import org.jetbrains.annotations.NotNull;
-
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.Identifiable;
@@ -14,6 +9,10 @@ import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
 import fr.flowsqy.stelyclaim.api.permission.PermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.UUID;
 
 public class ContextSubCommand extends DispatchCommandTabExecutor implements CommandNode, Identifiable {
 
@@ -26,8 +25,8 @@ public class ContextSubCommand extends DispatchCommandTabExecutor implements Com
     private final HelpMessage helpMessage;
 
     public ContextSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers, @NotNull ClaimHandler<?> claimHandler,
-            @NotNull ClaimSubCommandManager subCommandManager, @NotNull PermissionChecker permChecker,
-            @NotNull HelpMessage helpMessage) {
+                             @NotNull ClaimSubCommandManager subCommandManager, @NotNull PermissionChecker permChecker,
+                             @NotNull HelpMessage helpMessage) {
         this.id = id;
         this.name = name;
         this.triggers = triggers;

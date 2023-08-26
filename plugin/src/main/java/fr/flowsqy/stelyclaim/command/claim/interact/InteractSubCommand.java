@@ -1,17 +1,5 @@
 package fr.flowsqy.stelyclaim.command.claim.interact;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.HumanEntity;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.LazyHandledOwner;
@@ -22,6 +10,13 @@ import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.WorldChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class InteractSubCommand implements CommandNode, Identifiable {
 
@@ -33,9 +28,9 @@ public abstract class InteractSubCommand implements CommandNode, Identifiable {
     private final HelpMessage helpMessage;
 
     public InteractSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
-            @NotNull StelyClaimPlugin plugin,
-            @Nullable Collection<String> worlds, @NotNull OtherPermissionChecker permChecker,
-            @NotNull HelpMessage helpMessage) {
+                              @NotNull StelyClaimPlugin plugin,
+                              @Nullable Collection<String> worlds, @NotNull OtherPermissionChecker permChecker,
+                              @NotNull HelpMessage helpMessage) {
         this.id = id;
         this.name = name;
         this.triggers = triggers;

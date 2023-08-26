@@ -1,14 +1,13 @@
 package fr.flowsqy.stelyclaim.api.command;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
+import fr.flowsqy.stelyclaim.api.action.ActionContext;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import fr.flowsqy.stelyclaim.api.action.ActionContext;
-import fr.flowsqy.stelyclaim.api.actor.Actor;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class CommandContext extends ActionContext {
 
@@ -24,7 +23,7 @@ public class CommandContext extends ActionContext {
     }
 
     public static CommandContext buildFake(@NotNull CommandContext context, @NotNull String[] args,
-            @NotNull String... commandPath) {
+                                           @NotNull String... commandPath) {
         final CommandContext fakeContext = new CommandContext(context.getActor(), args, null, 0);
         for (String commandName : commandPath) {
             fakeContext.appendCommandName(commandName);

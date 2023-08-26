@@ -1,9 +1,8 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
-import org.jetbrains.annotations.NotNull;
-
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.permission.BasicPC;
+import org.jetbrains.annotations.NotNull;
 
 public class NearCommandPermissionChecker extends BasicPC {
 

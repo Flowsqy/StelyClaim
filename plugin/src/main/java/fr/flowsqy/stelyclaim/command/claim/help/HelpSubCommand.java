@@ -1,20 +1,15 @@
 package fr.flowsqy.stelyclaim.command.claim.help;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
-
-import org.jetbrains.annotations.NotNull;
-
 import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.CommandResolver;
 import fr.flowsqy.stelyclaim.api.command.CommandResolver.Result;
-import fr.flowsqy.stelyclaim.api.permission.PermissionChecker;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
+import fr.flowsqy.stelyclaim.api.permission.PermissionChecker;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
 
 public class HelpSubCommand implements CommandNode, Identifiable {
 
@@ -26,8 +21,8 @@ public class HelpSubCommand implements CommandNode, Identifiable {
     private final HelpMessage helpMessage;
 
     public HelpSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
-            @NotNull PermissionChecker permChecker, @NotNull DispatchCommandTabExecutor root,
-            @NotNull HelpMessage helpMessage) {
+                          @NotNull PermissionChecker permChecker, @NotNull DispatchCommandTabExecutor root,
+                          @NotNull HelpMessage helpMessage) {
         this.id = id;
         this.name = name;
         this.triggers = triggers;

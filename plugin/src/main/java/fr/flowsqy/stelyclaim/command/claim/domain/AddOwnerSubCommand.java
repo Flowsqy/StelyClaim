@@ -4,7 +4,6 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.permission.OtherCommandPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import fr.flowsqy.stelyclaim.protocol.domain.DomainProtocol;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import org.bukkit.OfflinePlayer;

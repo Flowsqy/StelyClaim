@@ -1,9 +1,8 @@
 package fr.flowsqy.stelyclaim.command.claim.help;
 
-import org.jetbrains.annotations.NotNull;
-
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.permission.PermissionChecker;
+import org.jetbrains.annotations.NotNull;
 
 public class BasicHelpMessageProvider implements HelpMessageProvider {
 

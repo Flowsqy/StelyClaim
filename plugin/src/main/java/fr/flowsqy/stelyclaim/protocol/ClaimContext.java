@@ -9,8 +9,8 @@ import java.util.function.Supplier;
 
 public class ClaimContext {
 
-    private World world;
     private final OwnerContext ownerContext;
+    private World world;
 
     public ClaimContext(@NotNull ClaimHandler<?> claimHandler) {
         ownerContext = new OwnerContext(claimHandler);

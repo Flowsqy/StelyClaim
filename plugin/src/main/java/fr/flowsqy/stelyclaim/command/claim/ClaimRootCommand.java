@@ -1,11 +1,10 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
-import org.jetbrains.annotations.NotNull;
-
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
+import org.jetbrains.annotations.NotNull;
 
 public class ClaimRootCommand extends DispatchCommandTabExecutor {
 

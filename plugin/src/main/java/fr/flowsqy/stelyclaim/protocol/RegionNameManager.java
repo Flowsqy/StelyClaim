@@ -19,6 +19,7 @@ public class RegionNameManager {
 
     private final static String PREFIX = "stelyclaim";
     private final static Pattern GLOBAL_PATTERN = Pattern.compile("^" + PREFIX + "_[a-z0-9]+_[A-Za-z0-9_,'\\-+/]+$");
+    private static FormattedMessages internalMessages;
 
     public static <T extends ClaimOwner> String getRegionName(@NotNull HandledOwner<T> handledOwner) {
         return PREFIX + "_" + handledOwner.handler().getId() + "_" + handledOwner.handler().getIdentifier(handledOwner.owner());
@@ -27,6 +28,9 @@ public class RegionNameManager {
     public static boolean isCorrectId(@Nullable String id) {
         return id != null && GLOBAL_PATTERN.matcher(id).matches();
     }
+
+
+    //TODO Remove this section
 
     /**
      * Get the parts stored in a region name
@@ -39,12 +43,6 @@ public class RegionNameManager {
         final String[] parts = regionName.split("_", 3);
         return new String[]{parts[1], parts[2]};
     }
-
-
-    //TODO Remove this section
-
-
-    private static FormattedMessages internalMessages;
 
     public static void setInternalMessages(@NotNull FormattedMessages messages) {
         if (internalMessages != null) {

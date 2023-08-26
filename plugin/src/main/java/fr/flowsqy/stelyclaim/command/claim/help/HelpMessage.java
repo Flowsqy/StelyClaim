@@ -1,15 +1,14 @@
 package fr.flowsqy.stelyclaim.command.claim.help;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import org.jetbrains.annotations.NotNull;
-
 import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class HelpMessage {
 

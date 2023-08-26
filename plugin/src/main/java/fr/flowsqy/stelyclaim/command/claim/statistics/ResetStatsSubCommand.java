@@ -1,28 +1,27 @@
 package fr.flowsqy.stelyclaim.command.claim.statistics;
 
-import java.util.UUID;
-
+import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
+import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
-import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
+import java.util.UUID;
 
 public class ResetStatsSubCommand extends SubStatsSubCommand {
 
     public ResetStatsSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
-            @NotNull StelyClaimPlugin plugin, @NotNull OtherPermissionChecker permChecker,
-            @NotNull HelpMessage helpMessage) {
+                                @NotNull StelyClaimPlugin plugin, @NotNull OtherPermissionChecker permChecker,
+                                @NotNull HelpMessage helpMessage) {
         super(id, name, triggers, plugin, permChecker, helpMessage);
     }
 
     @Override
     protected boolean process(@NotNull CommandContext context, boolean own, @Nullable String command,
-            @NotNull OfflinePlayer target) {
+                              @NotNull OfflinePlayer target) {
         final String other = own ? "" : "-other";
         final CommandSender sender = context.getActor().getBukkit();
         final UUID targetId = target.getUniqueId();

@@ -1,14 +1,10 @@
 package fr.flowsqy.stelyclaim.protocol.selection;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
@@ -16,6 +12,8 @@ import fr.flowsqy.stelyclaim.protocol.OwnerContext;
 import fr.flowsqy.stelyclaim.protocol.ProtocolInteractChecker;
 import fr.flowsqy.stelyclaim.protocol.RegionManagerRetriever;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SelectionProtocol {
 
@@ -29,9 +27,9 @@ public class SelectionProtocol {
     private final ProtocolInteractChecker protocolInteractChecker;
 
     public SelectionProtocol(@NotNull SelectionProvider selectionProvider,
-            @Nullable SelectionModifier selectionModifier, @Nullable RegionValidator regionValidator,
-            @NotNull SelectionProtocolHandler selectionProtocolHandler,
-            @NotNull ProtocolInteractChecker protocolInteractChecker) {
+                             @Nullable SelectionModifier selectionModifier, @Nullable RegionValidator regionValidator,
+                             @NotNull SelectionProtocolHandler selectionProtocolHandler,
+                             @NotNull ProtocolInteractChecker protocolInteractChecker) {
         this.selectionProvider = selectionProvider;
         this.selectionModifier = selectionModifier;
         this.regionValidator = regionValidator;

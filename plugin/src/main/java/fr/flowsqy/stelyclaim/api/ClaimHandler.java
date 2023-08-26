@@ -16,6 +16,7 @@ public interface ClaimHandler<T extends ClaimOwner> {
     @Nullable ClaimInteractHandler<T> getClaimInteractHandler();
 
     // TODO Throws an error if the owner can't be retrieved
+
     /**
      * The owner of the claim
      *

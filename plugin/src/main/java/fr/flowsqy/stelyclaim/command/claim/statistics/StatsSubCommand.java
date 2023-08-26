@@ -1,17 +1,16 @@
 package fr.flowsqy.stelyclaim.command.claim.statistics;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import org.jetbrains.annotations.NotNull;
-
 import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
 import fr.flowsqy.stelyclaim.api.permission.PermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class StatsSubCommand extends DispatchCommandTabExecutor implements CommandNode, Identifiable {
 
@@ -23,8 +22,8 @@ public class StatsSubCommand extends DispatchCommandTabExecutor implements Comma
     private final List<CommandNode> children;
 
     public StatsSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
-            @NotNull PermissionChecker permChecker, @NotNull HelpMessage helpMessage,
-            @NotNull List<CommandNode> children) {
+                           @NotNull PermissionChecker permChecker, @NotNull HelpMessage helpMessage,
+                           @NotNull List<CommandNode> children) {
         this.id = id;
         this.name = name;
         this.triggers = triggers;

@@ -1,8 +1,7 @@
 package fr.flowsqy.stelyclaim.protocol;
 
-import org.jetbrains.annotations.NotNull;
-
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
+import org.jetbrains.annotations.NotNull;
 
 public interface ProtocolInteractChecker {
 

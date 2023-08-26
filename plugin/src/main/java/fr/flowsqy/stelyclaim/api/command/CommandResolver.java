@@ -1,9 +1,9 @@
 package fr.flowsqy.stelyclaim.api.command;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Iterator;
 import java.util.function.BiPredicate;
-
-import org.jetbrains.annotations.NotNull;
 
 public class CommandResolver {
 
@@ -15,14 +15,14 @@ public class CommandResolver {
 
     @NotNull
     public Result resolve(@NotNull CommandContext context,
-            @NotNull BiPredicate<CommandNode, CommandContext> explorePredicate) {
+                          @NotNull BiPredicate<CommandNode, CommandContext> explorePredicate) {
         if (context.getArgsLength() == 0) {
             return new DispatcherResult(root);
         }
         DispatchCommandTabExecutor node = root;
         CommandNode selectedChild = null;
         Iterator<CommandNode> commandItr = root.getChildren().iterator();
-        for (CommandNode child = null; commandItr.hasNext();) {
+        for (CommandNode child = null; commandItr.hasNext(); ) {
             child = commandItr.next();
             if (!explorePredicate.test(child, context) || !child.getName().equals(context.getArg(0))) {
                 continue;

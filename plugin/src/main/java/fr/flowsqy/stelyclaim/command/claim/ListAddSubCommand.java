@@ -1,26 +1,7 @@
 package fr.flowsqy.stelyclaim.command.claim;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.entity.HumanEntity;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-
 import fr.flowsqy.componentreplacer.ComponentReplacer;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.HandlerRegistry;
@@ -39,6 +20,17 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.entity.HumanEntity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ListAddSubCommand implements CommandNode, Identifiable {
 
@@ -59,8 +51,8 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
     private final String regionMessage;
 
     public ListAddSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
-            @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds,
-            @NotNull OtherPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+                             @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds,
+                             @NotNull OtherPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
         this.id = id;
         this.name = name;
         this.triggers = triggers;
@@ -239,10 +231,9 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
                 final ComponentReplacer replacer = new ComponentReplacer(pageMessage);
                 sender.spigot().sendMessage(
                         replacer.replace(
-                                "%next%", new BaseComponent[] { nextComponent }).create());
+                                "%next%", new BaseComponent[]{nextComponent}).create());
                 // TODO Stats stuff
                 // context.getData().setStatistic(name);
-                return;
             } else if (page == pageCount) {
                 // Previous but no next
                 pageMessage = pageMessage.replace(
@@ -255,10 +246,9 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
                 final ComponentReplacer replacer = new ComponentReplacer(pageMessage);
                 sender.spigot().sendMessage(
                         replacer.replace(
-                                "%previous%", new BaseComponent[] { previousComponent }).create());
+                                "%previous%", new BaseComponent[]{previousComponent}).create());
                 // TODO Stats stuff
                 // context.getData().setStatistic(name);
-                return;
             } else {
                 // Previous and next
                 final ComponentReplacer replacer = new ComponentReplacer(pageMessage);
@@ -273,9 +263,9 @@ public class ListAddSubCommand implements CommandNode, Identifiable {
                 sender.spigot().sendMessage(
                         replacer
                                 .replace(
-                                        "%previous%", new BaseComponent[] { previousComponent })
+                                        "%previous%", new BaseComponent[]{previousComponent})
                                 .replace(
-                                        "%next%", new BaseComponent[] { nextComponent })
+                                        "%next%", new BaseComponent[]{nextComponent})
                                 .create());
             }
         }

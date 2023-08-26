@@ -8,7 +8,6 @@ import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.command.ClaimCommand;
 import fr.flowsqy.stelyclaim.util.PillarCoordinate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

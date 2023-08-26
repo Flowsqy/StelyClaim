@@ -1,8 +1,7 @@
 package fr.flowsqy.stelyclaim.api.permission;
 
-import org.jetbrains.annotations.NotNull;
-
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import org.jetbrains.annotations.NotNull;
 
 public class BasicPC implements PermissionChecker {
 

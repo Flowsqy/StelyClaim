@@ -1,16 +1,5 @@
 package fr.flowsqy.stelyclaim.command.claim.statistics;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
@@ -21,20 +10,30 @@ import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
+import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class SubStatsSubCommand implements CommandNode, Identifiable {
 
+    protected final ConfigurationFormattedMessages messages;
+    protected final StatisticManager statisticManager;
     private final UUID id;
     private final String name;
     private final String[] triggers;
     private final OtherPermissionChecker permChecker;
     private final HelpMessage helpMessage;
-    protected final ConfigurationFormattedMessages messages;
-    protected final StatisticManager statisticManager;
 
     public SubStatsSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers,
-            @NotNull StelyClaimPlugin plugin, @NotNull OtherPermissionChecker permChecker,
-            @NotNull HelpMessage helpMessage) {
+                              @NotNull StelyClaimPlugin plugin, @NotNull OtherPermissionChecker permChecker,
+                              @NotNull HelpMessage helpMessage) {
         this.id = id;
         this.name = name;
         this.triggers = triggers;
@@ -147,6 +146,6 @@ public abstract class SubStatsSubCommand implements CommandNode, Identifiable {
     }
 
     protected abstract boolean process(@NotNull CommandContext context, boolean own,
-            @Nullable String command, @NotNull OfflinePlayer target);
+                                       @Nullable String command, @NotNull OfflinePlayer target);
 
 }
