@@ -1,21 +1,21 @@
 package fr.flowsqy.stelyclaim;
 
-//import com.earth2me.essentials.Essentials;
-
 import fr.flowsqy.stelyclaim.api.HandlerRegistry;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.command.CommandManager;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.common.PrefixedConfigurationFormattedMessages;
+import fr.flowsqy.stelyclaim.external.ExternalManager;
 import fr.flowsqy.stelyclaim.internal.PlayerHandler;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
 import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
-import fr.flowsqy.stelyclaim.util.*;
+import fr.flowsqy.stelyclaim.util.DisconnectListener;
+import fr.flowsqy.stelyclaim.util.PillarData;
+import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,8 +36,6 @@ public class StelyClaimPlugin extends JavaPlugin {
     private BedrockManager breakManager;
     private StatisticManager statisticManager;
     private TeleportSync teleportSync;
-    private EssentialsManager essentialsManager;
-    private MailManager mailManager;
     private HandlerRegistry handlerRegistry;
     private ProtocolManager protocolManager;
     private CommandManager commandManager;
@@ -66,9 +64,9 @@ public class StelyClaimPlugin extends JavaPlugin {
         this.breakManager = new BedrockManager(dataFolder);
         this.statisticManager = new StatisticManager(this, dataFolder);
         this.teleportSync = new TeleportSync(this);
-        final Plugin plugin = Bukkit.getPluginManager().getPlugin("Essentials");
-        this.essentialsManager = new EssentialsManager.NullEssentialsManager();//plugin instanceof Essentials ? new EssentialsManager.EssentialsManagerImpl((Essentials) plugin) : EssentialsManager.NULL;
-        this.mailManager = new MailManager(messages, configuration, essentialsManager);
+
+        final ExternalManager externalManager = new ExternalManager();
+        externalManager.load(this);
 
         new DisconnectListener(this);
 
@@ -121,15 +119,6 @@ public class StelyClaimPlugin extends JavaPlugin {
 
     public TeleportSync getTeleportSync() {
         return teleportSync;
-    }
-
-    @SuppressWarnings("unused") // API
-    public EssentialsManager getEssentialsManager() {
-        return essentialsManager;
-    }
-
-    public MailManager getMailManager() {
-        return mailManager;
     }
 
     public Map<String, PillarData> getPillarData() {
