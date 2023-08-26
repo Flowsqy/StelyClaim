@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.util;
+package fr.flowsqy.stelyclaim.pillar;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
@@ -102,10 +102,10 @@ public class PillarTextSender {
     }*/
 
     public boolean sendMessage(Player player, ProtectedRegion newRegion) {
-        return sendMessage(player, new PillarCoordinate(newRegion, player.getWorld()));
+        return sendMessage(player, new CuboidPillarCoordinate(newRegion, player.getWorld()));
     }
 
-    public boolean sendMessage(Player player, PillarCoordinate pillarCoordinate) {
+    public boolean sendMessage(Player player, CuboidPillarCoordinate pillarCoordinate) {
         /*
         final ComponentReplacer replacer = getReplacer(player, pillarCoordinate);
         if (replacer != null) {

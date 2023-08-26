@@ -11,7 +11,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.api.RegionModifier;
-import fr.flowsqy.stelyclaim.util.PillarCoordinate;
+import fr.flowsqy.stelyclaim.pillar.CuboidPillarCoordinate;
 import org.bukkit.Location;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
@@ -44,7 +44,7 @@ public class ConfigRegionModifier<T extends ClaimOwner> implements RegionModifie
         // Teleportation flag
         final String setTp = config.getString(category + ".set-tp");
         if (setTp != null) {
-            final PillarCoordinate pillarCoordinate = new PillarCoordinate(region, sender.getWorld());
+            final CuboidPillarCoordinate pillarCoordinate = new CuboidPillarCoordinate(region, sender.getWorld());
 
             final Location location = switch (setTp) {
                 case "here" -> sender.getLocation();

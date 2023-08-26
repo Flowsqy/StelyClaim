@@ -7,7 +7,7 @@ import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
 import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import fr.flowsqy.stelyclaim.util.PillarCoordinate;
+import fr.flowsqy.stelyclaim.pillar.CuboidPillarCoordinate;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -100,7 +100,7 @@ public class InfoHandler implements InteractProtocolHandler {
         }
     }
 
-    private String replaceSize(String message, PillarCoordinate pillarCoordinate, ProtectedRegion region) {
+    private String replaceSize(String message, CuboidPillarCoordinate pillarCoordinate, ProtectedRegion region) {
         final int xSize = pillarCoordinate.getMaxX() - pillarCoordinate.getMinX() + 1;
         final int zSize = pillarCoordinate.getMaxZ() - pillarCoordinate.getMinZ() + 1;
 
@@ -114,7 +114,7 @@ public class InfoHandler implements InteractProtocolHandler {
                 .replace("%z-size%", String.valueOf(zSize));
     }
 
-    private String replacePillar(String message, PillarCoordinate pillarCoordinate) {
+    private String replacePillar(String message, CuboidPillarCoordinate pillarCoordinate) {
         final Location northwest = pillarCoordinate.getNorthWestBlockLocation();
         final Location northeast = pillarCoordinate.getNorthEastBlockLocation();
         final Location southwest = pillarCoordinate.getSouthWestBlockLocation();

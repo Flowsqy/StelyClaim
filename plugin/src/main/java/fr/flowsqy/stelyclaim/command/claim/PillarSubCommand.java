@@ -5,14 +5,14 @@ import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.util.PillarData;
+import fr.flowsqy.stelyclaim.pillar.PillarData;
+import fr.flowsqy.stelyclaim.pillar.PillarManager;
 import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 
 public class PillarSubCommand implements CommandNode {
 
@@ -20,7 +20,7 @@ public class PillarSubCommand implements CommandNode {
     private final String[] triggers;
     private final HelpMessage helpMessage;
     private final DispatchCommandTabExecutor root;
-    private final Map<String, PillarData> pillarData;
+    private final PillarManager pillarManager;
     private final TeleportSync teleportSync;
 
     public PillarSubCommand(@NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin,
@@ -29,17 +29,17 @@ public class PillarSubCommand implements CommandNode {
         this.triggers = triggers;
         this.helpMessage = helpMessage;
         this.root = root;
-        pillarData = plugin.getPillarData();
+        pillarManager = plugin.getPillarManager();
         teleportSync = plugin.getTeleportSync();
     }
 
     @Override
     public void execute(@NotNull CommandContext context) {
-        if (context.getArgsLength() != 1) {
+        if (context.getArgsLength() != 1 || !context.getActor().isPlayer()) {
             sendGlobalHelp(context);
             return;
         }
-        final PillarData pillarData = this.pillarData.get(context.getActor().getBukkit().getName());
+        final PillarData pillarData = pillarManager.getSession(context.getActor().getPlayer().getUniqueId());
         if (pillarData == null) {
             sendGlobalHelp(context);
             return;
@@ -49,7 +49,12 @@ public class PillarSubCommand implements CommandNode {
             sendGlobalHelp(context);
             return;
         }
-        final Location loc = pillarData.getLocations().get(arg);
+        final int index = fastParse(arg.charAt(0));
+        if (index < 0) {
+            sendGlobalHelp(context);
+            return;
+        }
+        final Location loc = pillarData.get(index);
         if (loc == null) {
             sendGlobalHelp(context);
             return;
@@ -58,14 +63,24 @@ public class PillarSubCommand implements CommandNode {
         if (world == null) // Normally impossible
             return;
 
-        final Location teleportLoc = loc.clone();
-        if (teleportLoc.getX() == Math.floor(teleportLoc.getX())) {
-            // Correct position only for pillar loc (exclude current position)
-            teleportLoc.setY(world.getHighestBlockYAt(loc));
-            teleportLoc.add(0.5, 1, 0.5);
-        }
-        context.getActor().getMovable().setLocation(teleportSync, teleportLoc);
+        context.getActor().getMovable().setLocation(teleportSync, loc);
         // context.getData().setStatistic(name);
+    }
+
+    private int fastParse(char c) {
+        return switch (c) {
+            case '0' -> 0;
+            case '1' -> 1;
+            case '2' -> 2;
+            case '3' -> 3;
+            case '4' -> 4;
+            case '5' -> 5;
+            case '6' -> 6;
+            case '7' -> 7;
+            case '8' -> 8;
+            case '9' -> 9;
+            default -> -1;
+        };
     }
 
     @Override
@@ -80,7 +95,7 @@ public class PillarSubCommand implements CommandNode {
 
     @Override
     public boolean canExecute(@NotNull CommandContext context) {
-        return context.getActor().isMovable();
+        return context.getActor().isPlayer();
     }
 
     @Override

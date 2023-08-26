@@ -1,19 +1,17 @@
-package fr.flowsqy.stelyclaim.util;
+package fr.flowsqy.stelyclaim.pillar;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
-public class PillarCoordinate {
+public class CuboidPillarCoordinate {
 
     private final World world;
-    private final int maxX;
-    private final int minX;
-    private final int maxZ;
-    private final int minZ;
+    private final int maxX, minX, maxZ, minZ;
 
-    public PillarCoordinate(ProtectedRegion region, World world) {
+    public CuboidPillarCoordinate(@NotNull ProtectedRegion region, @NotNull World world) {
         this.world = world;
         final BlockVector3 maxPoint = region.getMaximumPoint();
         final BlockVector3 minPoint = region.getMinimumPoint();
@@ -89,7 +87,7 @@ public class PillarCoordinate {
         return getTeleportLocation(getSouthEastBlockLocation());
     }
 
-    public Location getTeleportLocation(Location blockLocation) {
+    public Location getTeleportLocation(@NotNull Location blockLocation) {
         return blockLocation.add(0.5, world.getHighestBlockYAt(blockLocation) + 1, 0.5);
     }
 

@@ -9,9 +9,8 @@ import fr.flowsqy.stelyclaim.external.ExternalManager;
 import fr.flowsqy.stelyclaim.internal.PlayerHandler;
 import fr.flowsqy.stelyclaim.io.BedrockManager;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
+import fr.flowsqy.stelyclaim.pillar.PillarManager;
 import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
-import fr.flowsqy.stelyclaim.util.DisconnectListener;
-import fr.flowsqy.stelyclaim.util.PillarData;
 import fr.flowsqy.stelyclaim.util.TeleportSync;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,19 +21,17 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class StelyClaimPlugin extends JavaPlugin {
 
-    private final Map<String, PillarData> pillarData = new HashMap<>();
     private YamlConfiguration configuration;
     private ConfigurationFormattedMessages messages;
     private BedrockManager breakManager;
     private StatisticManager statisticManager;
+    private PillarManager pillarManager;
     private TeleportSync teleportSync;
     private HandlerRegistry handlerRegistry;
     private ProtocolManager protocolManager;
@@ -68,7 +65,8 @@ public class StelyClaimPlugin extends JavaPlugin {
         final ExternalManager externalManager = new ExternalManager();
         externalManager.load(this);
 
-        new DisconnectListener(this);
+        pillarManager = new PillarManager();
+        pillarManager.load(this);
 
         handlerRegistry = new HandlerRegistry();
 
@@ -121,8 +119,8 @@ public class StelyClaimPlugin extends JavaPlugin {
         return teleportSync;
     }
 
-    public Map<String, PillarData> getPillarData() {
-        return pillarData;
+    public PillarManager getPillarManager() {
+        return pillarManager;
     }
 
     public HandlerRegistry getHandlerRegistry() {

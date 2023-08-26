@@ -1,27 +1,29 @@
-package fr.flowsqy.stelyclaim.util;
+package fr.flowsqy.stelyclaim.pillar;
 
-import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-
-import java.util.Map;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 public class DisconnectListener implements Listener {
 
-    private final Map<String, PillarData> pillarData;
+    private final PillarManager pillarManager;
 
-    public DisconnectListener(StelyClaimPlugin plugin) {
-        this.pillarData = plugin.getPillarData();
+    public DisconnectListener(@NotNull PillarManager pillarManager) {
+        this.pillarManager = pillarManager;
+    }
+
+    public void load(@NotNull Plugin plugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @SuppressWarnings("unused")
     @EventHandler(priority = EventPriority.MONITOR)
     private void onQuit(PlayerQuitEvent e) {
-        pillarData.remove(e.getPlayer().getName());
+        pillarManager.removeSession(e.getPlayer().getUniqueId());
     }
 
 }
