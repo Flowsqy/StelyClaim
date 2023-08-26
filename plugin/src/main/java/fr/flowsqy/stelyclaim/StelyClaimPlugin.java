@@ -1,6 +1,7 @@
 package fr.flowsqy.stelyclaim;
 
 //import com.earth2me.essentials.Essentials;
+
 import fr.flowsqy.stelyclaim.api.HandlerRegistry;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
 import fr.flowsqy.stelyclaim.command.CommandManager;

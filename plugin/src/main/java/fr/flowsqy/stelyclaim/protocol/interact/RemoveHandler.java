@@ -2,14 +2,9 @@ package fr.flowsqy.stelyclaim.protocol.interact;
 
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.*;
+import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
-import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.command.ClaimCommand;
-import fr.flowsqy.stelyclaim.util.MailManager;
-import fr.flowsqy.stelyclaim.util.PillarTextSender;
 import org.jetbrains.annotations.NotNull;
 
 public class RemoveHandler implements InteractProtocolHandler {

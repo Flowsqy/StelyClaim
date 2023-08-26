@@ -160,7 +160,6 @@ public class HereSubCommand implements CommandNode, Identifiable {
 
         if (regionsComponents.isEmpty()) {
             messages.sendMessage(sender, "claim." + name + ".nothing");
-            return;
         }
 
         // TODO Handle replace

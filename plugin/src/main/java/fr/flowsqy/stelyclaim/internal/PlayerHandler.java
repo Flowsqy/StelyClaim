@@ -1,9 +1,11 @@
 package fr.flowsqy.stelyclaim.internal;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.*;
+import fr.flowsqy.stelyclaim.api.ClaimHandler;
+import fr.flowsqy.stelyclaim.api.ClaimInteractHandler;
+import fr.flowsqy.stelyclaim.api.HandledOwner;
+import fr.flowsqy.stelyclaim.api.RegionModifier;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
-import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -39,7 +41,7 @@ public class PlayerHandler implements ClaimHandler<PlayerOwner> {
             @Override
             public @NotNull Optional<PlayerOwner> getOwner(@NotNull Actor actor, @NotNull String commandArg) {
                 final OfflinePlayer p = OfflinePlayerRetriever.getOfflinePlayer(commandArg);
-                if(p == null) {
+                if (p == null) {
                     return Optional.empty();
                 }
                 return Optional.of(new PlayerOwner(p));

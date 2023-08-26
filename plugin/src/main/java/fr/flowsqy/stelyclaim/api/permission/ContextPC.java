@@ -17,7 +17,7 @@ public class ContextPC implements PermissionChecker {
 
     @NotNull
     public String buildBasePerm(@NotNull ActionContext context) {
-        final String handlerId = ((ClaimContext)context.getCustomData()).getOwnerContext().getHandler().getId(); // TODO Retrieve id
+        final String handlerId = ((ClaimContext) context.getCustomData()).getOwnerContext().getHandler().getId(); // TODO Retrieve id
         return prefix + handlerId + suffix;
     }
 

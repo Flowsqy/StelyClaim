@@ -1,7 +1,6 @@
 package fr.flowsqy.stelyclaim.api.permission;
 
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
-import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
 
 public class OtherContextPC extends ContextPC implements OtherPermissionChecker {
