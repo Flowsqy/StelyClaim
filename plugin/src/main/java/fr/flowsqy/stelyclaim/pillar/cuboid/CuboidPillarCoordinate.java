@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.pillar;
+package fr.flowsqy.stelyclaim.pillar.cuboid;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;

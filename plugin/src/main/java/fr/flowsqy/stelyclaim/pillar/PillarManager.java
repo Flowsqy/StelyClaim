@@ -17,8 +17,8 @@ public class PillarManager {
     }
 
     public void load(@NotNull Plugin plugin) {
-        final DisconnectListener disconnectListener = new DisconnectListener(this);
-        disconnectListener.load(plugin);
+        final RemoveSessionListener removeSessionListener = new RemoveSessionListener(this);
+        removeSessionListener.load(plugin);
     }
 
     @NotNull

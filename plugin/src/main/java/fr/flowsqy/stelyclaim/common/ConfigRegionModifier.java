@@ -11,7 +11,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.api.ClaimOwner;
 import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.api.RegionModifier;
-import fr.flowsqy.stelyclaim.pillar.CuboidPillarCoordinate;
+import fr.flowsqy.stelyclaim.pillar.cuboid.CuboidPillarCoordinate;
 import org.bukkit.Location;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;

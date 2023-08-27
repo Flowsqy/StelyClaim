@@ -8,11 +8,11 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-public class DisconnectListener implements Listener {
+public class RemoveSessionListener implements Listener {
 
     private final PillarManager pillarManager;
 
-    public DisconnectListener(@NotNull PillarManager pillarManager) {
+    public RemoveSessionListener(@NotNull PillarManager pillarManager) {
         this.pillarManager = pillarManager;
     }
 
