@@ -38,13 +38,17 @@ public class BedrockCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            return messages.sendMessage(sender, "util.onlyplayer");
+            messages.sendMessage(sender, "util.onlyplayer");
+            return true;
         }
 
-        if (manager.toggle(player.getUniqueId()))
-            return messages.sendMessage(player, "bedrock.enable");
+        if (manager.toggle(player.getUniqueId())) {
+            messages.sendMessage(player, "bedrock.enable");
+            return true;
+        }
 
-        return messages.sendMessage(player, "bedrock.disable");
+        messages.sendMessage(player, "bedrock.disable");
+        return true;
     }
 
     @Override
