@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ActionContext {
 
@@ -43,9 +44,9 @@ public class ActionContext {
         this.customData = customData;
     }
 
-    @Nullable
-    public ActionResult getResult() {
-        return result;
+    @NotNull
+    public Optional<ActionResult> getResult() {
+        return Optional.ofNullable(result);
     }
 
     public void setResult(@Nullable ActionResult result) {

@@ -1,11 +1,15 @@
 package fr.flowsqy.stelyclaim.command.claim.domain;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.ClaimInteractHandler;
+import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.api.ProtocolManager;
-import fr.flowsqy.stelyclaim.api.action.ActionResult;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
+import fr.flowsqy.stelyclaim.command.claim.HandlerContext;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
+import fr.flowsqy.stelyclaim.message.DomainMessage;
+import fr.flowsqy.stelyclaim.message.FallbackFormattedMessages;
 import fr.flowsqy.stelyclaim.protocol.domain.DomainProtocol;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import org.bukkit.OfflinePlayer;
@@ -30,8 +34,15 @@ public class RemoveMemberSubCommand extends DomainSubCommand {
     protected void interact(@NotNull CommandContext context, @NotNull OfflinePlayer target) {
         final InteractProtocol protocol = new InteractProtocol(new DomainProtocol(DomainProtocol.Protocol.REMOVE_MEMBER, target), getPermChecker());
         protocol.process(context);
-        final ActionResult result = context.getResult();
+    }
 
+    @Override
+    protected void sendMessage(@NotNull CommandContext context) {
+        super.sendMessage(context);
+        final ClaimInteractHandler<?> claimInteractHandler = context.getCustomData(HandlerContext.class).getHandler().getClaimInteractHandler();
+        final FormattedMessages specificMessage = claimInteractHandler == null ? null : claimInteractHandler.getMessages();
+        final FormattedMessages usedMessages = specificMessage == null ? plugin.getMessages() : new FallbackFormattedMessages(plugin.getMessages(), specificMessage);
+        new DomainMessage().sendMessage(context, usedMessages, "member", "not", "remove");
     }
 
 }

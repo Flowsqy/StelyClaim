@@ -35,18 +35,4 @@ public interface ClaimHandler<T extends ClaimOwner> {
     @NotNull
     String getIdentifier(@NotNull T owner);
 
-    /**
-     * Get the {@link RegionModifier} for the Define operation
-     *
-     * @return The Define {@link RegionModifier}
-     */
-    RegionModifier<T> getDefineModifier();
-
-    /**
-     * Get the {@link RegionModifier} for the Redefine operation
-     *
-     * @return The Redefine {@link RegionModifier}
-     */
-    RegionModifier<T> getRedefineModifier();
-
 }

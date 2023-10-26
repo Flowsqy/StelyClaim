@@ -1,6 +1,8 @@
 package fr.flowsqy.stelyclaim.command.claim.domain;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.ClaimInteractHandler;
+import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.api.Identifiable;
 import fr.flowsqy.stelyclaim.api.LazyHandledOwner;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
@@ -10,7 +12,10 @@ import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.HandlerContext;
 import fr.flowsqy.stelyclaim.command.claim.WorldChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
+import fr.flowsqy.stelyclaim.message.FallbackFormattedMessages;
+import fr.flowsqy.stelyclaim.message.InteractMessage;
 import fr.flowsqy.stelyclaim.protocol.context.DomainContext;
+import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -23,6 +28,7 @@ import java.util.stream.Collectors;
 
 public abstract class DomainSubCommand implements CommandNode, Identifiable {
 
+    protected final StelyClaimPlugin plugin;
     private final UUID id;
     private final String name;
     private final String[] triggers;
@@ -37,6 +43,7 @@ public abstract class DomainSubCommand implements CommandNode, Identifiable {
         worldChecker = new WorldChecker(worlds, plugin.getMessages());
         this.permChecker = permChecker;
         this.helpMessage = helpMessage;
+        this.plugin = plugin;
     }
 
     @NotNull
@@ -83,11 +90,23 @@ public abstract class DomainSubCommand implements CommandNode, Identifiable {
 
         interact(context, targetPlayer);
 
+        sendMessage(context);
 
-        /* Stats stuff.
-        if (success) {
-            contextual.getData().setStatistic(name);
-        }*/
+        if (context.getResult().orElseThrow().success()) {
+            // TODO Add stats
+        }
+    }
+
+    protected void sendMessage(@NotNull CommandContext context) {
+        final int code = context.getResult().orElseThrow().code();
+        if (code == InteractProtocol.CANT_OTHER) {
+            helpMessage.sendMessage(context, getId());
+            return;
+        }
+        final ClaimInteractHandler<?> claimInteractHandler = context.getCustomData(HandlerContext.class).getHandler().getClaimInteractHandler();
+        final FormattedMessages specificMessage = claimInteractHandler == null ? null : claimInteractHandler.getMessages();
+        final FormattedMessages usedMessages = specificMessage == null ? plugin.getMessages() : new FallbackFormattedMessages(plugin.getMessages(), specificMessage);
+        new InteractMessage().sendMessage(context, usedMessages);
     }
 
     @Override

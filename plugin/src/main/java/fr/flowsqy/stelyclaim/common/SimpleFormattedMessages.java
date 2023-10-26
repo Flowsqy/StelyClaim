@@ -1,7 +1,10 @@
 package fr.flowsqy.stelyclaim.common;
 
 import fr.flowsqy.stelyclaim.api.FormattedMessages;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -14,7 +17,7 @@ public abstract class SimpleFormattedMessages implements FormattedMessages {
     }
 
     @Override
-    public String getFormattedMessage(String path, String... replace) {
+    public String getFormattedMessage(@NotNull String path, String... replace) {
         String message = getMessage(path);
         if (message == null) {
             return null;
@@ -46,14 +49,13 @@ public abstract class SimpleFormattedMessages implements FormattedMessages {
     }
 
     @Override
-    public boolean sendMessage(CommandSender sender, String path, String... replace) {
-        if (sender == null) {
-            return true;
-        }
+    public void sendMessage(@NotNull CommandSender sender, @NotNull String path, String... replace) {
         final String message = getFormattedMessage(path, replace);
-        if (message != null) {
-            sender.sendMessage(message);
+        if (message == null) {
+            return;
         }
-        return true;
+        final BaseComponent[] components = TextComponent.fromLegacyText(message);
+        sender.spigot().sendMessage(components);
     }
+
 }

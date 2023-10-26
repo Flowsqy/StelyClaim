@@ -2,6 +2,7 @@ package fr.flowsqy.stelyclaim.common;
 
 import fr.flowsqy.stelyclaim.io.ConfigurationCachedMessages;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -15,7 +16,8 @@ public class ConfigurationFormattedMessages extends SimpleFormattedMessages {
     }
 
     @Override
-    public String getMessage(String identifier) {
+    public String getMessage(@NotNull String identifier) {
         return configurationCachedMessages.getMessage(identifier);
     }
+
 }

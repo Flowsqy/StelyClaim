@@ -1,6 +1,8 @@
 package fr.flowsqy.stelyclaim.api;
 
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface FormattedMessages extends CachedMessages {
 
@@ -11,7 +13,8 @@ public interface FormattedMessages extends CachedMessages {
      * @param replace A {@link String} array of the placeholders and their values
      * @return A formatted {@link String} message
      */
-    String getFormattedMessage(String path, String... replace);
+    @Nullable
+    String getFormattedMessage(@NotNull String path, @NotNull String... replace);
 
     /**
      * Send a message
@@ -21,8 +24,7 @@ public interface FormattedMessages extends CachedMessages {
      * @param sender  The receiver of the message
      * @param path    The identifier of the message
      * @param replace A {@link String} array of the placeholders and their values
-     * @return Always true
      */
-    boolean sendMessage(CommandSender sender, String path, String... replace);
+    void sendMessage(@NotNull CommandSender sender, @NotNull String path, @NotNull String... replace);
 
 }

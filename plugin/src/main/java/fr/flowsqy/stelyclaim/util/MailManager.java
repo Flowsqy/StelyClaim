@@ -74,7 +74,7 @@ public class MailManager {
     }
 
     public void sendInfoToOwner(Actor actor, ClaimOwner owner, FormattedMessages messages, String command, OfflinePlayer target) {
-        final Set<OfflinePlayer> mailablePlayers = owner.getMailable();
+        final Set<OfflinePlayer> mailablePlayers = null; //owner.getMailable();
         final List<Player> connectedPlayers = new ArrayList<>();
         final List<OfflinePlayer> disconnectedPlayers = new ArrayList<>();
         for (OfflinePlayer player : mailablePlayers) {

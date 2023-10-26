@@ -26,4 +26,7 @@ public interface ClaimInteractHandler<T extends ClaimOwner> {
     @NotNull
     Optional<T> getOwner(@NotNull Actor actor, @NotNull Player player);
 
+    @NotNull
+    FormattedMessages getMessages();
+
 }

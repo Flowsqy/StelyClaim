@@ -3,12 +3,12 @@ package fr.flowsqy.stelyclaim.internal;
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.ClaimInteractHandler;
+import fr.flowsqy.stelyclaim.api.FormattedMessages;
 import fr.flowsqy.stelyclaim.api.HandledOwner;
-import fr.flowsqy.stelyclaim.api.RegionModifier;
 import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,19 +19,14 @@ import java.util.UUID;
 public class PlayerHandler implements ClaimHandler<PlayerOwner> {
 
     public final static String ID = "player";
-
-    private final ConfigPlayerModifier defineModifier;
-    private final ConfigPlayerModifier redefineModifier;
     //private final ConfigurationFormattedMessages messages;
 
     public PlayerHandler(StelyClaimPlugin plugin) {
-        this.defineModifier = new ConfigPlayerModifier(plugin.getConfiguration(), plugin.getMessages(), "define");
-        this.redefineModifier = new ConfigPlayerModifier(plugin.getConfiguration(), plugin.getMessages(), "redefine");
         //this.messages = plugin.getMessages();
     }
 
     @Override
-    public String getId() {
+    public @NotNull String getId() {
         return ID;
     }
 
@@ -40,16 +35,31 @@ public class PlayerHandler implements ClaimHandler<PlayerOwner> {
         return new ClaimInteractHandler<>() {
             @Override
             public @NotNull Optional<PlayerOwner> getOwner(@NotNull Actor actor, @NotNull String commandArg) {
-                final OfflinePlayer p = OfflinePlayerRetriever.getOfflinePlayer(commandArg);
-                if (p == null) {
-                    return Optional.empty();
-                }
-                return Optional.of(new PlayerOwner(p));
+                return Optional.of(new PlayerOwner(OfflinePlayerRetriever.getOfflinePlayer(commandArg)));
             }
 
             @Override
             public @NotNull Optional<PlayerOwner> getOwner(@NotNull Actor actor, @NotNull Player player) {
                 return Optional.of(new PlayerOwner(player));
+            }
+
+            @Override
+            public @NotNull FormattedMessages getMessages() {
+                return new FormattedMessages() {
+                    @Override
+                    public String getFormattedMessage(@NotNull String path, String... replace) {
+                        return null;
+                    }
+
+                    @Override
+                    public void sendMessage(@NotNull CommandSender sender, @NotNull String path, String... replace) {
+                    }
+
+                    @Override
+                    public String getMessage(@NotNull String identifier) {
+                        return null;
+                    }
+                };
             }
         };
     }
@@ -62,18 +72,8 @@ public class PlayerHandler implements ClaimHandler<PlayerOwner> {
 
 
     @Override
-    public String getIdentifier(PlayerOwner owner) {
+    public @NotNull String getIdentifier(@NotNull PlayerOwner owner) {
         return owner.player().getUniqueId().toString();
-    }
-
-    @Override
-    public RegionModifier<PlayerOwner> getDefineModifier() {
-        return defineModifier;
-    }
-
-    @Override
-    public RegionModifier<PlayerOwner> getRedefineModifier() {
-        return redefineModifier;
     }
 
 

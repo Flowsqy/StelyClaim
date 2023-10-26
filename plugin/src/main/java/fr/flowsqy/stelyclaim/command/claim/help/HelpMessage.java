@@ -30,6 +30,7 @@ public class HelpMessage {
     public void sendMessage(@NotNull CommandContext context, @NotNull UUID commandId) {
         // May check for context specific handler provider registry to allow custom help
         // messages
+        // TODO Link this to claim handler
         final HelpMessageProvider messageProvider = providerRegistry.get(commandId);
         if (messageProvider == null) {
             return;

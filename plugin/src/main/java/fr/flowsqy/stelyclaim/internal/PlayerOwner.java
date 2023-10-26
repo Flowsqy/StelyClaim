@@ -5,9 +5,7 @@ import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.Objects;
-import java.util.Set;
 
 public record PlayerOwner(@NotNull OfflinePlayer player) implements ClaimOwner {
 
@@ -16,13 +14,8 @@ public record PlayerOwner(@NotNull OfflinePlayer player) implements ClaimOwner {
     }
 
     @Override
-    public String getName() {
-        return player.getName();
-    }
-
-    @Override
-    public Set<OfflinePlayer> getMailable() {
-        return Collections.singleton(player);
+    public @NotNull String getName() {
+        return Objects.toString(player.getName());
     }
 
     @Override

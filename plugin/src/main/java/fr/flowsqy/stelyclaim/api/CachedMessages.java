@@ -1,5 +1,8 @@
 package fr.flowsqy.stelyclaim.api;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 public interface CachedMessages {
 
     /**
@@ -8,6 +11,7 @@ public interface CachedMessages {
      * @param identifier The {@link String} identifier of the message
      * @return The {@link String} message stored. {@code null} if it does not exist
      */
-    String getMessage(String identifier);
+    @Nullable
+    String getMessage(@NotNull String identifier);
 
 }
