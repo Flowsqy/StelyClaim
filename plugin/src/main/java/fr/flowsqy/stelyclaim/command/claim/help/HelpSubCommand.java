@@ -47,7 +47,6 @@ public class HelpSubCommand implements CommandNode, Identifiable {
             helpMessage.sendMessages(fakeContext, result.asDispatcher(), CommandNode::canExecute);
             return;
         }
-        System.out.println(result.asNode().getName());
         helpMessage.sendMessage(fakeContext, result.asNode());
     }
 
@@ -68,7 +67,6 @@ public class HelpSubCommand implements CommandNode, Identifiable {
 
     @Override
     public List<String> tabComplete(@NotNull CommandContext context) {
-        // final CommandResolver resolver = new CommandResolver(root);
         // TODO Hardcoded -> Bad
         final CommandContext fakeContext = CommandContext.buildFake(context, context.copyArgs(), "claim");
         final CommandResolver resolver = new CommandResolver(root);

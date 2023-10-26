@@ -34,6 +34,11 @@ public class ActionContext {
         return customData;
     }
 
+    @NotNull
+    public <T> T getCustomData(@NotNull Class<T> type) {
+        return type.cast(customData);
+    }
+
     public void setCustomData(@Nullable Object customData) {
         this.customData = customData;
     }

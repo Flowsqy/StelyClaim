@@ -1,4 +1,4 @@
-package fr.flowsqy.stelyclaim.protocol;
+package fr.flowsqy.stelyclaim.protocol.context;
 
 import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.LazyHandledOwner;

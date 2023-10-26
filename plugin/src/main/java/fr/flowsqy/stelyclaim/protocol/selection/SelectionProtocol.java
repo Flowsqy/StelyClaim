@@ -9,8 +9,8 @@ import fr.flowsqy.stelyclaim.api.LockableCounter;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
 import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import fr.flowsqy.stelyclaim.protocol.OwnerContext;
+import fr.flowsqy.stelyclaim.protocol.context.InteractContext;
+import fr.flowsqy.stelyclaim.protocol.context.OwnerContext;
 import fr.flowsqy.stelyclaim.protocol.RegionManagerRetriever;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import org.jetbrains.annotations.NotNull;
@@ -53,16 +53,13 @@ public class SelectionProtocol {
         final Region selection = selectionProvider.getSelection(context);
         if (selection == null) {
             // messages.sendMessage(player, "claim.selection.empty");
-            System.out.println("Selection not defined");
             context.setResult(new ActionResult(SELECTION_NOT_DEFINED, false));
             return;
         }
-        if (!(context.getCustomData() instanceof final ClaimContext claimContext)) {
-            throw new RuntimeException();
-        }
-        final OwnerContext ownerContext = claimContext.getOwnerContext();
+        final InteractContext interactContext = context.getCustomData(InteractContext.class);
+        final OwnerContext ownerContext = interactContext.getOwnerContext();
         ownerContext.calculateOwningProperty(context.getActor(), false);
-        if (!claimContext.getOwnerContext().isActorOwnTheClaim()
+        if (!interactContext.getOwnerContext().isActorOwnTheClaim()
                 && !permChecker.checkOther(context)) {
             System.out.println("Can't other");
             context.setResult(new ActionResult(InteractProtocol.CANT_OTHER, false));
@@ -70,7 +67,7 @@ public class SelectionProtocol {
         }
 
         final RegionManager regionManager = RegionManagerRetriever
-                .retrieve(claimContext.getWorld().orElseThrow().getName());
+                .retrieve(interactContext.getWorld().orElseThrow().getName());
         if (regionManager == null) {
             System.out.println("World not handled");
             context.setResult(new ActionResult(InteractProtocol.WORLD_NOT_HANDLED, false));

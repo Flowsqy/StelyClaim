@@ -21,7 +21,6 @@ import fr.flowsqy.stelyclaim.command.claim.statistics.ShowStatsSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.statistics.StatsSubCommand;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.bukkit.command.*;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Entity;
@@ -55,7 +54,7 @@ public class ClaimCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         final Actor actor = getActor(sender);
-        final CommandContext context = new CommandContext(actor, args, new ClaimContext(defaultHandler), 0);
+        final CommandContext context = new CommandContext(actor, args, new DefaultContext(defaultHandler), 0);
         context.appendCommandName("claim");
         rootCommand.execute(context);
         /* TODO Implement stats again, but well do we really need it ? :D
@@ -70,7 +69,7 @@ public class ClaimCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         final Actor actor = getActor(sender);
-        final CommandContext context = new CommandContext(actor, args, new ClaimContext(defaultHandler), 0);
+        final CommandContext context = new CommandContext(actor, args, new DefaultContext(defaultHandler), 0);
         return rootCommand.tabComplete(context);
     }
 

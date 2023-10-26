@@ -20,8 +20,6 @@ public class DefineSubCommand extends SelectionSubCommand {
 
     @Override
     protected void interactRegion(@NotNull CommandContext context) {
-        context.getActor().getBukkit().spigot().sendMessage(new TextComponent("Define"));
-        //new SelectionProtocol().process(context);
         final OverlappingRegion overlappingRegion = new OverlappingRegion();
         final SelectionProtocol protocol = new SelectionProtocol(
                 new PlayerSelectionProvider(),
@@ -31,6 +29,8 @@ public class DefineSubCommand extends SelectionSubCommand {
                 getPermChecker()
         );
         protocol.process(context);
+
+        //TODO Messages
     }
 
 }

@@ -2,7 +2,7 @@ package fr.flowsqy.stelyclaim.api.permission;
 
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
+import fr.flowsqy.stelyclaim.command.claim.HandlerContext;
 import org.jetbrains.annotations.NotNull;
 
 public class ContextPC implements PermissionChecker {
@@ -17,7 +17,7 @@ public class ContextPC implements PermissionChecker {
 
     @NotNull
     public String buildBasePerm(@NotNull ActionContext context) {
-        final String handlerId = ((ClaimContext) context.getCustomData()).getOwnerContext().getHandler().getId(); // TODO Retrieve id
+        final String handlerId = context.getCustomData(HandlerContext.class).getHandler().getId();
         return prefix + handlerId + suffix;
     }
 

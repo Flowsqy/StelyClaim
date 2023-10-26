@@ -48,7 +48,7 @@ public class DomainProtocol implements InteractProtocolHandler {
         final boolean add = protocol.isAdd();
         final boolean containsTarget = protocol.getContains().apply(domain, uuid);
         if (add == containsTarget) {
-            context.setResult(new ActionResult(CANT_MODIFY, false, ActionResult.getModifier()));
+            context.setResult(new ActionResult(CANT_MODIFY, false));
             return;
             /*
             messages.sendMessage(

@@ -7,9 +7,10 @@ import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
+import fr.flowsqy.stelyclaim.command.claim.HandlerContext;
 import fr.flowsqy.stelyclaim.command.claim.WorldChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
+import fr.flowsqy.stelyclaim.protocol.context.InteractContext;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.jetbrains.annotations.NotNull;
@@ -50,10 +51,9 @@ public abstract class InteractSubCommand implements CommandNode, Identifiable {
         if (worldChecker.checkCancelledWorld(context.getActor())) {
             return;
         }
-        if (!(context.getCustomData() instanceof final ClaimContext claimContext)) {
-            throw new RuntimeException();
-        }
-        final LazyHandledOwner<?> lazyHandledOwner = claimContext.getOwnerContext().getLazyHandledOwner();
+        final InteractContext interactContext = new InteractContext(context.getCustomData(HandlerContext.class).getHandler());
+        context.setCustomData(interactContext);
+        final LazyHandledOwner<?> lazyHandledOwner = interactContext.getOwnerContext().getLazyHandledOwner();
         if (context.getArgsLength() == 0) {
             final Actor sender = context.getActor();
             if (!sender.isPlayer()) {
@@ -71,7 +71,7 @@ public abstract class InteractSubCommand implements CommandNode, Identifiable {
             // TODO Send a message to say that this owner can't be retrieved
             return;
         }
-        claimContext.setWorld(() -> context.getActor().getPhysic().getWorld(), false);
+        interactContext.setWorld(() -> context.getActor().getPhysic().getWorld(), false);
         interactRegion(context);
     }
 

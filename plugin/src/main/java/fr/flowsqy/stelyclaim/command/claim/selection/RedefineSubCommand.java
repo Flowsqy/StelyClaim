@@ -4,7 +4,7 @@ import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import net.md_5.bungee.api.chat.TextComponent;
+import fr.flowsqy.stelyclaim.protocol.selection.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +21,16 @@ public class RedefineSubCommand extends SelectionSubCommand {
 
     @Override
     protected void interactRegion(@NotNull CommandContext context) {
-        context.getActor().getBukkit().spigot().sendMessage(new TextComponent("Redefine"));
+        final OverlappingRegion overlappingRegion = new OverlappingRegion();
+        final SelectionProtocol protocol = new SelectionProtocol(
+                new PlayerSelectionProvider(),
+                new ExpandSelectionModifier(255, 0),
+                new OverlappingValidator(overlappingRegion),
+                new RedefineHandler(null),
+                getPermChecker()
+        );
+        protocol.process(context);
+        // TODO Handler message + Handler
     }
 
 }

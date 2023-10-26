@@ -7,7 +7,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.regions.Region;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
+import fr.flowsqy.stelyclaim.protocol.context.InteractContext;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,10 +22,8 @@ public class PlayerSelectionProvider implements SelectionProvider {
         }
         final Player player = context.getActor().getPlayer();
         final LocalSession session = WorldEdit.getInstance().getSessionManager().get(BukkitAdapter.adapt(player));
-        if (!(context.getCustomData() instanceof ClaimContext claimContext)) {
-            throw new RuntimeException();
-        }
-        final com.sk89q.worldedit.world.World weWorld = new BukkitWorld(claimContext.getWorld().orElseThrow());
+        final InteractContext interactContext = context.getCustomData(InteractContext.class);
+        final com.sk89q.worldedit.world.World weWorld = new BukkitWorld(interactContext.getWorld().orElseThrow());
 
         if (!session.isSelectionDefined(weWorld)) {
             return null;

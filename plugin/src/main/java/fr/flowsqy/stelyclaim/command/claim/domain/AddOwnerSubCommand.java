@@ -24,8 +24,6 @@ public class AddOwnerSubCommand extends DomainSubCommand {
     protected void interact(@NotNull CommandContext context, @NotNull OfflinePlayer target) {
         final InteractProtocol protocol = new InteractProtocol(new DomainProtocol(DomainProtocol.Protocol.ADD_OWNER, target), getPermChecker());
         protocol.process(context);
-        final ActionResult result = context.getResult();
-
     }
 
 }

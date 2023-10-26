@@ -6,7 +6,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import fr.flowsqy.stelyclaim.api.InteractProtocolHandler;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
+import fr.flowsqy.stelyclaim.protocol.context.InteractContext;
 import fr.flowsqy.stelyclaim.pillar.cuboid.CuboidPillarCoordinate;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -56,10 +56,8 @@ public class InfoHandler implements InteractProtocolHandler {
 
         //return true;
         */
-        if (!(context.getCustomData() instanceof ClaimContext claimContext)) {
-            throw new RuntimeException();
-        }
-        final String handledOwner = claimContext.getOwnerContext().getLazyHandledOwner().toHandledOwner().toString();
+        final InteractContext interactContext = context.getCustomData(InteractContext.class);
+        final String handledOwner = interactContext.getOwnerContext().getLazyHandledOwner().toHandledOwner().toString();
         context.getActor().getBukkit().spigot().sendMessage(new TextComponent(handledOwner));
         context.setResult(new ActionResult(InteractProtocol.SUCCESS, true));
     }

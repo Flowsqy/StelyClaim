@@ -8,7 +8,6 @@ import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.command.DispatchCommandTabExecutor;
 import fr.flowsqy.stelyclaim.api.permission.PermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -54,19 +53,13 @@ public class ContextSubCommand extends DispatchCommandTabExecutor implements Com
 
     @Override
     public void execute(@NotNull CommandContext context) {
-        if (!(context.getCustomData() instanceof final ClaimContext claimContext)) {
-            throw new RuntimeException();
-        }
-        claimContext.getOwnerContext().setHandler(claimHandler);
+        context.setCustomData(new DefaultContext(claimHandler));
         super.execute(context);
     }
 
     @Override
     public List<String> tabComplete(@NotNull CommandContext context) {
-        if (!(context.getCustomData() instanceof final ClaimContext claimContext)) {
-            throw new RuntimeException();
-        }
-        claimContext.getOwnerContext().setHandler(claimHandler);
+        context.setCustomData(new DefaultContext(claimHandler));
         return super.tabComplete(context);
     }
 

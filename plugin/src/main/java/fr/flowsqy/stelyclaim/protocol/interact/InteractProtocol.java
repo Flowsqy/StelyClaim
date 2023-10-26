@@ -8,8 +8,8 @@ import fr.flowsqy.stelyclaim.api.LockableCounter;
 import fr.flowsqy.stelyclaim.api.action.ActionContext;
 import fr.flowsqy.stelyclaim.api.action.ActionResult;
 import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
-import fr.flowsqy.stelyclaim.protocol.OwnerContext;
+import fr.flowsqy.stelyclaim.protocol.context.InteractContext;
+import fr.flowsqy.stelyclaim.protocol.context.OwnerContext;
 import fr.flowsqy.stelyclaim.protocol.RegionManagerRetriever;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,10 +63,8 @@ public class InteractProtocol {
 
         //final CommandSender sender = actor.getBukkit();
         //final boolean ownRegion = owner.own(actor);
-        if (!(context.getCustomData() instanceof ClaimContext claimContext)) {
-            throw new RuntimeException();
-        }
-        final OwnerContext ownerContext = claimContext.getOwnerContext();
+        final InteractContext interactContext = context.getCustomData(InteractContext.class);
+        final OwnerContext ownerContext = interactContext.getOwnerContext();
         ownerContext.calculateOwningProperty(context.getActor(), false);
         if (!ownerContext.isActorOwnTheClaim() && !permChecker.checkOther(context)
             /*!sender.hasPermission(ClaimCommand.Permissions.getOtherPerm(interactProtocolHandler.getPermission())) */
@@ -77,7 +75,7 @@ public class InteractProtocol {
             //return false;
         }
 
-        final RegionManager regionManager = RegionManagerRetriever.retrieve(claimContext.getWorld().orElseThrow().getName());
+        final RegionManager regionManager = RegionManagerRetriever.retrieve(interactContext.getWorld().orElseThrow().getName());
         if (regionManager == null) {
             context.setResult(new ActionResult(WORLD_NOT_HANDLED, false));
             return;

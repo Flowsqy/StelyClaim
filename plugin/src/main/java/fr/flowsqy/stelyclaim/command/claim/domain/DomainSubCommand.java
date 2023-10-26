@@ -7,9 +7,10 @@ import fr.flowsqy.stelyclaim.api.actor.Actor;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.command.CommandNode;
 import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
+import fr.flowsqy.stelyclaim.command.claim.HandlerContext;
 import fr.flowsqy.stelyclaim.command.claim.WorldChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
-import fr.flowsqy.stelyclaim.protocol.ClaimContext;
+import fr.flowsqy.stelyclaim.protocol.context.DomainContext;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -49,10 +50,9 @@ public abstract class DomainSubCommand implements CommandNode, Identifiable {
         if (worldChecker.checkCancelledWorld(context.getActor())) {
             return;
         }
-        if (!(context.getCustomData() instanceof final ClaimContext claimContext)) {
-            throw new RuntimeException();
-        }
-        final LazyHandledOwner<?> lazyOwner = claimContext.getOwnerContext().getLazyHandledOwner();
+        final DomainContext domainContext = new DomainContext(context.getCustomData(HandlerContext.class).getHandler());
+        context.setCustomData(domainContext);
+        final LazyHandledOwner<?> lazyOwner = domainContext.getOwnerContext().getLazyHandledOwner();
         final String target;
         if (context.getArgsLength() == 1) {
             final Actor actor = context.getActor();
@@ -77,10 +77,13 @@ public abstract class DomainSubCommand implements CommandNode, Identifiable {
         }
 
         final OfflinePlayer targetPlayer = OfflinePlayerRetriever.getOfflinePlayer(target);
+        domainContext.setTarget(targetPlayer);
         final Actor sender = context.getActor();
-        claimContext.setWorld(() -> sender.getPhysic().getWorld(), false);
+        domainContext.setWorld(() -> sender.getPhysic().getWorld(), false);
 
         interact(context, targetPlayer);
+
+
         /* Stats stuff.
         if (success) {
             contextual.getData().setStatistic(name);
