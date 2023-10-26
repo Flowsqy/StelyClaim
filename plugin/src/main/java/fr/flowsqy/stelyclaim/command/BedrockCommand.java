@@ -1,8 +1,8 @@
 package fr.flowsqy.stelyclaim.command;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.BedrockManager;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
-import fr.flowsqy.stelyclaim.io.BedrockManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.GameMode;
@@ -28,7 +28,7 @@ public class BedrockCommand implements TabExecutor {
     private final ConfigurationFormattedMessages messages;
     private final BedrockManager manager;
 
-    public BedrockCommand(StelyClaimPlugin plugin) {
+    public BedrockCommand(@NotNull StelyClaimPlugin plugin) {
         this.messages = plugin.getMessages();
         this.manager = plugin.getBreakManager();
 
@@ -41,7 +41,7 @@ public class BedrockCommand implements TabExecutor {
             return messages.sendMessage(sender, "util.onlyplayer");
         }
 
-        if (manager.toggle(player.getName(), true))
+        if (manager.toggle(player.getUniqueId()))
             return messages.sendMessage(player, "bedrock.enable");
 
         return messages.sendMessage(player, "bedrock.disable");
@@ -72,7 +72,7 @@ public class BedrockCommand implements TabExecutor {
             if (player.getGameMode() != GameMode.SURVIVAL)
                 return;
 
-            if (!manager.has(player.getName()))
+            if (!manager.has(player.getUniqueId()))
                 return;
 
             final BlockBreakEvent blockEvent = new BlockBreakEvent(block, player);
@@ -82,7 +82,6 @@ public class BedrockCommand implements TabExecutor {
 
             block.setType(Material.AIR);
             player.playEffect(block.getLocation(), Effect.STEP_SOUND, Material.BEDROCK);
-
         }
 
     }

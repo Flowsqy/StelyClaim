@@ -7,7 +7,7 @@ import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.common.PrefixedConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.external.ExternalManager;
 import fr.flowsqy.stelyclaim.internal.PlayerHandler;
-import fr.flowsqy.stelyclaim.io.BedrockManager;
+import fr.flowsqy.stelyclaim.api.BedrockManager;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
 import fr.flowsqy.stelyclaim.pillar.PillarManager;
 import fr.flowsqy.stelyclaim.protocol.RegionNameManager;
@@ -59,6 +59,7 @@ public class StelyClaimPlugin extends JavaPlugin {
         RegionNameManager.setInternalMessages(messages);
 
         this.breakManager = new BedrockManager(dataFolder);
+        breakManager.load();
         this.statisticManager = new StatisticManager(this, dataFolder);
         this.teleportSync = new TeleportSync(this);
 
@@ -78,6 +79,11 @@ public class StelyClaimPlugin extends JavaPlugin {
         this.commandManager = new CommandManager(this);
 
         this.statisticManager.initData();
+    }
+
+    @Override
+    public void onDisable() {
+        breakManager.save();
     }
 
     private boolean checkDataFolder(File dataFolder) {

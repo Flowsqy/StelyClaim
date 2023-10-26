@@ -12,11 +12,8 @@ public class CommandManager {
 
     public CommandManager(StelyClaimPlugin plugin) {
 
-        final PluginCommand claimCmd = plugin.getCommand("claim");
-        final PluginCommand bedrockCmd = plugin.getCommand("bedrock");
-
-        assert claimCmd != null;
-        assert bedrockCmd != null;
+        final PluginCommand claimCmd = Objects.requireNonNull(plugin.getCommand("claim"));
+        final PluginCommand bedrockCmd = Objects.requireNonNull(plugin.getCommand("bedrock"));
 
         final String configNoPerm = plugin.getMessages().getFormattedMessage("util.noperm");
 
