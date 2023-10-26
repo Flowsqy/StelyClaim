@@ -51,7 +51,7 @@ public class TeleportSync {
 
     private void teleportTask() {
         for (TeleportData teleportData : pendingTeleportationMap.values()) {
-            teleportData.entity().teleport(teleportData.entity().getLocation());
+            teleportData.entity().teleport(teleportData.location());
         }
         pendingTeleportationMap.clear();
         launched = false;
