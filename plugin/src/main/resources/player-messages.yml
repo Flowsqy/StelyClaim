@@ -1,0 +1,21 @@
+prefix: "&7[&5StelyClaim&7]&f"
+
+domain:
+  owner:
+    already: "%prefix% &8%target% &cfait déjà parti des propriétaires de ton claim"
+    already-other: "%prefix% &8%target% &cfait déjà parti des propriétaires du claim de &8%region%"
+    not: "%prefix% &8%target% &cne fait pas parti des propriétaires de ton claim"
+    not-other: "%prefix% &8%target% &cne fait pas parti des propriétaires du claim de &8%region%"
+    add: "%prefix% &6Tu viens d'ajouter &a%target% &6aux propriétaires de ton claim"
+    add-other: "%prefix% &6Tu viens d'ajouter &a%target% &6aux propriétaires du claim de &a%region%"
+    remove: "%prefix% &6Tu viens de retirer &a%target% &6des propriétaires de ton claim"
+    remove-other: "%prefix% &6Tu viens de retirer &a%target% &6des propriétaires du claim de &a%region%"
+  member:
+    already: "%prefix% &8%target% &cfait déjà parti de ton claim"
+    already-other: "%prefix% &8%target% &cfait déjà parti du claim de &8%region%"
+    not: "%prefix% &8%target% &cne fait pas parti de ton claim"
+    not-other: "%prefix% &8%target% &cne fait pas parti du claim de &8%region%"
+    add: "%prefix% &6Tu viens d'ajouter &a%target% &6à ton claim"
+    add-other: "%prefix% &6Tu viens d'ajouter &a%target% &6au claim de &a%region%"
+    remove: "%prefix% &6Tu viens de retirer &a%target% &6de ton claim"
+    remove-other: "%prefix% &6Tu viens de retirer &a%target% &6du claim de &a%region%"

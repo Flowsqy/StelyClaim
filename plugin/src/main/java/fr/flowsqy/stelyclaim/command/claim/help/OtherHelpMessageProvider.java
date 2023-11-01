@@ -3,6 +3,7 @@ package fr.flowsqy.stelyclaim.command.claim.help;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class OtherHelpMessageProvider implements HelpMessageProvider {
 
@@ -10,8 +11,8 @@ public class OtherHelpMessageProvider implements HelpMessageProvider {
     private final String baseMessage;
     private final String otherMessage;
 
-    public OtherHelpMessageProvider(@NotNull OtherPermissionChecker permChecker, @NotNull String baseMessage,
-                                    @NotNull String otherMessage) {
+    public OtherHelpMessageProvider(@NotNull OtherPermissionChecker permChecker, @Nullable String baseMessage,
+                                    @Nullable String otherMessage) {
         this.permChecker = permChecker;
         this.baseMessage = baseMessage;
         this.otherMessage = otherMessage;

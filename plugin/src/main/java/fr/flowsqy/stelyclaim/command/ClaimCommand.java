@@ -6,10 +6,7 @@ import fr.flowsqy.stelyclaim.api.actor.*;
 import fr.flowsqy.stelyclaim.api.command.CommandContext;
 import fr.flowsqy.stelyclaim.api.permission.*;
 import fr.flowsqy.stelyclaim.command.claim.*;
-import fr.flowsqy.stelyclaim.command.claim.domain.AddMemberSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.domain.AddOwnerSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.domain.RemoveMemberSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.domain.RemoveOwnerSubCommand;
+import fr.flowsqy.stelyclaim.command.claim.domain.DomainSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.help.*;
 import fr.flowsqy.stelyclaim.command.claim.interact.InfoSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.interact.RemoveSubCommand;
@@ -21,6 +18,7 @@ import fr.flowsqy.stelyclaim.command.claim.statistics.ShowStatsSubCommand;
 import fr.flowsqy.stelyclaim.command.claim.statistics.StatsSubCommand;
 import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
 import fr.flowsqy.stelyclaim.io.StatisticManager;
+import fr.flowsqy.stelyclaim.protocol.domain.DomainProtocol;
 import org.bukkit.command.*;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Entity;
@@ -167,14 +165,15 @@ public class ClaimCommand implements TabExecutor {
         final String addmemberName = "addmember";
         final OtherPermissionChecker addmemberPermChecker = new OtherContextPC(basePermission + ".", "." + addmemberName);
         subCommandManager.register(
-                new AddMemberSubCommand(
+                new DomainSubCommand(
                         addMemberId,
                         addmemberName,
                         new String[]{addmemberName, "am"},
                         plugin,
                         config.getStringList("worlds.addmember"),
                         addmemberPermChecker,
-                        helpMessage
+                        helpMessage,
+                        DomainProtocol.Protocol.ADD_MEMBER
                 ),
                 true
         );
@@ -191,14 +190,15 @@ public class ClaimCommand implements TabExecutor {
         final String removememberName = "removemember";
         final OtherPermissionChecker removememberPermChecker = new OtherContextPC(basePermission + ".", "." + removememberName);
         subCommandManager.register(
-                new RemoveMemberSubCommand(
+                new DomainSubCommand(
                         removeMemberId,
                         removememberName,
                         new String[]{removememberName, "rm"},
                         plugin,
                         config.getStringList("worlds.removemember"),
                         removememberPermChecker,
-                        helpMessage
+                        helpMessage,
+                        DomainProtocol.Protocol.REMOVE_MEMBER
                 ),
                 true
         );
@@ -215,14 +215,15 @@ public class ClaimCommand implements TabExecutor {
         final String addownerName = "addowner";
         final OtherPermissionChecker addownerPermChecker = new OtherContextPC(basePermission + ".", "." + addownerName);
         subCommandManager.register(
-                new AddOwnerSubCommand(
+                new DomainSubCommand(
                         addOwnerId,
                         addownerName,
                         new String[]{addownerName, "ao"},
                         plugin,
                         config.getStringList("worlds.addowner"),
                         addownerPermChecker,
-                        helpMessage
+                        helpMessage,
+                        DomainProtocol.Protocol.ADD_OWNER
                 ),
                 true
         );
@@ -239,14 +240,15 @@ public class ClaimCommand implements TabExecutor {
         final String removeOwnerName = "removeowner";
         final OtherPermissionChecker removeOwnerPermChecker = new OtherContextPC(basePermission + ".", "." + removeOwnerName);
         subCommandManager.register(
-                new RemoveOwnerSubCommand(
+                new DomainSubCommand(
                         removeOwnerId,
                         removeOwnerName,
                         new String[]{removeOwnerName, "ro"},
                         plugin,
                         config.getStringList("worlds.removeowner"),
                         removeOwnerPermChecker,
-                        helpMessage
+                        helpMessage,
+                        DomainProtocol.Protocol.REMOVE_OWNER
                 ),
                 true
         );

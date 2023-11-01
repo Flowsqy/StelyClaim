@@ -52,14 +52,6 @@ claim:
     not: "%prefix% &cTu n'as pas de claim"
     not-other: "%prefix% &8%region% &cne possède pas de claim"
   command:
-    addmember: "%prefix% &6Tu viens d'ajouter &a%target% &6à ton claim"
-    addmember-other: "%prefix% &6Tu viens d'ajouter &a%target% &6au claim de &a%region%"
-    addowner: "%prefix% &6Tu viens d'ajouter &a%target% &6aux propriétaires de ton claim"
-    addowner-other: "%prefix% &6Tu viens d'ajouter &a%target% &6aux propriétaires du claim de &a%region%"
-    removemember: "%prefix% &6Tu viens de retirer &a%target% &6de ton claim"
-    removemember-other: "%prefix% &6Tu viens de retirer &a%target% &6du claim de &a%region%"
-    removeowner: "%prefix% &6Tu viens de retirer &a%target% &6des propriétaires de ton claim"
-    removeowner-other: "%prefix% &6Tu viens de retirer &a%target% &6des propriétaires du claim de &a%region%"
     define: "%prefix% &6Tu viens de créer ton claim"
     define-other: "%prefix% &6Tu viens de créer le claim de &a%region%"
     redefine: "%prefix% &6Tu viens de redéfinir ton claim"
@@ -68,17 +60,6 @@ claim:
     tp-other: "%prefix% &6Tu as été téléporté au claim de &a%region%"
     remove: "%prefix% &6Tu as supprimé ton claim"
     remove-other: "%prefix% &6Tu as supprimé le claim de &a%region%"
-  domain:
-    owner:
-      already: "%prefix% &8%target% &cfait déjà parti des propriétaires de ton claim"
-      already-other: "%prefix% &8%target% &cfait déjà parti des propriétaires du claim de &8%region%"
-      not: "%prefix% &8%target% &cne fait pas parti des propriétaires de ton claim"
-      not-other: "%prefix% &8%target% &cne fait pas parti des propriétaires du claim de &8%region%"
-    member:
-      already: "%prefix% &8%target% &cfait déjà parti de ton claim"
-      already-other: "%prefix% &8%target% &cfait déjà parti du claim de &8%region%"
-      not: "%prefix% &8%target% &cne fait pas parti de ton claim"
-      not-other: "%prefix% &8%target% &cne fait pas parti du claim de &8%region%"
   selection:
     empty: "%prefix% &cTu dois d'abord faire une séléction"
     cuboid: "%prefix% &cTu ne peux faire que des sélections cubiques"

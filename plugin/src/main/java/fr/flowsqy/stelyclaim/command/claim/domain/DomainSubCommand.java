@@ -12,9 +12,11 @@ import fr.flowsqy.stelyclaim.api.permission.OtherPermissionChecker;
 import fr.flowsqy.stelyclaim.command.claim.HandlerContext;
 import fr.flowsqy.stelyclaim.command.claim.WorldChecker;
 import fr.flowsqy.stelyclaim.command.claim.help.HelpMessage;
+import fr.flowsqy.stelyclaim.message.DomainMessage;
 import fr.flowsqy.stelyclaim.message.FallbackFormattedMessages;
 import fr.flowsqy.stelyclaim.message.InteractMessage;
 import fr.flowsqy.stelyclaim.protocol.context.DomainContext;
+import fr.flowsqy.stelyclaim.protocol.domain.DomainProtocol;
 import fr.flowsqy.stelyclaim.protocol.interact.InteractProtocol;
 import fr.flowsqy.stelyclaim.util.OfflinePlayerRetriever;
 import org.bukkit.Bukkit;
@@ -26,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class DomainSubCommand implements CommandNode, Identifiable {
+public class DomainSubCommand implements CommandNode, Identifiable {
 
     protected final StelyClaimPlugin plugin;
     private final UUID id;
@@ -35,8 +37,9 @@ public abstract class DomainSubCommand implements CommandNode, Identifiable {
     private final WorldChecker worldChecker;
     private final OtherPermissionChecker permChecker;
     private final HelpMessage helpMessage;
+    private final DomainProtocol.Protocol protocol;
 
-    public DomainSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull OtherPermissionChecker permChecker, @NotNull HelpMessage helpMessage) {
+    public DomainSubCommand(@NotNull UUID id, @NotNull String name, @NotNull String[] triggers, @NotNull StelyClaimPlugin plugin, @Nullable Collection<String> worlds, @NotNull OtherPermissionChecker permChecker, @NotNull HelpMessage helpMessage, @NotNull DomainProtocol.Protocol protocol) {
         this.id = id;
         this.name = name;
         this.triggers = triggers;
@@ -44,6 +47,7 @@ public abstract class DomainSubCommand implements CommandNode, Identifiable {
         this.permChecker = permChecker;
         this.helpMessage = helpMessage;
         this.plugin = plugin;
+        this.protocol = protocol;
     }
 
     @NotNull
@@ -97,6 +101,11 @@ public abstract class DomainSubCommand implements CommandNode, Identifiable {
         }
     }
 
+    private void interact(@NotNull CommandContext context, @NotNull OfflinePlayer target) {
+        final InteractProtocol protocol = new InteractProtocol(new DomainProtocol(this.protocol, target), getPermChecker());
+        protocol.process(context);
+    }
+
     protected void sendMessage(@NotNull CommandContext context) {
         final int code = context.getResult().orElseThrow().code();
         if (code == InteractProtocol.CANT_OTHER) {
@@ -106,7 +115,8 @@ public abstract class DomainSubCommand implements CommandNode, Identifiable {
         final ClaimInteractHandler<?> claimInteractHandler = context.getCustomData(HandlerContext.class).getHandler().getClaimInteractHandler();
         final FormattedMessages specificMessage = claimInteractHandler == null ? null : claimInteractHandler.getMessages();
         final FormattedMessages usedMessages = specificMessage == null ? plugin.getMessages() : new FallbackFormattedMessages(plugin.getMessages(), specificMessage);
-        new InteractMessage().sendMessage(context, usedMessages);
+        new InteractMessage(usedMessages).sendMessage(context);
+        new DomainMessage(usedMessages, "domain").sendMessage(context, protocol);
     }
 
     @Override
@@ -140,7 +150,5 @@ public abstract class DomainSubCommand implements CommandNode, Identifiable {
                 .filter(name -> name.toLowerCase(Locale.ENGLISH).startsWith(arg))
                 .collect(Collectors.toList());
     }
-
-    protected abstract void interact(@NotNull CommandContext context, @NotNull OfflinePlayer target);
 
 }
