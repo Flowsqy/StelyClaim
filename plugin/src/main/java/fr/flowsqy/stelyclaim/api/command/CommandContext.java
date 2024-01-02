@@ -1,41 +1,22 @@
 package fr.flowsqy.stelyclaim.api.command;
 
-import fr.flowsqy.stelyclaim.api.action.ActionContext;
-import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+public class CommandContext {
 
-public class CommandContext extends ActionContext {
-
-    private final LinkedList<String> currentPath;
+    private final PermissionCache permissionCache;
     private final String[] args;
     private int argPos;
 
-    public CommandContext(@NotNull Actor sender, @NotNull String[] args, @Nullable Object data, int argPos) {
-        super(sender, data);
-        currentPath = new LinkedList<>();
+    public CommandContext(@NotNull String[] args, @NotNull PermissionCache permissionCache) {
+        this.permissionCache = permissionCache;
         this.args = args;
-        this.argPos = argPos;
-    }
-
-    public static CommandContext buildFake(@NotNull CommandContext context, @NotNull String[] args,
-                                           @NotNull String... commandPath) {
-        final CommandContext fakeContext = new CommandContext(context.getActor(), args, null, 0);
-        for (String commandName : commandPath) {
-            fakeContext.appendCommandName(commandName);
-        }
-        return context;
+        this.argPos = 0;
     }
 
     @NotNull
-    public String[] copyArgs() {
-        final String[] copy = new String[getArgsLength()];
-        System.arraycopy(args, argPos, copy, 0, copy.length);
-        return copy;
+    public PermissionCache getPermissionCache() {
+        return permissionCache;
     }
 
     public int getArgsLength() {
@@ -55,17 +36,13 @@ public class CommandContext extends ActionContext {
         this.argPos--;
     }
 
-    public void appendCommandName(@NotNull String commandName) {
-        currentPath.add(commandName);
-    }
-
-    public void removeLastCommandName() {
-        currentPath.removeLast();
-    }
-
     @NotNull
-    public List<String> getCurrentPath() {
-        return Collections.unmodifiableList(currentPath);
+    public CommandArgs buildArgs() {
+        final String[] path = new String[argPos];
+        System.arraycopy(args, 0, path, 0, path.length);
+        final String[] commandArgs = new String[args.length - argPos];
+        System.arraycopy(args, 0, commandArgs, argPos, commandArgs.length);
+        return new CommandArgs(path, commandArgs);
     }
 
 }
