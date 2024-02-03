@@ -5,28 +5,39 @@ import org.jetbrains.annotations.NotNull;
 public class SimpleCommandTree implements CommandTree {
 
     private final CommandTree[] children;
+    private final CommandNode node;
 
-    public SimpleCommandTree() {
+    public SimpleCommandTree(@NotNull CommandNode node) {
         children = new CommandTree[0];
+        this.node = node;
     }
 
 
     @NotNull
     public ResolveResult resolve(@NotNull CommandContext context) {
         if (context.getArgsLength() == 0) {
-            return new ResolveResult(this, context.buildArgs());
+            throw new IllegalArgumentException("Trying to access a tree without specifying any arguments");
+        }
+        final ResolveResult ownResult = node.resolve(context);
+        if (!ownResult.success()) {
+            return ownResult;
+        }
+        context.consumeArg();
+        if(context.getArgsLength() == 0) {
+            return ownResult;
         }
 
         for (CommandTree child : children) {
-            context.consumeArg();
-            final ResolveResult result = child.resolve(context);
-            context.restoreArg();
-            if(result.success()) {
+            final ResolveResult childResult = child.resolve(context);
+            if(!childResult.found()) {
                 continue;
             }
-            return result;
+            if (!childResult.success()) {
+                break;
+            }    
+            return childResult;
         }
-        return new ResolveResult(this, context.buildArgs());
+        return new ResolveResult(this, true, true);
     }
 
 }
