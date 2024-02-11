@@ -52,6 +52,7 @@ public class ClaimCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         final Actor actor = getActor(sender);
+        /*
         final CommandContext context = new CommandContext(actor, args, new DefaultContext(defaultHandler), 0);
         context.appendCommandName("claim");
         rootCommand.execute(context);
@@ -67,8 +68,8 @@ public class ClaimCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         final Actor actor = getActor(sender);
-        final CommandContext context = new CommandContext(actor, args, new DefaultContext(defaultHandler), 0);
-        return rootCommand.tabComplete(context);
+        // final CommandContext context = new CommandContext(actor, args, new DefaultContext(defaultHandler), 0);
+        return rootCommand.tabComplete(null);
     }
 
     @NotNull

@@ -7,11 +7,14 @@ import java.util.Objects;
 
 public class CommandManager {
 
+    /*
     private final ClaimCommand claimCommand;
     private final BedrockCommand bedrockCommand;
+    */
 
     public CommandManager(StelyClaimPlugin plugin) {
 
+        /*
         final PluginCommand claimCmd = Objects.requireNonNull(plugin.getCommand("claim"));
         final PluginCommand bedrockCmd = Objects.requireNonNull(plugin.getCommand("bedrock"));
 
@@ -27,9 +30,11 @@ public class CommandManager {
         bedrockCommand = new BedrockCommand(plugin);
         bedrockCmd.setExecutor(bedrockCommand);
         bedrockCmd.setTabCompleter(bedrockCommand);
+        */
 
     }
 
+    /*
     @SuppressWarnings("unused") // API
     public ClaimCommand getClaimCommand() {
         return claimCommand;
@@ -39,4 +44,6 @@ public class CommandManager {
     public BedrockCommand getBedrockCommand() {
         return bedrockCommand;
     }
+    */
+
 }

@@ -7,9 +7,9 @@ public class SimpleCommandTree implements CommandTree {
     private final CommandTree[] children;
     private final CommandNode node;
 
-    public SimpleCommandTree(@NotNull CommandNode node) {
-        children = new CommandTree[0];
+    public SimpleCommandTree(@NotNull CommandNode node, @NotNull CommandTree[] children) {
         this.node = node;
+        this.children = children;
     }
 
 
@@ -37,7 +37,7 @@ public class SimpleCommandTree implements CommandTree {
             }    
             return childResult;
         }
-        return new ResolveResult(this, true, true);
+        return new ResolveResult(node, true, true);
     }
 
 }

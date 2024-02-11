@@ -1,6 +1,6 @@
 package fr.flowsqy.stelyclaim.api.permission;
 
-import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.api.command.PermissionCache;
 import org.jetbrains.annotations.NotNull;
 
 public class BasicPC implements PermissionChecker {
@@ -17,8 +17,8 @@ public class BasicPC implements PermissionChecker {
     }
 
     @Override
-    public boolean checkBase(@NotNull CommandContext context) {
-        return context.hasPermission(permission);
+    public boolean checkBase(@NotNull PermissionCache cache) {
+        return cache.hasPermission(permission);
     }
 
 }

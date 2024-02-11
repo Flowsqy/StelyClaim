@@ -1,0 +1,28 @@
+package fr.flowsqy.stelyclaim.api.permission;
+
+import fr.flowsqy.stelyclaim.api.command.PermissionCache;
+import org.jetbrains.annotations.NotNull;
+
+public class ContextPC implements PermissionChecker {
+
+    private final String prefix;
+    private final String suffix;
+
+    public ContextPC(@NotNull String prefix, @NotNull String suffix) {
+        this.prefix = prefix;
+        this.suffix = suffix;
+    }
+
+    @NotNull
+    public String buildBasePerm(@NotNull PermissionCache cache) {
+        /* TODO Fix that (aled) */
+        final String handlerId = ""; //cache.getCustomData(HandlerContext.class).getHandler().getId();
+        return prefix + handlerId + suffix;
+    }
+
+    @Override
+    public boolean checkBase(@NotNull PermissionCache cache) {
+        return cache.hasPermission(buildBasePerm(cache));
+    }
+
+}
