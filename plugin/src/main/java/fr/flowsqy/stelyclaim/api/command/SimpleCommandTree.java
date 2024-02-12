@@ -4,10 +4,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class SimpleCommandTree implements CommandTree {
 
-    private final CommandTree[] children;
     private final CommandNode node;
+    private final GroupCommandTree children;
 
-    public SimpleCommandTree(@NotNull CommandNode node, @NotNull CommandTree[] children) {
+    public SimpleCommandTree(@NotNull CommandNode node, @NotNull GroupCommandTree children) {
         this.node = node;
         this.children = children;
     }
@@ -19,25 +19,18 @@ public class SimpleCommandTree implements CommandTree {
             throw new IllegalArgumentException("Trying to access a tree without specifying any arguments");
         }
         final ResolveResult ownResult = node.resolve(context);
-        if (!ownResult.success()) {
+        if (ownResult.node().isEmpty()) {
             return ownResult;
         }
         context.consumeArg();
         if(context.getArgsLength() == 0) {
             return ownResult;
         }
-
-        for (CommandTree child : children) {
-            final ResolveResult childResult = child.resolve(context);
-            if(!childResult.found()) {
-                continue;
-            }
-            if (!childResult.success()) {
-                break;
-            }    
+        final ResolveResult childResult = children.resolve(context);
+        if(childResult.node().isPresent()){
             return childResult;
         }
-        return new ResolveResult(node, true, true);
+        return ownResult;
     }
 
 }

@@ -2,6 +2,8 @@ package fr.flowsqy.stelyclaim.api.command;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
+import java.util.Arrays;
+import java.util.LinkedList;
 
 public class RootCommandTreeTest {
 
@@ -13,16 +15,17 @@ public class RootCommandTreeTest {
         this.rootNode = new BasicNode("root", "root");
         final CommandNode helpNode = new BasicNode("help", "help");
         this.statsNode = new BasicNode("stats", "stats");
-        final CommandTree helpTree = new SimpleCommandTree(helpNode, new CommandTree[0]);
-        final CommandTree statsTree = new SimpleCommandTree(statsNode, new CommandTree[0]); 
-        this.rootCommandTree = new RootCommandTree(rootNode, new CommandTree[]{helpTree, statsTree});
+        final CommandTree helpTree = new SimpleCommandTree(helpNode, GroupCommandTree.EMPTY);
+        final CommandTree statsTree = new SimpleCommandTree(statsNode, GroupCommandTree.EMPTY);
+        this.rootCommandTree = new RootCommandTree(rootNode, new GroupCommandTree(new LinkedList<>(Arrays.asList(helpTree, statsTree))));
     }
 
     @Test
     public void whenNoArgsThenRoot() {
         final CommandContext context = new CommandContext(new String[]{}, new FakePermissionCache());
         final ResolveResult result = rootCommandTree.resolve(context);
-        Assertions.assertEquals(rootNode, result.node());
+        Assertions.assertTrue(result.node().isPresent());
+        Assertions.assertEquals(rootNode, result.node().get());
         Assertions.assertEquals(0, context.getArgsLength());
     }
 
@@ -30,7 +33,8 @@ public class RootCommandTreeTest {
     public void whenWrongArgsThenRoot() {
         final CommandContext context = new CommandContext(new String[]{"info"}, new FakePermissionCache());
         final ResolveResult result = rootCommandTree.resolve(context);
-        Assertions.assertEquals(rootNode, result.node());
+        Assertions.assertTrue(result.node().isPresent());
+        Assertions.assertEquals(rootNode, result.node().get());
         Assertions.assertEquals(1, context.getArgsLength());
         Assertions.assertEquals("info", context.getArg(0));
     }
@@ -39,7 +43,8 @@ public class RootCommandTreeTest {
     public void whenCorrectArgButNoPermThenRoot() {
         final CommandContext context = new CommandContext(new String[]{"stats"}, new FakePermissionCache());
         final ResolveResult result = rootCommandTree.resolve(context);
-        Assertions.assertEquals(rootNode, result.node());
+        Assertions.assertTrue(result.node().isPresent());
+        Assertions.assertEquals(rootNode, result.node().get());
         Assertions.assertEquals(1, context.getArgsLength());
         Assertions.assertEquals("stats", context.getArg(0));
     }
@@ -48,7 +53,8 @@ public class RootCommandTreeTest {
     public void whenCorrectArgAndPermThenChild() { 
         final CommandContext context = new CommandContext(new String[]{"stats"}, new FakePermissionCache("stats"));
         final ResolveResult result = rootCommandTree.resolve(context);
-        Assertions.assertEquals(statsNode, result.node());
+        Assertions.assertTrue(result.node().isPresent());
+        Assertions.assertEquals(statsNode, result.node().get());
         Assertions.assertEquals(0, context.getArgsLength());
     }
 

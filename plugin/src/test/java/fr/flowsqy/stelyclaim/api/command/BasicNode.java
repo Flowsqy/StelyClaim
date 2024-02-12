@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 class BasicNode implements CommandNode {
 
@@ -30,9 +31,12 @@ class BasicNode implements CommandNode {
     public ResolveResult resolve(@NotNull CommandContext context) {
         final String arg = context.getArg(0);
         if (!name.equalsIgnoreCase(arg)) {
-            return new ResolveResult(this, false, false);
+            return new ResolveResult(Optional.empty(), false);
+        } 
+        if (!context.getPermissionCache().hasPermission(permission)) {
+            return new ResolveResult(Optional.empty(), true);
         }
-        return new ResolveResult(this, true, context.getPermissionCache().hasPermission(permission));
+        return new ResolveResult(Optional.of(this), true);
     }
 
 
