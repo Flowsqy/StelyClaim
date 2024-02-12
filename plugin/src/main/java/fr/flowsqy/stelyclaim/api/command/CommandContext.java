@@ -1,17 +1,24 @@
 package fr.flowsqy.stelyclaim.api.command;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CommandContext {
 
     private final PermissionCache permissionCache;
     private final String[] args;
     private int argPos;
+    private Object data;
 
     public CommandContext(@NotNull String[] args, @NotNull PermissionCache permissionCache) {
+        this(args, permissionCache, null);
+    }
+
+    public CommandContext(@NotNull String[] args, @NotNull PermissionCache permissionCache, @Nullable Object data) {
         this.permissionCache = permissionCache;
         this.args = args;
         this.argPos = 0;
+        this.data = data;
     }
 
     @NotNull
@@ -37,12 +44,22 @@ public class CommandContext {
     }
 
     @NotNull
-    public CommandArgs buildArgs() {
-        final String[] path = new String[argPos];
-        System.arraycopy(args, 0, path, 0, path.length);
-        final String[] commandArgs = new String[args.length - argPos];
-        System.arraycopy(args, 0, commandArgs, argPos, commandArgs.length);
-        return new CommandArgs(path, commandArgs);
+    public String[] getRawArgs() {
+        return args;
+    }
+
+    @Nullable
+    public Object getData() {
+        return data;
+    }
+     
+    @NotNull
+    public <T> T getCustomData(@NotNull Class<T> type) {
+        return type.cast(data);
+    }
+
+    public void setCustomData(@Nullable Object data) {
+        this.data = data;
     }
 
 }

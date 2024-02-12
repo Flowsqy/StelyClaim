@@ -2,31 +2,23 @@ package fr.flowsqy.stelyclaim.api.command;
 
 import org.jetbrains.annotations.NotNull;
 
-public class SimpleCommandTree implements CommandTree {
+public class RootCommandTree {
 
     private final CommandTree[] children;
     private final CommandNode node;
 
-    public SimpleCommandTree(@NotNull CommandNode node, @NotNull CommandTree[] children) {
+    public RootCommandTree(@NotNull CommandNode node, @NotNull CommandTree[] children) {
         this.node = node;
         this.children = children;
     }
 
-    @Override
     @NotNull
     public ResolveResult resolve(@NotNull CommandContext context) {
+        // Skip current node check as we assume be directly as this step (and not one step before)
+        // Due to this behavior, this class does not implement SimpleCommandTree
         if (context.getArgsLength() == 0) {
-            throw new IllegalArgumentException("Trying to access a tree without specifying any arguments");
+            return new ResolveResult(node, true, true);
         }
-        final ResolveResult ownResult = node.resolve(context);
-        if (!ownResult.success()) {
-            return ownResult;
-        }
-        context.consumeArg();
-        if(context.getArgsLength() == 0) {
-            return ownResult;
-        }
-
         for (CommandTree child : children) {
             final ResolveResult childResult = child.resolve(context);
             if(!childResult.found()) {
@@ -39,5 +31,6 @@ public class SimpleCommandTree implements CommandTree {
         }
         return new ResolveResult(node, true, true);
     }
-
+    
 }
+

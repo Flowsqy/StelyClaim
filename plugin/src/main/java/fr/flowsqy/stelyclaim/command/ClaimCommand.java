@@ -1,44 +1,27 @@
 package fr.flowsqy.stelyclaim.command;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.ClaimHandler;
 import fr.flowsqy.stelyclaim.api.actor.*;
-import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.api.permission.*;
-import fr.flowsqy.stelyclaim.command.claim.*;
-import fr.flowsqy.stelyclaim.command.claim.domain.DomainSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.help.*;
-import fr.flowsqy.stelyclaim.command.claim.interact.InfoSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.interact.RemoveSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.interact.TeleportSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.selection.DefineSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.selection.RedefineSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.statistics.ResetStatsSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.statistics.ShowStatsSubCommand;
-import fr.flowsqy.stelyclaim.command.claim.statistics.StatsSubCommand;
-import fr.flowsqy.stelyclaim.common.ConfigurationFormattedMessages;
-import fr.flowsqy.stelyclaim.io.StatisticManager;
-import fr.flowsqy.stelyclaim.protocol.domain.DomainProtocol;
 import org.bukkit.command.*;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class ClaimCommand implements TabExecutor {
 
+    /*
     private final StatisticManager statisticManager;
     private final ClaimHandler<?> defaultHandler;
     private final HelpMessage helpMessage;
     private final String basePermission;
     private final ClaimSubCommandManager subCommandManager;
     private final ClaimRootCommand rootCommand;
+    */
 
     public ClaimCommand(@NotNull StelyClaimPlugin plugin, @NotNull String basePermission) {
+        /*
         statisticManager = plugin.getStatisticManager();
         defaultHandler = plugin.getHandlerRegistry().getHandler("player");
         helpMessage = new HelpMessage();
@@ -47,6 +30,7 @@ public class ClaimCommand implements TabExecutor {
         rootCommand = new ClaimRootCommand(subCommandManager, helpMessage);
 
         initInternalCommands(plugin);
+        */
     }
 
     @Override
@@ -69,7 +53,7 @@ public class ClaimCommand implements TabExecutor {
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         final Actor actor = getActor(sender);
         // final CommandContext context = new CommandContext(actor, args, new DefaultContext(defaultHandler), 0);
-        return rootCommand.tabComplete(null);
+        return null; // return rootCommand.tabComplete(null);
     }
 
     @NotNull
@@ -95,6 +79,7 @@ public class ClaimCommand implements TabExecutor {
      * @param plugin The {@link StelyClaimPlugin} instance
      */
     private void initInternalCommands(@NotNull StelyClaimPlugin plugin) {
+        /*
         final Configuration config = plugin.getConfiguration();
         final ConfigurationFormattedMessages messages = plugin.getMessages();
 
@@ -498,8 +483,10 @@ public class ClaimCommand implements TabExecutor {
         final String statsHelpMessage = messages.getFormattedMessage("help." + statsName);
         final HelpMessageProvider statsHMP = new BasicHelpMessageProvider(helpPermChecker, statsHelpMessage);
         helpMessage.register(statsId, statsHMP);
+        */
     }
 
+    /*
     private void registerPerm(@NotNull PermissionChecker data, @NotNull String[] modifiers) {
         // TODO Update that :clown:
         /*
@@ -522,8 +509,9 @@ public class ClaimCommand implements TabExecutor {
         // Link the top permission to the global permission
         topPermission.addParent(globalPerm, true);
         */
-    }
+    //}
 
+    /*
     public HelpMessage getHelpMessage() {
         return helpMessage;
     }
@@ -531,5 +519,6 @@ public class ClaimCommand implements TabExecutor {
     public String getBasePermission() {
         return basePermission;
     }
+    */
 
 }

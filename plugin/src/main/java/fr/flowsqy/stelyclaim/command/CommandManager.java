@@ -6,35 +6,26 @@ import org.bukkit.command.PluginCommand;
 import java.util.Objects;
 
 public class CommandManager {
-
-    /*
+ 
     private final ClaimCommand claimCommand;
     private final BedrockCommand bedrockCommand;
-    */
 
     public CommandManager(StelyClaimPlugin plugin) {
-
-        /*
-        final PluginCommand claimCmd = Objects.requireNonNull(plugin.getCommand("claim"));
-        final PluginCommand bedrockCmd = Objects.requireNonNull(plugin.getCommand("bedrock"));
-
         final String configNoPerm = plugin.getMessages().getFormattedMessage("util.noperm");
 
-        claimCmd.setPermissionMessage(configNoPerm);
-        bedrockCmd.setPermissionMessage(configNoPerm);
-
+        final PluginCommand claimCmd = Objects.requireNonNull(plugin.getCommand("claim"));
         claimCommand = new ClaimCommand(plugin, Objects.requireNonNull(claimCmd.getPermission()));
         claimCmd.setExecutor(claimCommand);
         claimCmd.setTabCompleter(claimCommand);
+        claimCmd.setPermissionMessage(configNoPerm);
 
+        final PluginCommand bedrockCmd = Objects.requireNonNull(plugin.getCommand("bedrock"));
         bedrockCommand = new BedrockCommand(plugin);
         bedrockCmd.setExecutor(bedrockCommand);
         bedrockCmd.setTabCompleter(bedrockCommand);
-        */
-
+        bedrockCmd.setPermissionMessage(configNoPerm);
     }
 
-    /*
     @SuppressWarnings("unused") // API
     public ClaimCommand getClaimCommand() {
         return claimCommand;
@@ -44,6 +35,5 @@ public class CommandManager {
     public BedrockCommand getBedrockCommand() {
         return bedrockCommand;
     }
-    */
 
 }
