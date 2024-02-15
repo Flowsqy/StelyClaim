@@ -1,24 +1,23 @@
 package fr.flowsqy.stelyclaim.api.command;
 
-import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 
 public class CommandContext {
 
     private final Actor actor;
     private final PermissionCache permissionCache;
+    private final ActionType type;
     private final String[] args;
     private int argPos;
     private Object data;
 
-    public CommandContext(@NotNull Actor actor, @NotNull String[] args, @NotNull PermissionCache permissionCache) {
-        this(actor, args, permissionCache, null);
-    }
-
-    public CommandContext(@NotNull Actor actor, @NotNull String[] args, @NotNull PermissionCache permissionCache, @Nullable Object data) {
+    public CommandContext(@NotNull Actor actor, @NotNull String[] args, @NotNull PermissionCache permissionCache, @NotNull ActionType type, @Nullable Object data) {
         this.actor = actor;
         this.permissionCache = permissionCache;
+        this.type = type;
         this.args = args;
         this.argPos = 0;
         this.data = data;
@@ -32,6 +31,11 @@ public class CommandContext {
     @NotNull
     public PermissionCache getPermissionCache() {
         return permissionCache;
+    }
+
+    @NotNull
+    public ActionType getType() {
+        return type;
     }
 
     public int getArgsLength() {
@@ -68,6 +72,13 @@ public class CommandContext {
 
     public void setCustomData(@Nullable Object data) {
         this.data = data;
+    }
+
+    public enum ActionType {
+        TAB_COMPLETE,
+        EXECUTE,
+        UNKNOWN,
+        OTHER
     }
 
 }

@@ -1,27 +1,36 @@
 package fr.flowsqy.stelyclaim.command;
 
-import fr.flowsqy.stelyclaim.StelyClaimPlugin;
-import fr.flowsqy.stelyclaim.api.actor.*;
-import fr.flowsqy.stelyclaim.api.command.CommandTree;
-import fr.flowsqy.stelyclaim.api.command.GroupCommandTree;
-import fr.flowsqy.stelyclaim.api.command.SimpleCommandTree;
-import fr.flowsqy.stelyclaim.api.command.ResolveResult;
-import fr.flowsqy.stelyclaim.api.command.CommandContext;
-import fr.flowsqy.stelyclaim.api.command.CommandNode;
-import fr.flowsqy.stelyclaim.api.command.RootCommandTree;
-import fr.flowsqy.stelyclaim.api.command.PermissionCache;
-import org.bukkit.command.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+
+import org.bukkit.command.BlockCommandSender;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.Collections;
-import java.util.Arrays;
+import fr.flowsqy.stelyclaim.StelyClaimPlugin;
+import fr.flowsqy.stelyclaim.api.actor.Actor;
+import fr.flowsqy.stelyclaim.api.actor.BlockActor;
+import fr.flowsqy.stelyclaim.api.actor.ConsoleActor;
+import fr.flowsqy.stelyclaim.api.actor.EntityActor;
+import fr.flowsqy.stelyclaim.api.actor.PlayerActor;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.api.command.CommandContext.ActionType;
+import fr.flowsqy.stelyclaim.api.command.CommandNode;
+import fr.flowsqy.stelyclaim.api.command.CommandTree;
+import fr.flowsqy.stelyclaim.api.command.GroupCommandTree;
+import fr.flowsqy.stelyclaim.api.command.PermissionCache;
+import fr.flowsqy.stelyclaim.api.command.ResolveResult;
+import fr.flowsqy.stelyclaim.api.command.RootCommandTree;
+import fr.flowsqy.stelyclaim.api.command.SimpleCommandTree;
+import net.md_5.bungee.api.chat.TextComponent;
 
 public class ClaimCommand implements TabExecutor {
 
@@ -56,7 +65,7 @@ public class ClaimCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         final Actor actor = getActor(sender);
-        final CommandContext context = new CommandContext(actor, args, new PermissionCache(actor));
+        final CommandContext context = new CommandContext(actor, args, new PermissionCache(actor), ActionType.EXECUTE, null);
         final ResolveResult result = rootTree.resolve(context);
         if(result.node().isEmpty()) {
             throw new RuntimeException("Could not resolve command");
@@ -78,7 +87,7 @@ public class ClaimCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         final Actor actor = getActor(sender);
-        final CommandContext context = new CommandContext(actor, args, new PermissionCache(actor));
+        final CommandContext context = new CommandContext(actor, args, new PermissionCache(actor), ActionType.TAB_COMPLETE, null);
         final ResolveResult result = rootTree.resolve(context);
         if(result.node().isEmpty()) {
             throw new RuntimeException("Could not resolve command");

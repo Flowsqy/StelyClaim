@@ -1,8 +1,9 @@
 package fr.flowsqy.stelyclaim.api.command;
 
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jetbrains.annotations.NotNull;
 
 class FakePermissionCache extends PermissionCache {

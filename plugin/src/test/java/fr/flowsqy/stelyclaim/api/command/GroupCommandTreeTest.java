@@ -1,9 +1,12 @@
 package fr.flowsqy.stelyclaim.api.command;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
-import java.util.LinkedList;
 import java.util.Arrays;
+import java.util.LinkedList;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import fr.flowsqy.stelyclaim.api.command.CommandContext.ActionType;
 
 public class GroupCommandTreeTest {
 
@@ -21,7 +24,7 @@ public class GroupCommandTreeTest {
 
     @Test
     public void whenWrongArgThenNothing() {
-        final CommandContext context = new CommandContext(null, new String[]{"info"}, new FakePermissionCache());
+        final CommandContext context = new CommandContext(null, new String[]{"info"}, new FakePermissionCache(), ActionType.UNKNOWN, null);
         final ResolveResult result = groupCommandTree.resolve(context);
         Assertions.assertTrue(result.node().isEmpty());
         Assertions.assertEquals(1, context.getArgsLength());
@@ -30,7 +33,7 @@ public class GroupCommandTreeTest {
 
     @Test
     public void whenCorrectArgThenChild() {
-        final CommandContext context = new CommandContext(null, new String[]{"help"}, new FakePermissionCache("help"));
+        final CommandContext context = new CommandContext(null, new String[]{"help"}, new FakePermissionCache("help"), ActionType.UNKNOWN, null);
         final ResolveResult result = groupCommandTree.resolve(context);
         Assertions.assertTrue(result.node().isPresent());
         Assertions.assertEquals(helpNode, result.node().get());

@@ -1,10 +1,10 @@
 package fr.flowsqy.stelyclaim.api.command;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 class BasicNode implements CommandNode {
 

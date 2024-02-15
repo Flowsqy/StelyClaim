@@ -1,9 +1,12 @@
 package fr.flowsqy.stelyclaim.api.command;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
 import java.util.Arrays;
 import java.util.LinkedList;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import fr.flowsqy.stelyclaim.api.command.CommandContext.ActionType;
 
 public class RootCommandTreeTest {
 
@@ -22,7 +25,7 @@ public class RootCommandTreeTest {
 
     @Test
     public void whenNoArgsThenRoot() {
-        final CommandContext context = new CommandContext(null, new String[]{}, new FakePermissionCache());
+        final CommandContext context = new CommandContext(null, new String[]{}, new FakePermissionCache(), ActionType.UNKNOWN, null);
         final ResolveResult result = rootCommandTree.resolve(context);
         Assertions.assertTrue(result.node().isPresent());
         Assertions.assertEquals(rootNode, result.node().get());
@@ -31,7 +34,7 @@ public class RootCommandTreeTest {
 
     @Test
     public void whenWrongArgsThenRoot() {
-        final CommandContext context = new CommandContext(null, new String[]{"info"}, new FakePermissionCache());
+        final CommandContext context = new CommandContext(null, new String[]{"info"}, new FakePermissionCache(), ActionType.UNKNOWN, null);
         final ResolveResult result = rootCommandTree.resolve(context);
         Assertions.assertTrue(result.node().isPresent());
         Assertions.assertEquals(rootNode, result.node().get());
@@ -41,7 +44,7 @@ public class RootCommandTreeTest {
 
     @Test
     public void whenCorrectArgButNoPermThenRoot() {
-        final CommandContext context = new CommandContext(null, new String[]{"stats"}, new FakePermissionCache());
+        final CommandContext context = new CommandContext(null, new String[]{"stats"}, new FakePermissionCache(), ActionType.UNKNOWN, null);
         final ResolveResult result = rootCommandTree.resolve(context);
         Assertions.assertTrue(result.node().isPresent());
         Assertions.assertEquals(rootNode, result.node().get());
@@ -51,7 +54,7 @@ public class RootCommandTreeTest {
 
     @Test
     public void whenCorrectArgAndPermThenChild() { 
-        final CommandContext context = new CommandContext(null, new String[]{"stats"}, new FakePermissionCache("stats"));
+        final CommandContext context = new CommandContext(null, new String[]{"stats"}, new FakePermissionCache("stats"), ActionType.UNKNOWN, null);
         final ResolveResult result = rootCommandTree.resolve(context);
         Assertions.assertTrue(result.node().isPresent());
         Assertions.assertEquals(statsNode, result.node().get());
