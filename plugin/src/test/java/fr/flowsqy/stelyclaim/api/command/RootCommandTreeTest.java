@@ -22,7 +22,7 @@ public class RootCommandTreeTest {
 
     @Test
     public void whenNoArgsThenRoot() {
-        final CommandContext context = new CommandContext(new String[]{}, new FakePermissionCache());
+        final CommandContext context = new CommandContext(null, new String[]{}, new FakePermissionCache());
         final ResolveResult result = rootCommandTree.resolve(context);
         Assertions.assertTrue(result.node().isPresent());
         Assertions.assertEquals(rootNode, result.node().get());
@@ -31,7 +31,7 @@ public class RootCommandTreeTest {
 
     @Test
     public void whenWrongArgsThenRoot() {
-        final CommandContext context = new CommandContext(new String[]{"info"}, new FakePermissionCache());
+        final CommandContext context = new CommandContext(null, new String[]{"info"}, new FakePermissionCache());
         final ResolveResult result = rootCommandTree.resolve(context);
         Assertions.assertTrue(result.node().isPresent());
         Assertions.assertEquals(rootNode, result.node().get());
@@ -41,7 +41,7 @@ public class RootCommandTreeTest {
 
     @Test
     public void whenCorrectArgButNoPermThenRoot() {
-        final CommandContext context = new CommandContext(new String[]{"stats"}, new FakePermissionCache());
+        final CommandContext context = new CommandContext(null, new String[]{"stats"}, new FakePermissionCache());
         final ResolveResult result = rootCommandTree.resolve(context);
         Assertions.assertTrue(result.node().isPresent());
         Assertions.assertEquals(rootNode, result.node().get());
@@ -51,7 +51,7 @@ public class RootCommandTreeTest {
 
     @Test
     public void whenCorrectArgAndPermThenChild() { 
-        final CommandContext context = new CommandContext(new String[]{"stats"}, new FakePermissionCache("stats"));
+        final CommandContext context = new CommandContext(null, new String[]{"stats"}, new FakePermissionCache("stats"));
         final ResolveResult result = rootCommandTree.resolve(context);
         Assertions.assertTrue(result.node().isPresent());
         Assertions.assertEquals(statsNode, result.node().get());

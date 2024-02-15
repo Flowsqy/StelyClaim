@@ -21,7 +21,7 @@ public class GroupCommandTreeTest {
 
     @Test
     public void whenWrongArgThenNothing() {
-        final CommandContext context = new CommandContext(new String[]{"info"}, new FakePermissionCache());
+        final CommandContext context = new CommandContext(null, new String[]{"info"}, new FakePermissionCache());
         final ResolveResult result = groupCommandTree.resolve(context);
         Assertions.assertTrue(result.node().isEmpty());
         Assertions.assertEquals(1, context.getArgsLength());
@@ -30,7 +30,7 @@ public class GroupCommandTreeTest {
 
     @Test
     public void whenCorrectArgThenChild() {
-        final CommandContext context = new CommandContext(new String[]{"help"}, new FakePermissionCache("help"));
+        final CommandContext context = new CommandContext(null, new String[]{"help"}, new FakePermissionCache("help"));
         final ResolveResult result = groupCommandTree.resolve(context);
         Assertions.assertTrue(result.node().isPresent());
         Assertions.assertEquals(helpNode, result.node().get());

@@ -2,12 +2,26 @@ package fr.flowsqy.stelyclaim.command;
 
 import fr.flowsqy.stelyclaim.StelyClaimPlugin;
 import fr.flowsqy.stelyclaim.api.actor.*;
+import fr.flowsqy.stelyclaim.api.command.CommandTree;
+import fr.flowsqy.stelyclaim.api.command.GroupCommandTree;
+import fr.flowsqy.stelyclaim.api.command.SimpleCommandTree;
+import fr.flowsqy.stelyclaim.api.command.ResolveResult;
+import fr.flowsqy.stelyclaim.api.command.CommandContext;
+import fr.flowsqy.stelyclaim.api.command.CommandNode;
+import fr.flowsqy.stelyclaim.api.command.RootCommandTree;
+import fr.flowsqy.stelyclaim.api.command.PermissionCache;
 import org.bukkit.command.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.LinkedList;
+import java.util.Optional;
+import java.util.Collections;
+import java.util.Arrays;
 
 public class ClaimCommand implements TabExecutor {
 
@@ -20,6 +34,9 @@ public class ClaimCommand implements TabExecutor {
     private final ClaimRootCommand rootCommand;
     */
 
+    private final GroupCommandTree allGroup, contextGroup;
+    private final RootCommandTree rootTree;
+
     public ClaimCommand(@NotNull StelyClaimPlugin plugin, @NotNull String basePermission) {
         /*
         statisticManager = plugin.getStatisticManager();
@@ -31,11 +48,20 @@ public class ClaimCommand implements TabExecutor {
 
         initInternalCommands(plugin);
         */
+        allGroup = new GroupCommandTree(new LinkedList<>());
+        contextGroup = new GroupCommandTree(new LinkedList<>());
+        rootTree = initInternalCommands(plugin);
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         final Actor actor = getActor(sender);
+        final CommandContext context = new CommandContext(actor, args, new PermissionCache(actor));
+        final ResolveResult result = rootTree.resolve(context);
+        if(result.node().isEmpty()) {
+            throw new RuntimeException("Could not resolve command");
+        }
+        result.node().get().execute(context);
         /*
         final CommandContext context = new CommandContext(actor, args, new DefaultContext(defaultHandler), 0);
         context.appendCommandName("claim");
@@ -52,8 +78,14 @@ public class ClaimCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         final Actor actor = getActor(sender);
+        final CommandContext context = new CommandContext(actor, args, new PermissionCache(actor));
+        final ResolveResult result = rootTree.resolve(context);
+        if(result.node().isEmpty()) {
+            throw new RuntimeException("Could not resolve command");
+        }
+        return result.node().get().tabComplete(context);
         // final CommandContext context = new CommandContext(actor, args, new DefaultContext(defaultHandler), 0);
-        return null; // return rootCommand.tabComplete(null);
+        // return rootCommand.tabComplete(null);
     }
 
     @NotNull
@@ -73,17 +105,54 @@ public class ClaimCommand implements TabExecutor {
         throw new UnsupportedOperationException("Unsupported command sender type: " + sender.getClass());
     }
 
+    private static final class TestNode implements CommandNode {
+
+        private final String name;
+        private final String permission;
+        
+        public TestNode(@NotNull String name, @NotNull String permission) {
+            this.name = name;
+            this.permission = permission;
+        }
+
+        @Override
+        public @NotNull ResolveResult resolve(@NotNull CommandContext context) {
+            final String arg = context.getArg(0);
+            if (!name.equalsIgnoreCase(arg)) {
+                return new ResolveResult(Optional.empty(), false);
+            }
+            if (!context.getPermissionCache().hasPermission(permission)) {
+                return new ResolveResult(Optional.empty(), true);
+            }
+            return new ResolveResult(Optional.of(this), true);
+        }
+
+        @Override
+        public @Nullable List<String> tabComplete(@NotNull CommandContext context) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public void execute(@NotNull CommandContext context) {
+            context.getActor().getBukkit().spigot().sendMessage(new TextComponent(name));
+        }
+
+    }
+
     /**
      * Initialize all internal sub commands
      *
      * @param plugin The {@link StelyClaimPlugin} instance
      */
-    private void initInternalCommands(@NotNull StelyClaimPlugin plugin) {
+    @NotNull
+    private RootCommandTree initInternalCommands(@NotNull StelyClaimPlugin plugin) {
         /*
         final Configuration config = plugin.getConfiguration();
         final ConfigurationFormattedMessages messages = plugin.getMessages();
+        */
 
         // Help
+        /*
         final UUID helpId = UUID.fromString("ac1851e4-dcb4-44d3-977d-f9f9f62f82a3");
         final String helpName = "help";
         final PermissionChecker helpPermChecker = new BasicPC(basePermission + "." + helpName);
@@ -97,8 +166,13 @@ public class ClaimCommand implements TabExecutor {
         final String helpHelpMessage = messages.getFormattedMessage("help." + helpName);
         final HelpMessageProvider helpHMP = new BasicHelpMessageProvider(helpPermChecker, helpHelpMessage);
         helpMessage.register(helpId, helpHMP);
+        */
+        final CommandNode helpNode = new TestNode("help", "help");
+        final CommandTree helpTree = new SimpleCommandTree(helpNode, GroupCommandTree.EMPTY);
+        allGroup.getChildren().add(helpTree);
 
         // Define
+        /*
         final UUID defineId = UUID.fromString("8a387ffb-b204-409c-ab51-9a85c0c22915");
         final String defineName = "define";
         final OtherPermissionChecker definePermChecker = new OtherContextPC(basePermission + ".", "." + defineName);
@@ -121,8 +195,13 @@ public class ClaimCommand implements TabExecutor {
         final String defineOtherHelpMessage = messages.getFormattedMessage("help." + defineName + "-other");
         final HelpMessageProvider defineHMP = new OtherHelpMessageProvider(definePermChecker, defineHelpMessage, defineOtherHelpMessage);
         helpMessage.register(defineId, defineHMP);
+        */
+        final CommandNode defineNode = new TestNode("define", "define");
+        final CommandTree defineTree = new SimpleCommandTree(defineNode, GroupCommandTree.EMPTY);
+        contextGroup.getChildren().add(defineTree);
 
         // Redefine
+        /*
         final UUID redefineId = UUID.fromString("6e57c8c6-1237-4339-98fc-d20812bdeb42");
         final String redefineName = "redefine";
         final OtherPermissionChecker redefinePermChecker = new OtherContextPC(basePermission + ".", "." + redefineName);
@@ -145,8 +224,13 @@ public class ClaimCommand implements TabExecutor {
         final String redefineOtherHelpMessage = messages.getFormattedMessage("help." + redefineName + "-other");
         final HelpMessageProvider redefineHMP = new OtherHelpMessageProvider(redefinePermChecker, redefineHelpMessage, redefineOtherHelpMessage);
         helpMessage.register(redefineId, redefineHMP);
+        */
+        final CommandNode redefineNode = new TestNode("redefine", "redefine");
+        final CommandTree redefineTree = new SimpleCommandTree(redefineNode, GroupCommandTree.EMPTY);
+        contextGroup.getChildren().add(redefineTree);
 
         // AddMember
+        /*
         final UUID addMemberId = UUID.fromString("a417fbaa-0d93-4045-b26b-ae58c46ec5d9");
         final String addmemberName = "addmember";
         final OtherPermissionChecker addmemberPermChecker = new OtherContextPC(basePermission + ".", "." + addmemberName);
@@ -170,8 +254,13 @@ public class ClaimCommand implements TabExecutor {
         final String addmemberOtherHelpMessage = messages.getFormattedMessage("help." + addmemberName + "-other");
         final HelpMessageProvider addMemberHMP = new OtherHelpMessageProvider(addmemberPermChecker, addmemberHelpMessage, addmemberOtherHelpMessage);
         helpMessage.register(addMemberId, addMemberHMP);
+        */
+        final CommandNode addMemberNode = new TestNode("addmember", "addmember");
+        final CommandTree addMemberTree = new SimpleCommandTree(addMemberNode, GroupCommandTree.EMPTY);
+        contextGroup.getChildren().add(addMemberTree);
 
         // RemoveMember
+        /*
         final UUID removeMemberId = UUID.fromString("a41af9c0-419d-4b8e-9eb5-662d7551162f");
         final String removememberName = "removemember";
         final OtherPermissionChecker removememberPermChecker = new OtherContextPC(basePermission + ".", "." + removememberName);
@@ -195,8 +284,13 @@ public class ClaimCommand implements TabExecutor {
         final String removeMemberOtherHelpMessage = messages.getFormattedMessage("help." + removememberName + "-other");
         final HelpMessageProvider removeMemberHMP = new OtherHelpMessageProvider(removememberPermChecker, removememberHelpMessage, removeMemberOtherHelpMessage);
         helpMessage.register(removeMemberId, removeMemberHMP);
+        */
+        final CommandNode removeMemberNode = new TestNode("removemember", "removemember");
+        final CommandTree removeMemberTree = new SimpleCommandTree(removeMemberNode, GroupCommandTree.EMPTY);
+        contextGroup.getChildren().add(removeMemberTree);
 
         // AddOwner
+        /*
         final UUID addOwnerId = UUID.fromString("109f5ea6-62d0-4e34-b6a7-4841fcc60d52");
         final String addownerName = "addowner";
         final OtherPermissionChecker addownerPermChecker = new OtherContextPC(basePermission + ".", "." + addownerName);
@@ -220,8 +314,13 @@ public class ClaimCommand implements TabExecutor {
         final String addOwnerOtherHelpMessage = messages.getFormattedMessage("help." + addownerName + "-other");
         final HelpMessageProvider addOwnerHMP = new OtherHelpMessageProvider(addownerPermChecker, addOwnerHelpMessage, addOwnerOtherHelpMessage);
         helpMessage.register(addOwnerId, addOwnerHMP);
+        */
+        final CommandNode addOwnerNode = new TestNode("addowner", "addowner");
+        final CommandTree addOwnerTree = new SimpleCommandTree(addOwnerNode, GroupCommandTree.EMPTY);
+        contextGroup.getChildren().add(addOwnerTree);
 
         // RemoveOwner
+        /*
         final UUID removeOwnerId = UUID.fromString("290aff1b-9f4d-4afc-bed7-4907c51fa7b0");
         final String removeOwnerName = "removeowner";
         final OtherPermissionChecker removeOwnerPermChecker = new OtherContextPC(basePermission + ".", "." + removeOwnerName);
@@ -245,8 +344,13 @@ public class ClaimCommand implements TabExecutor {
         final String removeOwnerOtherHelpMessage = messages.getFormattedMessage("help." + removeOwnerName + "-other");
         final HelpMessageProvider removeOwnerHMP = new OtherHelpMessageProvider(removeOwnerPermChecker, removeOwnerHelpMessage, removeOwnerOtherHelpMessage);
         helpMessage.register(removeOwnerId, removeOwnerHMP);
+        */
+        final CommandNode removeOwnerNode = new TestNode("removeowner", "removeowner");
+        final CommandTree removeOwnerTree = new SimpleCommandTree(removeOwnerNode, GroupCommandTree.EMPTY);
+        contextGroup.getChildren().add(removeOwnerTree);
 
         // Remove
+        /*
         final UUID removeId = UUID.fromString("bd4b2455-9e23-4997-b983-f4d3be0c0d7a");
         final String removeName = "remove";
         final OtherPermissionChecker removePermChecker = new OtherContextPC(basePermission + ".", "." + removeName);
@@ -269,8 +373,13 @@ public class ClaimCommand implements TabExecutor {
         final String removeOtherHelpMessage = messages.getFormattedMessage("help." + removeName + "-other");
         final HelpMessageProvider removeHMP = new OtherHelpMessageProvider(removePermChecker, removeHelpMessage, removeOtherHelpMessage);
         helpMessage.register(removeId, removeHMP);
+        */
+        final CommandNode removeNode = new TestNode("remove", "remove");
+        final CommandTree removeTree = new SimpleCommandTree(removeNode, GroupCommandTree.EMPTY);
+        contextGroup.getChildren().add(removeTree);
 
         // Info
+        /*
         final UUID infoId = UUID.fromString("5a5ca7ba-93f4-46ca-8b13-ca325ce286ff");
         final String infoName = "info";
         final OtherPermissionChecker infoPermChecker = new OtherContextPC(basePermission + ".", "." + infoName);
@@ -293,8 +402,13 @@ public class ClaimCommand implements TabExecutor {
         final String infoOtherHelpMessage = messages.getFormattedMessage("help." + infoName + "-other");
         final HelpMessageProvider infoHMP = new OtherHelpMessageProvider(infoPermChecker, infoHelpMessage, infoOtherHelpMessage);
         helpMessage.register(infoId, infoHMP);
+        */
+        final CommandNode infoNode = new TestNode("info", "info");
+        final CommandTree infoTree = new SimpleCommandTree(infoNode, GroupCommandTree.EMPTY);
+        contextGroup.getChildren().add(infoTree);
 
         // Teleport
+        /*
         final UUID teleportId = UUID.fromString("36d52f0c-c8e3-41d8-ba57-cd9651f3c6b4");
         final String teleportName = "teleport";
         final OtherPermissionChecker teleportPermChecker = new OtherContextPC(basePermission + ".", "." + teleportName);
@@ -317,8 +431,13 @@ public class ClaimCommand implements TabExecutor {
         final String teleportOtherHelpMessage = messages.getFormattedMessage("help." + teleportName + "-other");
         final HelpMessageProvider teleportHMP = new OtherHelpMessageProvider(teleportPermChecker, teleportHelpMessage, teleportOtherHelpMessage);
         helpMessage.register(teleportId, teleportHMP);
+        */
+        final CommandNode teleportNode = new TestNode("teleport", "teleport");
+        final CommandTree teleportTree = new SimpleCommandTree(teleportNode, GroupCommandTree.EMPTY);
+        contextGroup.getChildren().add(teleportTree);
 
         // Here
+        /*
         final UUID hereId = UUID.fromString("e8d49bbb-83b0-4796-be2d-79f8487f0532");
         final String hereName = "here";
         final OtherPermissionChecker herePermChecker = new OtherBasicPC(basePermission + "." + hereName);
@@ -341,8 +460,13 @@ public class ClaimCommand implements TabExecutor {
         final String hereHelpMessage = messages.getFormattedMessage("help." + hereName);
         final HelpMessageProvider hereHMP = new BasicHelpMessageProvider(herePermChecker, hereHelpMessage);
         helpMessage.register(hereId, hereHMP);
+        */
+        final CommandNode hereNode = new TestNode("here", "here");
+        final CommandTree hereTree = new SimpleCommandTree(hereNode, GroupCommandTree.EMPTY);
+        allGroup.getChildren().add(hereTree);
 
         // Near
+        /*
         final UUID nearId = UUID.fromString("24341444-78c3-440e-a4ff-ebdd248f11ed");
         final String nearName = "near";
         final NearCommandPermissionChecker nearPermChecker = new NearCommandPermissionChecker(basePermission + "." + nearName);
@@ -364,8 +488,13 @@ public class ClaimCommand implements TabExecutor {
         final String nearHelpMessage = messages.getFormattedMessage("help." + nearName);
         final HelpMessageProvider nearHMP = new BasicHelpMessageProvider(nearPermChecker, nearHelpMessage);
         helpMessage.register(nearId, nearHMP);
+        */
+        final CommandNode nearNode = new TestNode("near", "near");
+        final CommandTree nearTree = new SimpleCommandTree(nearNode, GroupCommandTree.EMPTY);
+        allGroup.getChildren().add(nearTree);
 
         // ListAdd
+        /*
         final UUID listAddId = UUID.fromString("9b4186c9-eb7f-48e4-8a46-3c173b28af2d");
         final String listaddName = "listadd";
         final OtherPermissionChecker listaddPermChecker = new OtherBasicPC(basePermission + "." + listaddName);
@@ -388,8 +517,13 @@ public class ClaimCommand implements TabExecutor {
         final String listAddOtherHelpMessage = messages.getFormattedMessage("help." + listaddName + "-other");
         final HelpMessageProvider listAddHMP = new OtherHelpMessageProvider(listaddPermChecker, listaddHelpMessage, listAddOtherHelpMessage);
         helpMessage.register(listAddId, listAddHMP);
+        */
+        final CommandNode listAddNode = new TestNode("listadd", "listadd");
+        final CommandTree listAddTree = new SimpleCommandTree(listAddNode, GroupCommandTree.EMPTY);
+        allGroup.getChildren().add(listAddTree);
 
         // Pillar
+        /*
         final String pillarName = "pillar";
         //final CommandPermissionChecker pillarData = new CommandPermissionChecker(pillarName, basePermission, false);
         subCommandManager.register(
@@ -405,8 +539,13 @@ public class ClaimCommand implements TabExecutor {
         if (config.getBoolean("statistic.pillar")) {
             statisticManager.addCommand(pillarName);
         }
+        */
+        final CommandNode pillarNode = new TestNode("pillar", "pillar");
+        final CommandTree pillarTree = new SimpleCommandTree(pillarNode, GroupCommandTree.EMPTY);
+        allGroup.getChildren().add(pillarTree);
 
         // Player
+        /*
         final UUID playerId = UUID.fromString("e7c0094d-5c8d-4807-a428-6e5a739e11fc");
         final String playerName = "player";
         final PermissionChecker playerPermChecker = new ContextPC(basePermission + ".contextual.", "");
@@ -428,8 +567,13 @@ public class ClaimCommand implements TabExecutor {
         final String playerHelpMessage = messages.getFormattedMessage("help." + playerName);
         final HelpMessageProvider playerHMP = new BasicHelpMessageProvider(playerPermChecker, playerHelpMessage);
         helpMessage.register(playerId, playerHMP);
+        */
+        final CommandNode playerNode = new TestNode("player", "player");
+        final CommandTree playerTree = new SimpleCommandTree(playerNode, contextGroup);
+        allGroup.getChildren().add(playerTree);
 
         // Stats
+        /*
         final String statsName = "stats";
 
         final UUID showStatsId = UUID.fromString("412ff688-7b16-4852-b305-7e5c19b89b98");
@@ -447,7 +591,13 @@ public class ClaimCommand implements TabExecutor {
         final String showStatOtherHelpMessage = messages.getFormattedMessage("help." + statsName + "-" + showStatsName + "-other");
         final HelpMessageProvider showStatsHMP = new OtherHelpMessageProvider(showStatsPermChecker, showStatsHelpMessage, showStatOtherHelpMessage);
         helpMessage.register(showStatsId, showStatsHMP);
+        */
+        final GroupCommandTree statsGroup = new GroupCommandTree(new LinkedList<>());
+        final CommandNode showNode = new TestNode("show", "show");
+        final CommandTree showTree = new SimpleCommandTree(showNode, GroupCommandTree.EMPTY);
+        statsGroup.getChildren().add(showTree);
 
+        /*
         final UUID resetStatsId = UUID.fromString("893ac1a9-ced0-4511-a997-9eb2176e5f96");
         final String resetStatsName = "reset";
         final OtherPermissionChecker resetStatsPermChecker = new OtherBasicPC(basePermission + "." + statsName + "." + resetStatsName);
@@ -463,7 +613,12 @@ public class ClaimCommand implements TabExecutor {
         final String resetStatOtherHelpMessage = messages.getFormattedMessage("help." + statsName + "-" + resetStatsName + "-other");
         final HelpMessageProvider resetStatsHMP = new OtherHelpMessageProvider(resetStatsPermChecker, resetStatsHelpMessage, resetStatOtherHelpMessage);
         helpMessage.register(resetStatsId, resetStatsHMP);
+        */
+        final CommandNode resetNode = new TestNode("reset", "reset");
+        final CommandTree resetTree = new SimpleCommandTree(resetNode, GroupCommandTree.EMPTY);
+        statsGroup.getChildren().add(resetTree);
 
+        /*
         final UUID statsId = UUID.fromString("be98a9a6-a6f0-4bd9-aceb-ac47c40b94ba");
         final PermissionChecker statsPermChecker = new BasicPC(basePermission + "." + statsName);
         subCommandManager.register(
@@ -482,8 +637,17 @@ public class ClaimCommand implements TabExecutor {
         }
         final String statsHelpMessage = messages.getFormattedMessage("help." + statsName);
         final HelpMessageProvider statsHMP = new BasicHelpMessageProvider(helpPermChecker, statsHelpMessage);
-        helpMessage.register(statsId, statsHMP);
+        helpMessage.register(statsId, statsHMP); 
         */
+        final CommandNode statsNode = new TestNode("stats", "stats");
+        final CommandTree statsTree = new SimpleCommandTree(statsNode, statsGroup);
+        allGroup.getChildren().add(statsTree);
+
+        // Root
+        allGroup.getChildren().add(contextGroup);
+        final CommandNode rootNode = new TestNode("claim", "claim");
+        final RootCommandTree rootCommandTree = new RootCommandTree(rootNode, allGroup);
+        return rootCommandTree;
     }
 
     /*

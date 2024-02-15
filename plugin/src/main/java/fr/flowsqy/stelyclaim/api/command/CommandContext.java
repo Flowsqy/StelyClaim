@@ -1,24 +1,32 @@
 package fr.flowsqy.stelyclaim.api.command;
 
+import fr.flowsqy.stelyclaim.api.actor.Actor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CommandContext {
 
+    private final Actor actor;
     private final PermissionCache permissionCache;
     private final String[] args;
     private int argPos;
     private Object data;
 
-    public CommandContext(@NotNull String[] args, @NotNull PermissionCache permissionCache) {
-        this(args, permissionCache, null);
+    public CommandContext(@NotNull Actor actor, @NotNull String[] args, @NotNull PermissionCache permissionCache) {
+        this(actor, args, permissionCache, null);
     }
 
-    public CommandContext(@NotNull String[] args, @NotNull PermissionCache permissionCache, @Nullable Object data) {
+    public CommandContext(@NotNull Actor actor, @NotNull String[] args, @NotNull PermissionCache permissionCache, @Nullable Object data) {
+        this.actor = actor;
         this.permissionCache = permissionCache;
         this.args = args;
         this.argPos = 0;
         this.data = data;
+    }
+
+    @NotNull
+    public Actor getActor() {
+        return actor;
     }
 
     @NotNull
