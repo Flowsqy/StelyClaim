@@ -39,6 +39,10 @@ class BasicNode implements CommandNode {
         return new ResolveResult(Optional.of(this), true);
     }
 
+    @Override
+    public @NotNull Optional<String> getNameAsChild(@NotNull CommandContext context) {
+        return Optional.of(name);
+    }
 
 }
 

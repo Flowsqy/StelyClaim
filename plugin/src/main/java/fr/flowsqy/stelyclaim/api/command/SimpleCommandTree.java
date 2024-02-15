@@ -12,6 +12,11 @@ public class SimpleCommandTree implements CommandTree {
         this.children = children;
     }
 
+    @NotNull
+    public CommandNode getNode() {
+        return node;
+    }
+
     @Override
     @NotNull
     public ResolveResult resolve(@NotNull CommandContext context) {
